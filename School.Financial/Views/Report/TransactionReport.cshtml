@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<School.Financial.Models.Transaction>
 
 @{
-    ViewData["Title"] = "TransactionReport";
+    ViewData["Title"] = "รายงานบันทึกรายการ";
 
     var budgets = ViewBag.budgets as IEnumerable<School.Financial.Models.Budget>;
     decimal remainCash = 0, remain = 0, remainDeposit = 0;
 }
 
-<h1>TransactionReport</h1>
+<h1>รายงานบันทึกรายการ</h1>
 <br />
 <form>
     <div class="row">
@@ -28,36 +28,57 @@
 <table class="table">
     <thead>
         <tr>
-            <th>วัน เดือน ปี</th>
-            <th>ที่เอกสาร</th>
-            <th>รายการ</th>
-            <th class="text-right">รับ</th>
-            <th class="text-right">จ่าย</th>
-            <th class="text-right">เงินสดคงเหลือ</th>
-            <th class="text-right">เงินฝากธนาคารคงเหลือ</th>
-            <th class="text-right">เงินฝากคงเหลือ<br />ส่วนราชการผู้เบิก</th>
-            <th>หมายเหตุ</th>
+            <th rowspan="2">วัน เดือน ปี</th>
+            <th rowspan="2">ที่เอกสาร</th>
+            <th rowspan="2">รายการ</th>
+            <th rowspan="2" class="text-right">รับ</th>
+            <th colspan="2" class="text-center">จ่าย</th>
+            <th rowspan="2" class="text-right">เงินสดคงเหลือ</th>
+            <th rowspan="2" class="text-right">เงินฝากธนาคารคงเหลือ</th>
+            <th rowspan="2" class="text-right">เงินฝากคงเหลือ<br />ส่วนราชการผู้เบิก</th>
+            <th rowspan="2">หมายเหตุ</th>
+        </tr>
+        <tr>
+            <th class="text-right">ลูกหนี้</th>
+            <th class="text-right">ใบสำคัญ</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            remainCash += item.Cash;
             remain += item.Amount;
-            remainDeposit += item.Deposit;
             <tr>
                 <td class="showdate">@item.IssueDateString</td>
-                <td>@item.PayEvidence</td>
+                <td>
+                    @if (item.PaymentType == PaymentType.DuplicatePayment || item.PaymentType == PaymentType.Debtor)
+                    {
+                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}/{item.DuplicatePaymentYear}");
+                    }
+                    else
+                    {
+                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}");
+                    }
+                </td>
                 <td>@item.Title</td>
                 @if (item.Amount >= 0)
                 {
                     <td class="text-right">@item.AmountString</td>
                     <td></td>
+                    <td></td>
                 }
                 else
                 {
                     <td></td>
-                    <td class="text-right">@item.AmountString</td>
+                    if (item.PaymentType == PaymentType.DuplicatePayment)
+                    {
+                        <td></td>
+                        <td class="text-right">@item.AmountString</td>
+                    }
+                    else
+                    {
+                        <td class="text-right">@item.AmountString</td>
+                        <td></td>
+                    }
                 }
                 <td class="text-right">@remainCash.ToString(WebConfiguration.MoneyFormat)</td>
                 <td class="text-right">@remain.ToString(WebConfiguration.MoneyFormat)</td>

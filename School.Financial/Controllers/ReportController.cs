@@ -49,13 +49,13 @@ namespace School.Financial.Controllers
                 Budgets = budgets.OrderBy(x => x.Name).Select(x => new OverAllReportDetail
                 {
                     Budget = x,
-                    Transactions = transactions.Where(t => t.BudgetId == x.Id).ToList(),
+                    Transactions = transactions.Where(t => t.BudgetId == x.Id).OrderBy(x => x.IssueDate).ThenBy(x => x.Id).ToList(),
                 }).ToList(),
             };
             return View(response);
         }
 
-        public ActionResult OverAllVat(DateTime? month)
+        public ActionResult OverAllVatReport(DateTime? month)
         {
             if (month == null) month = DateTime.UtcNow;
             ViewBag.month = month;
@@ -63,7 +63,7 @@ namespace School.Financial.Controllers
             var budgets = budgetDac.Get().OrderBy(x => x.Name);
             ViewBag.budgets = budgets;
 
-            var transactions = transactionDac.GetWithVat(month.Value).ToList();
+            var transactions = transactionDac.GetWithVat(month.Value).OrderBy(x => x.IssueDate).ThenBy(x => x.Id).ToList();
             return View(transactions);
         }
 
@@ -76,7 +76,7 @@ namespace School.Financial.Controllers
             var budgets = budgetDac.Get().OrderBy(x => x.Name);
             ViewBag.budgets = budgets;
 
-            var transactions = transactionDac.Get(month.Value, budgetId).ToList();
+            var transactions = transactionDac.Get(month.Value, budgetId).OrderBy(x => x.IssueDate).ThenBy(x => x.Id).ToList();
             var bringForword = bringForwardDac.Get(month.Value, budgetId);
             if (bringForword != null)
             {
@@ -93,7 +93,19 @@ namespace School.Financial.Controllers
 
         public ActionResult VatReport(int month)
         {
-            var transactions = transactionDac.Get();
+            var transactions = transactionDac.Get().OrderBy(x => x.IssueDate).ThenBy(x => x.Id).ToList();
+            return View(transactions);
+        }
+
+        public ActionResult ChequeReport()
+        {
+            var transactions = transactionDac.GetWithPartner().OrderBy(x => x.IssueDate).ThenBy(x => x.Id).ToList();
+            return View(transactions);
+        }
+
+        public ActionResult DuplicatePaymentReport()
+        {
+            var transactions = transactionDac.GetDuplicatePayment().OrderBy(x => x.IssueDate).ThenBy(x => x.Id).ToList();
             return View(transactions);
         }
     }
@@ -109,5 +121,12 @@ namespace School.Financial.Models
     {
         public Budget Budget { get; set; }
         public IEnumerable<Transaction> Transactions { get; set; }
+    }
+
+    public class TransactionWithPartner : Transaction
+    {
+        public Partner Partner { get; set; }
+
+        public string TotalAmountChequeString { get { return VatInclude.HasValue ? Math.Abs(TotalAmount).ToString(WebConfiguration.MoneyFormat) : "-"; } }
     }
 }

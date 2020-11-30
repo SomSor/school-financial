@@ -28,28 +28,37 @@
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            <td class="showdate">@item.IssueDateString</td>
-            <td>@(budgets.FirstOrDefault(x => x.Id == item.BudgetId)?.Name)</td>
-            <td>@item.PayEvidence</td>
-            <td>@item.Title</td>
-            @if (item.Amount >= 0)
-            {
-                <td class="text-right">@item.AmountString</td>
-                <td></td>
-            }
-            else
-            {
-                <td></td>
-                <td class="text-right">@item.AmountString</td>
-            }
-            <td class="text-right">@item.Remark</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">แก้ไข</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">รายละเอียด</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">ลบ</a>
-            </td>
-        </tr>
+            <tr>
+                <td class="showdate">@item.IssueDateString</td>
+                <td>@(budgets.FirstOrDefault(x => x.Id == item.BudgetId)?.Name)</td>
+                <td>
+                    @if (item.PaymentType == PaymentType.DuplicatePayment || item.PaymentType == PaymentType.Debtor)
+                    {
+                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}/{item.DuplicatePaymentYear}");
+                    }
+                    else
+                    {
+                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}");
+                    }
+                </td>
+                <td>@item.Title</td>
+                @if (item.Amount >= 0)
+                {
+                    <td class="text-right">@item.AmountString</td>
+                    <td></td>
+                }
+                else
+                {
+                    <td></td>
+                    <td class="text-right">@item.AmountString</td>
+                }
+                <td class="text-right">@item.Remark</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="text-success"><span class="glyphicon glyphicon-edit"></span></a>
+                    <a asp-action="Details" asp-route-id="@item.Id"><span class="glyphicon glyphicon-search"></span></a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="text-danger"><span class="glyphicon glyphicon-trash"></span></a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>

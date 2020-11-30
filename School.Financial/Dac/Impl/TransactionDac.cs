@@ -93,14 +93,13 @@ namespace School.Financial.Dac.Impl
             return list;
         }
 
-        public IEnumerable<Transaction> GetWithVat(DateTime month)
+        public IEnumerable<Transaction> GetDuplicatePayment()
         {
             var list = new List<Transaction>();
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from Transaction where month(IssueDate) = month(@month) and year(IssueDate) = year(@month) and IsTrackVat", conn);
-                cmd.Parameters.AddWithValue("@month", month);
+                MySqlCommand cmd = new MySqlCommand("select * from Transaction where PaymentType is not null and PaymentType <> ''", conn);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -113,23 +112,70 @@ namespace School.Financial.Dac.Impl
             return list;
         }
 
+        public IEnumerable<TransactionWithPartner> GetWithVat(DateTime month)
+        {
+            var list = new List<TransactionWithPartner>();
+            using (MySqlConnection conn = context.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select tx.*," +
+                    "pn.Id as pn_Id,pn.Name as pn_Name,pn.VatNumber as pn_VatNumber,pn.Address as pn_Address,pn.PartnerType as pn_PartnerType,pn.CreatedDate as pn_CreatedDate " +
+                    "from Transaction as tx " +
+                    "left join Partner as pn on tx.PartnerId = pn.Id " +
+                    "where month(IssueDate) = month(@month) and year(IssueDate) = year(@month) and IsTrackVat", conn);
+                cmd.Parameters.AddWithValue("@month", month);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(ReadDataWithPartner(reader));
+                    }
+                }
+            }
+            return list;
+        }
+
+        public IEnumerable<TransactionWithPartner> GetWithPartner()
+        {
+            var list = new List<TransactionWithPartner>();
+            using (MySqlConnection conn = context.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select tx.*," +
+                    "pn.Id as pn_Id,pn.Name as pn_Name,pn.VatNumber as pn_VatNumber,pn.Address as pn_Address,pn.PartnerType as pn_PartnerType,pn.CreatedDate as pn_CreatedDate " +
+                    "from Transaction as tx " +
+                    "left join Partner as pn on tx.PartnerId = pn.Id " +
+                    "where tx.PartnerId is not null or tx.PartnerId<>''", conn);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(ReadDataWithPartner(reader));
+                    }
+                }
+            }
+            return list;
+        }
+
         public void Insert(Transaction data)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (0,@IssueDate,@PayEvidence,@Title,@Remark,@PartnerId,@Amount,@IsTrackVat,@VatInclude,@Remain,@Cash,@Deposit,@BudgetId,@CreatedDate)", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear,@Title,@Remark,@PartnerId,@Amount,@PaymentType,@IsTrackVat,@VatInclude,@BudgetId,@CreatedDate)", conn);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
-                cmd.Parameters.AddWithValue("@PayEvidence", data.PayEvidence);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentNumber", data.DuplicatePaymentNumber);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentYear", data.DuplicatePaymentYear);
                 cmd.Parameters.AddWithValue("@Title", data.Title);
                 cmd.Parameters.AddWithValue("@Remark", data.Remark);
                 cmd.Parameters.AddWithValue("@PartnerId", data.PartnerId);
                 cmd.Parameters.AddWithValue("@Amount", data.Amount);
+                cmd.Parameters.AddWithValue("@PaymentType", data.PaymentType);
                 cmd.Parameters.AddWithValue("@IsTrackVat", data.IsTrackVat);
                 cmd.Parameters.AddWithValue("@VatInclude", data.VatInclude);
-                cmd.Parameters.AddWithValue("@Remain", data.Remain);
-                cmd.Parameters.AddWithValue("@Cash", data.Cash);
-                cmd.Parameters.AddWithValue("@Deposit", data.Deposit);
                 cmd.Parameters.AddWithValue("@BudgetId", data.BudgetId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
@@ -142,13 +188,14 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("UPDATE `Transaction` SET `IssueDate`=@IssueDate,`Title`=@Title,`Amount`=@Amount,`Remain`=@Remain,`Cash`=@Cash,`Deposit`=@Deposit,`Remark`=@Remark WHERE `Id`=@Id", conn);
+                MySqlCommand cmd = new MySqlCommand("UPDATE `Transaction` SET `IssueDate`=@IssueDate,`DuplicatePaymentType`=@DuplicatePaymentType,`DuplicatePaymentNumber`=@DuplicatePaymentNumber,`DuplicatePaymentYear`=@DuplicatePaymentYear,`Title`=@Title,`Amount`=@Amount,`PaymentType`=@PaymentType,`Remark`=@Remark WHERE `Id`=@Id", conn);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentNumber", data.DuplicatePaymentNumber);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentYear", data.DuplicatePaymentYear);
                 cmd.Parameters.AddWithValue("@Title", data.Title);
                 cmd.Parameters.AddWithValue("@Amount", data.Amount);
-                cmd.Parameters.AddWithValue("@Remain", data.Remain);
-                cmd.Parameters.AddWithValue("@Cash", data.Cash);
-                cmd.Parameters.AddWithValue("@Deposit", data.Deposit);
+                cmd.Parameters.AddWithValue("@PaymentType", data.PaymentType);
                 cmd.Parameters.AddWithValue("@Remark", data.Remark);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
 
@@ -161,20 +208,20 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (@Id,@IssueDate,@PayEvidence,@Title,@Remark,@PartnerId,@Amount,@IsTrackVat,@VatInclude,@Remain,@Cash,@Deposit,@budgetId,@CreatedDate)" +
-                    "ON DUPLICATE KEY UPDATE `IssueDate`=@IssueDate,`Title`=@Title,`Amount`=@Amount,`Remain`=@Remain,`Cash`=@Cash,`Deposit`=@Deposit,`Remark`=@Remark", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (@Id,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear,@Title,@Remark,@PartnerId,@Amount,@PaymentType,@IsTrackVat,@VatInclude,@budgetId,@CreatedDate)" +
+                    "ON DUPLICATE KEY UPDATE `IssueDate`=@IssueDate,`DuplicatePaymentType`=@DuplicatePaymentType,`DuplicatePaymentNumber`=@DuplicatePaymentNumber,`DuplicatePaymentYear`=@DuplicatePaymentYear,`Title`=@Title,`Amount`=@Amount,`PaymentType`=@PaymentType,`Remark`=@Remark", conn);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
-                cmd.Parameters.AddWithValue("@PayEvidence", data.PayEvidence);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentNumber", data.DuplicatePaymentNumber);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentYear", data.DuplicatePaymentYear);
                 cmd.Parameters.AddWithValue("@Title", data.Title);
                 cmd.Parameters.AddWithValue("@Remark", data.Remark);
                 cmd.Parameters.AddWithValue("@PartnerId", data.PartnerId);
                 cmd.Parameters.AddWithValue("@Amount", data.Amount);
+                cmd.Parameters.AddWithValue("@PaymentType", data.PaymentType);
                 cmd.Parameters.AddWithValue("@IsTrackVat", data.IsTrackVat);
                 cmd.Parameters.AddWithValue("@VatInclude", data.VatInclude);
-                cmd.Parameters.AddWithValue("@Remain", data.Remain);
-                cmd.Parameters.AddWithValue("@Cash", data.Cash);
-                cmd.Parameters.AddWithValue("@Deposit", data.Deposit);
                 cmd.Parameters.AddWithValue("@budgetId", data.BudgetId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
@@ -200,18 +247,48 @@ namespace School.Financial.Dac.Impl
             {
                 Id = Convert.ToInt32(reader["Id"]),
                 IssueDate = Convert.ToDateTime(reader["IssueDate"]),
-                PayEvidence = reader["PayEvidence"] == DBNull.Value ? null : reader["PayEvidence"].ToString(),
+                DuplicatePaymentType = reader["DuplicatePaymentType"] == DBNull.Value ? null : reader["DuplicatePaymentType"].ToString(),
+                DuplicatePaymentNumber = reader["DuplicatePaymentNumber"] == DBNull.Value ? null : reader["DuplicatePaymentNumber"].ToString(),
+                DuplicatePaymentYear = reader["DuplicatePaymentYear"] == DBNull.Value ? null : reader["DuplicatePaymentYear"].ToString(),
                 Title = reader["Title"].ToString(),
                 Remark = reader["Remark"] == DBNull.Value ? null : reader["Remark"].ToString(),
                 PartnerId = reader["PartnerId"] == DBNull.Value ? default : Convert.ToInt32(reader["PartnerId"]),
                 Amount = Convert.ToDecimal(reader["Amount"]),
+                PaymentType = reader["PaymentType"] == DBNull.Value ? null : reader["PaymentType"].ToString(),
                 IsTrackVat = reader["IsTrackVat"] == DBNull.Value ? null : (bool?)reader["IsTrackVat"],
                 VatInclude = reader["VatInclude"] == DBNull.Value ? null : (decimal?)reader["VatInclude"],
-                Remain = Convert.ToDecimal(reader["Remain"]),
-                Cash = Convert.ToDecimal(reader["Cash"]),
-                Deposit = Convert.ToDecimal(reader["Deposit"]),
                 BudgetId = Convert.ToInt32(reader["budgetId"]),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
+            };
+        }
+
+        private TransactionWithPartner ReadDataWithPartner(MySqlDataReader reader)
+        {
+            return new TransactionWithPartner()
+            {
+                Id = Convert.ToInt32(reader["Id"]),
+                IssueDate = Convert.ToDateTime(reader["IssueDate"]),
+                DuplicatePaymentType = reader["DuplicatePaymentType"] == DBNull.Value ? null : reader["DuplicatePaymentType"].ToString(),
+                DuplicatePaymentNumber = reader["DuplicatePaymentNumber"] == DBNull.Value ? null : reader["DuplicatePaymentNumber"].ToString(),
+                DuplicatePaymentYear = reader["DuplicatePaymentYear"] == DBNull.Value ? null : reader["DuplicatePaymentYear"].ToString(),
+                Title = reader["Title"].ToString(),
+                Remark = reader["Remark"] == DBNull.Value ? null : reader["Remark"].ToString(),
+                PartnerId = reader["PartnerId"] == DBNull.Value ? default : Convert.ToInt32(reader["PartnerId"]),
+                Amount = Convert.ToDecimal(reader["Amount"]),
+                PaymentType = reader["PaymentType"] == DBNull.Value ? null : reader["PaymentType"].ToString(),
+                IsTrackVat = reader["IsTrackVat"] == DBNull.Value ? null : (bool?)reader["IsTrackVat"],
+                VatInclude = reader["VatInclude"] == DBNull.Value ? null : (decimal?)reader["VatInclude"],
+                BudgetId = Convert.ToInt32(reader["budgetId"]),
+                CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
+                Partner = new Partner
+                {
+                    Id = Convert.ToInt32(reader["pn_Id"]),
+                    Name = reader["pn_Name"] == DBNull.Value ? null : reader["pn_Name"].ToString(),
+                    VatNumber = reader["pn_VatNumber"] == DBNull.Value ? null : reader["pn_VatNumber"].ToString(),
+                    Address = reader["pn_Address"] == DBNull.Value ? null : reader["pn_Address"].ToString(),
+                    PartnerType = reader["pn_PartnerType"] == DBNull.Value ? null : reader["pn_PartnerType"].ToString(),
+                    CreatedDate = Convert.ToDateTime(reader["pn_CreatedDate"]),
+                },
             };
         }
     }

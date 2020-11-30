@@ -1,0 +1,49 @@
+﻿
+@model IEnumerable<School.Financial.Models.Transaction>
+
+@{
+    ViewData["Title"] = "บค. บจ.";
+}
+
+<h1>บค. บจ.</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th rowspan="2" class="align-text-top">พ.ศ.</th>
+            <th colspan="2">ใบสำคัญคู่จ่าย</th>
+            <th rowspan="2" class="align-text-top">รายการ</th>
+            <th rowspan="2" class="align-text-top text-right">จำนวนเงิน</th>
+            <th rowspan="2" class="align-text-top">วันที่จ่าย</th>
+        </tr>
+        <tr>
+            <th>บค.</th>
+            <th>บจ.</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.DuplicatePaymentYear</td>
+                @if (item.DuplicatePaymentType?.StartsWith("บค") ?? false)
+                {
+                    <td>@item.DuplicatePaymentNumber</td>
+                    <td></td>
+                }
+                else if (item.DuplicatePaymentType?.StartsWith("บจ") ?? false)
+                {
+                    <td></td>
+                    <td>@item.DuplicatePaymentNumber</td>
+                }
+                else
+                {
+                    <td></td>
+                    <td></td>
+                }
+                <td>@item.Title</td>
+                <td class="text-right">@item.AmountAbsString</td>
+                <td class="showdate">@item.IssueDateString</td>
+            </tr>
+        }
+    </tbody>
+</table>

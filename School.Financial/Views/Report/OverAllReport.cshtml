@@ -1,10 +1,10 @@
 ﻿@model School.Financial.Models.OverAllReport
 
 @{
-    ViewData["Title"] = "OverAllReport";
+    ViewData["Title"] = "รายงานเงินคงเหลือประจำวัน";
 }
 
-<h1>OverAllReport</h1>
+<h1>รายงานเงินคงเหลือประจำวัน</h1>
 <form>
     <input name="month" class="monthpicker" type="text" value="@ViewBag?.month?.ToString("yyyy-MM-dd hh:mm:ss")" />
     <button type="submit">Ok</button>
@@ -24,10 +24,10 @@
         {
             <tr>
                 <td>@item.Budget.Name</td>
-                <td class="text-right">@(item.Transactions.Sum(x => x.Cash))</td>
+                <td class="text-right">0.00</td>
                 <td class="text-right">@(item.Transactions.Sum(x => x.Amount))</td>
-                <td class="text-right">@(item.Transactions.Sum(x => x.Deposit))</td>
-                <td class="text-right">@(item.Transactions.Sum(x => x.Cash + x.Remain + x.Deposit))</td>
+                <td class="text-right">0.00</td>
+                <td class="text-right">@(item.Transactions.Sum(x => x.Amount))</td>
             </tr>
         }
     </tbody>

@@ -24,7 +24,16 @@
         {
             <tr>
                 <td>@item.IssueDateString</td>
-                <td>@item.PayEvidence</td>
+                <td>
+                    @if (item.PaymentType == PaymentType.DuplicatePayment || item.PaymentType == PaymentType.Debtor)
+                    {
+                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}/{item.DuplicatePaymentYear}");
+                    }
+                    else
+                    {
+                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}");
+                    }
+                </td>
                 <td>@item.Title</td>
                 @if (item.Amount >= 0)
                 {
@@ -36,9 +45,9 @@
                     <td></td>
                     <td class="text-right">@item.AmountString</td>
                 }
-                <td class="text-right">@item.Remain</td>
-                <td class="text-right">@item.Cash</td>
-                <td class="text-right">@item.Deposit</td>
+                <td class="text-right">0.00</td>
+                <td class="text-right">0.00</td>
+                <td class="text-right">0.00</td>
                 <td class="text-right">@item.Remark</td>
             </tr>
         }

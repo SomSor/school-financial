@@ -27,9 +27,19 @@
                 <span asp-validation-for="IssueDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PayEvidence" class="control-label"></label>
-                <input asp-for="PayEvidence" class="form-control" />
-                <span asp-validation-for="PayEvidence" class="text-danger"></span>
+                <label asp-for="DuplicatePaymentType" class="control-label"></label>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <select asp-for="DuplicatePaymentType" class="form-control">
+                            <option>ไม่ระบุ</option>
+                            <option>บร.</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <input asp-for="DuplicatePaymentNumber" class="form-control" placeholder="เลขที่ เช่น 17ก63220/2" />
+                    </div>
+                </div>
+                <span asp-validation-for="DuplicatePaymentType" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>

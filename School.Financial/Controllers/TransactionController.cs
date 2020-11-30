@@ -57,7 +57,9 @@ namespace School.Financial.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateIncome(Transaction request)
         {
-            request.PayEvidence = string.Empty;
+            request.DuplicatePaymentType= string.Empty;
+            request.DuplicatePaymentNumber = string.Empty;
+            request.DuplicatePaymentYear = string.Empty;
             request.PartnerId = null;
             request.IsTrackVat = null;
             request.VatInclude = null;
@@ -124,11 +126,11 @@ namespace School.Financial.Controllers
             var transaction = transactionDac.Get(id);
 
             transaction.IssueDate = request.IssueDate;
+            transaction.DuplicatePaymentType = request.DuplicatePaymentType;
+            transaction.DuplicatePaymentNumber = request.DuplicatePaymentNumber;
+            transaction.DuplicatePaymentYear = request.DuplicatePaymentYear;
             transaction.Title = request.Title;
             transaction.Amount = request.Amount;
-            transaction.Remain = request.Remain;
-            transaction.Cash = request.Cash;
-            transaction.Deposit = request.Deposit;
             transaction.Remark = request.Remark;
 
             transactionDac.Update(transaction);
