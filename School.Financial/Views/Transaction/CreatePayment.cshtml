@@ -1,0 +1,99 @@
+﻿@model School.Financial.Models.Transaction
+
+@{
+    ViewData["Title"] = "Create";
+
+    var budgets = ViewBag.Budets as IEnumerable<School.Financial.Models.Budget>;
+    var partners = ViewBag.Partners as IEnumerable<School.Financial.Models.Partner>;
+    var partnerOptions = partners.Select(x =>
+    {
+        var name = x.PartnerType switch
+        {
+            PartnerType.Person => "(บุคคลธรรมดา)",
+            PartnerType.Shop => "(นิติบุคคล)",
+            _ => string.Empty,
+        };
+        return new
+        {
+            Id = x.Id,
+            Name = $"{x.Name} {name}",
+        };
+    });
+}
+
+<h1>สร้าง</h1>
+
+<h4>บันทึกรายจ่าย</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreatePayment">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BudgetId" class="control-label"></label>
+                <select asp-for="BudgetId" asp-items="@(new SelectList(budgets,"Id","Name"))" class="form-control">
+                    <option value="">เลือก ...</option>
+                </select>
+                <span asp-validation-for="BudgetId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IssueDate" class="control-label"></label>
+                <input asp-for="IssueDate" class="form-control datepicker" type="text" />
+                <span asp-validation-for="IssueDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PayEvidence" class="control-label"></label>
+                <input asp-for="PayEvidence" class="form-control" />
+                <span asp-validation-for="PayEvidence" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Remark" class="control-label"></label>
+                <input asp-for="Remark" class="form-control" />
+                <span asp-validation-for="Remark" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PartnerId" class="control-label"></label>
+                <select asp-for="PartnerId" asp-items="@(new SelectList(partnerOptions,"Id","Name"))" class="form-control" onchange="OnPartnerChanged(this)">
+                    <option value="">ไม่กำหนด</option>
+                </select>
+                <span asp-validation-for="BudgetId" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="div_IsTrackVat" style="display:none">
+                <input type="checkbox" id="IsTrackVat" name="TrackVat" />
+                <label asp-for="IsTrackVat" class="control-label"></label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="สร้าง" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">กลับ</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        function OnPartnerChanged(sender) {
+            if ($(sender).val() == "") {
+                $("#IsTrackVat").prop("checked", false);
+                $("#div_IsTrackVat").hide();
+            } else {
+                $("#div_IsTrackVat").show();
+            }
+        }
+    </script>
+}

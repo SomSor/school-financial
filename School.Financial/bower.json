@@ -1,0 +1,22 @@
+{
+  "name": "school.financial",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Somkiet <somsor@perfenterprise.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "glyphicons-only-bootstrap": "*",
+    "eonasdan-bootstrap-datetimepicker": "*",
+    "moment": "*"
+  }
+}
