@@ -1,0 +1,72 @@
+﻿@model IEnumerable<School.Financial.Models.Transaction>
+
+@{
+    ViewData["Title"] = "Index";
+
+    var budgets = ViewBag.budgets as IEnumerable<School.Financial.Models.Budget>;
+}
+
+<h1>บันทึกรายการ</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="CreateIncome"><span class="glyphicon glyphicon-piggy-bank"></span> บันทึกรายรับ</a>
+    <a class="btn btn-primary" asp-action="CreatePayment"><span class="glyphicon glyphicon-usd"></span> บันทึกรายจ่าย</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>วัน เดือน ปี</th>
+            <th>ประเภทงบประมาณ</th>
+            <th>ที่เอกสาร</th>
+            <th>รายการ</th>
+            <th class="text-right">รับ</th>
+            <th class="text-right">จ่าย</th>
+            <th>หมายเหตุ</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="showdate">@item.IssueDateString</td>
+                <td>@(budgets.FirstOrDefault(x => x.Id == item.BudgetId)?.Name)</td>
+                <td>
+                    @if (item.PaymentType == PaymentType.DuplicatePayment || item.PaymentType == PaymentType.Debtor)
+                    {
+                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}/{item.DuplicatePaymentYear}");
+                    }
+                    else
+                    {
+                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}");
+                    }
+                </td>
+                <td>@item.Title</td>
+                @if (item.Amount >= 0)
+                {
+                    <td class="text-right">@item.AmountString</td>
+                    <td></td>
+                }
+                else
+                {
+                    <td></td>
+                    <td class="text-right">@item.AmountString</td>
+                }
+                <td class="text-right">@item.Remark</td>
+                @if (item.BudgetId == 0 && item.Amount > 0)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="text-success"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a asp-action="Details" asp-route-id="@item.Id"><span class="glyphicon glyphicon-search"></span></a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="text-danger"><span class="glyphicon glyphicon-trash"></span></a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+

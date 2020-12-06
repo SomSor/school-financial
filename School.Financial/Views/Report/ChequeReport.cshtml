@@ -1,0 +1,42 @@
+﻿@model IEnumerable<School.Financial.Models.TransactionWithPartner>
+
+@{
+    ViewData["Title"] = "ออกเช็ค";
+
+    int index = 1;
+}
+
+<h1>ออกเช็ค</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ลำดับที่</th>
+            <th>ชื่อ</th>
+            <th>นิติบุคล/ร้านค้า</th>
+            <th>รายการจ่าย</th>
+            <th>ประเภทสินค้า</th>
+            <th>วันที่จ่าย</th>
+            <th class="text-right">ยอดจ่าย</th>
+            <th class="text-right">หักภาษี ณ ที่จ่าย</th>
+            <th class="text-right">ยอดจ่ายเช็ค</th>
+            <th>เลขที่เช็ค</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@(index++)</td>
+                <td>@item.Partner.Name</td>
+                <td>@item.Partner.PartnerType</td>
+                <td>@item.Title</td>
+                <td></td>
+                <td class="showdate">@item.IssueDateString</td>
+                <td class="text-right">@item.AmountAbsString</td>
+                <td class="text-right">@item.VatIncludeString</td>
+                <td class="text-right">@item.TotalAmountChequeString</td>
+                <td></td>
+            </tr>
+        }
+    </tbody>
+</table>

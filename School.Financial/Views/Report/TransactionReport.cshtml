@@ -1,0 +1,90 @@
+﻿@model IEnumerable<School.Financial.Models.Transaction>
+
+@{
+    ViewData["Title"] = "รายงานบันทึกรายการ";
+
+    var budgets = ViewBag.budgets as IEnumerable<School.Financial.Models.Budget>;
+    decimal remainCash = 0, remain = 0, remainDeposit = 0;
+}
+
+<h1>รายงานบันทึกรายการ</h1>
+<br />
+<form>
+    <div class="row">
+        <div class="col-sm-2">
+            <input name="month" class="form-control monthpicker" type="text" value="@ViewBag?.month?.ToString("yyyy-MM-dd hh:mm:ss")" />
+        </div>
+        <div class="col-sm-2">
+            <select name="budgetId" asp-items="@(new SelectList(budgets, "Id", "Name", ViewBag.budgetId))" class="form-control">
+                <option value="">เลือก ...</option>
+            </select>
+        </div>
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-primary">Ok</button>
+        </div>
+    </div>
+</form>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th rowspan="2">วัน เดือน ปี</th>
+            <th rowspan="2">ที่เอกสาร</th>
+            <th rowspan="2">รายการ</th>
+            <th rowspan="2" class="text-right">รับ</th>
+            <th colspan="2" class="text-center">จ่าย</th>
+            <th rowspan="2" class="text-right">เงินสดคงเหลือ</th>
+            <th rowspan="2" class="text-right">เงินฝากธนาคารคงเหลือ</th>
+            <th rowspan="2" class="text-right">เงินฝากคงเหลือ<br />ส่วนราชการผู้เบิก</th>
+            <th rowspan="2">หมายเหตุ</th>
+        </tr>
+        <tr>
+            <th class="text-right">ลูกหนี้</th>
+            <th class="text-right">ใบสำคัญ</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            remain += item.Amount;
+            <tr>
+                <td class="showdate">@item.IssueDateString</td>
+                <td>
+                    @if (item.PaymentType == PaymentType.DuplicatePayment || item.PaymentType == PaymentType.Debtor)
+                    {
+                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}/{item.DuplicatePaymentYear}");
+                    }
+                    else
+                    {
+                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}");
+                    }
+                </td>
+                <td>@item.Title</td>
+                @if (item.Amount >= 0)
+                {
+                    <td class="text-right">@item.AmountString</td>
+                    <td></td>
+                    <td></td>
+                }
+                else
+                {
+                    <td></td>
+                    if (item.PaymentType == PaymentType.DuplicatePayment)
+                    {
+                        <td></td>
+                        <td class="text-right">@item.AmountString</td>
+                    }
+                    else
+                    {
+                        <td class="text-right">@item.AmountString</td>
+                        <td></td>
+                    }
+                }
+                <td class="text-right">@remainCash.ToString(WebConfiguration.MoneyFormat)</td>
+                <td class="text-right">@remain.ToString(WebConfiguration.MoneyFormat)</td>
+                <td class="text-right">@remainDeposit.ToString(WebConfiguration.MoneyFormat)</td>
+                <td class="text-right">@item.Remark</td>
+            </tr>
+        }
+    </tbody>
+</table>

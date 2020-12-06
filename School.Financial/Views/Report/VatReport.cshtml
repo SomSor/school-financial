@@ -1,0 +1,55 @@
+﻿@model IEnumerable<School.Financial.Models.Transaction>
+
+@{
+    ViewData["Title"] = "VatReport";
+}
+
+<h1>VatReport</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>วัน เดือน ปี</th>
+            <th>ที่เอกสาร</th>
+            <th>รายการ</th>
+            <th class="text-right">รับ</th>
+            <th class="text-right">จ่าย</th>
+            <th class="text-right">เงินสดคงเหลือ</th>
+            <th class="text-right">เงินฝากธนาคารคงเหลือ</th>
+            <th class="text-right">เงินฝากคงเหลือ<br />ส่วนราชการผู้เบิก</th>
+            <th>หมายเหตุ</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.IssueDateString</td>
+                <td>
+                    @if (item.PaymentType == PaymentType.DuplicatePayment || item.PaymentType == PaymentType.Debtor)
+                    {
+                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}/{item.DuplicatePaymentYear}");
+                    }
+                    else
+                    {
+                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}");
+                    }
+                </td>
+                <td>@item.Title</td>
+                @if (item.Amount >= 0)
+                {
+                    <td class="text-right">@item.AmountString</td>
+                    <td></td>
+                }
+                else
+                {
+                    <td></td>
+                    <td class="text-right">@item.AmountString</td>
+                }
+                <td class="text-right">0.00</td>
+                <td class="text-right">0.00</td>
+                <td class="text-right">0.00</td>
+                <td class="text-right">@item.Remark</td>
+            </tr>
+        }
+    </tbody>
+</table>
