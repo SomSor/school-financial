@@ -31,7 +31,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="BudgetId" class="control-label"></label>
-                <select asp-for="BudgetId" asp-items="@(new SelectList(budgets,"Id","Name"))" class="form-control">
+                <select asp-for="BudgetId" asp-items="@(new SelectList(budgets,"Id","Name"))" class="form-control" onchange="OnBudgetChanged(this)">
                     <option value="">เลือก ...</option>
                 </select>
                 <span asp-validation-for="BudgetId" class="text-danger"></span>
@@ -41,7 +41,7 @@
                 <input asp-for="IssueDate" class="form-control datepicker" type="text" />
                 <span asp-validation-for="IssueDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="div_PaymentTypeDetail">
                 <label asp-for="DuplicatePaymentType" class="control-label"></label>
                 <div class="row">
                     <div class="col-sm-3">
@@ -71,7 +71,7 @@
                 <input asp-for="Amount" class="form-control" />
                 <span asp-validation-for="Amount" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="div_PaymentType">
                 <label asp-for="PaymentType" class="control-label"></label>
                 <select asp-for="PaymentType" class="form-control">
                     <option>ใบสำคัญ</option>
@@ -85,16 +85,12 @@
                 <input asp-for="Remark" class="form-control" />
                 <span asp-validation-for="Remark" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="div_PartnerId">
                 <label asp-for="PartnerId" class="control-label"></label>
-                <select asp-for="PartnerId" asp-items="@(new SelectList(partnerOptions,"Id","Name"))" class="form-control" onchange="OnPartnerChanged(this)">
+                <select asp-for="PartnerId" asp-items="@(new SelectList(partnerOptions,"Id","Name"))" class="form-control">
                     <option value="">ไม่ระบุ</option>
                 </select>
                 <span asp-validation-for="BudgetId" class="text-danger"></span>
-            </div>
-            <div class="form-group" id="div_IsTrackVat" style="display:none">
-                <input type="checkbox" id="IsTrackVat" name="TrackVat" />
-                <label asp-for="IsTrackVat" class="control-label"></label>
             </div>
             <div class="form-group">
                 <input type="submit" value="สร้าง" class="btn btn-primary" />
@@ -111,12 +107,15 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
-        function OnPartnerChanged(sender) {
-            if ($(sender).val() == "") {
-                $("#IsTrackVat").prop("checked", false);
-                $("#div_IsTrackVat").hide();
+        function OnBudgetChanged(sender) {
+            if ($(sender).val() == "0") {
+                $("#div_PaymentTypeDetail").hide();
+                $("#div_PaymentType").hide();
+                $("#div_PartnerId").hide();
             } else {
-                $("#div_IsTrackVat").show();
+                $("#div_PaymentTypeDetail").show();
+                $("#div_PaymentType").show();
+                $("#div_PartnerId").show();
             }
         }
     </script>

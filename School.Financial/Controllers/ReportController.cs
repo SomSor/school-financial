@@ -10,16 +10,19 @@ namespace School.Financial.Controllers
     public class ReportController : Controller
     {
         private readonly IBudgetDac budgetDac;
+        private readonly IPartnerDac partnerDac;
         private readonly ITransactionDac transactionDac;
         private readonly IBringForwardDac bringForwardDac;
 
         public ReportController(
             IBudgetDac budgetDac,
+            IPartnerDac partnerDac,
             ITransactionDac transactionDac,
             IBringForwardDac bringForwardDac
             )
         {
             this.budgetDac = budgetDac;
+            this.partnerDac = partnerDac;
             this.transactionDac = transactionDac;
             this.bringForwardDac = bringForwardDac;
         }
@@ -67,16 +70,32 @@ namespace School.Financial.Controllers
             return View(transactions);
         }
 
-        public ActionResult TransactionReport(DateTime? month, int budgetId)
+        public ActionResult TransactionReport(DateTime? month, int budgetId = -1)
         {
             if (month == null) month = DateTime.UtcNow;
             ViewBag.month = month;
             ViewBag.budgetId = budgetId;
 
-            var budgets = budgetDac.Get().OrderBy(x => x.Name);
-            ViewBag.budgets = budgets;
+            var budgets = budgetDac.Get().ToList();
+            budgets.Add(new Budget
+            {
+                Id = 0,
+                Name = "ภาษี ณ ที่จ่าย",
+            });
+            ViewBag.budgets = budgets.OrderBy(x => x.Name);
 
-            var transactions = transactionDac.Get(month.Value, budgetId).OrderBy(x => x.IssueDate).ThenBy(x => x.Id).ToList();
+            var partners = partnerDac.Get();
+            var transactions = budgetId switch
+            {
+                0 => transactionDac.GetTeackVat(month.Value).OrderBy(x => x.IssueDate).ThenBy(x => x.Id).Select(x => new Transaction
+                {
+                    Id = x.Id,
+                    IssueDate = x.IssueDate,
+                    Title = $"รับเงินภาษี ณ ที่จ่ายจาก {partners.FirstOrDefault(p => p.Id == x.PartnerId)?.Name}",
+                    Amount = x.VatInclude.Value,
+                }).ToList(),
+                _ => transactionDac.Get(month.Value, budgetId).OrderBy(x => x.IssueDate).ThenBy(x => x.Id).ToList(),
+            };
             var bringForword = bringForwardDac.Get(month.Value, budgetId);
             if (bringForword != null)
             {

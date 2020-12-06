@@ -93,6 +93,26 @@ namespace School.Financial.Dac.Impl
             return list;
         }
 
+        public IEnumerable<Transaction> GetTeackVat(DateTime month)
+        {
+            var list = new List<Transaction>();
+            using (MySqlConnection conn = context.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select * from Transaction where month(IssueDate) = month(@month) and year(IssueDate) = year(@month) and VatInclude > 0", conn);
+                cmd.Parameters.AddWithValue("@month", month);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(ReadData(reader));
+                    }
+                }
+            }
+            return list;
+        }
+
         public IEnumerable<Transaction> GetDuplicatePayment()
         {
             var list = new List<Transaction>();
@@ -122,7 +142,7 @@ namespace School.Financial.Dac.Impl
                     "pn.Id as pn_Id,pn.Name as pn_Name,pn.VatNumber as pn_VatNumber,pn.Address as pn_Address,pn.PartnerType as pn_PartnerType,pn.CreatedDate as pn_CreatedDate " +
                     "from Transaction as tx " +
                     "left join Partner as pn on tx.PartnerId = pn.Id " +
-                    "where month(IssueDate) = month(@month) and year(IssueDate) = year(@month) and IsTrackVat", conn);
+                    "where month(IssueDate) = month(@month) and year(IssueDate) = year(@month) and VatInclude > 0", conn);
                 cmd.Parameters.AddWithValue("@month", month);
 
                 using (var reader = cmd.ExecuteReader())
@@ -159,12 +179,12 @@ namespace School.Financial.Dac.Impl
             return list;
         }
 
-        public void Insert(Transaction data)
+        public int Insert(Transaction data)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear,@Title,@Remark,@PartnerId,@Amount,@PaymentType,@IsTrackVat,@VatInclude,@BudgetId,@CreatedDate)", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear,@Title,@Remark,@PartnerId,@Amount,@PaymentType,@VatInclude,@BudgetId,@CreatedDate)", conn);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentNumber", data.DuplicatePaymentNumber);
@@ -174,12 +194,12 @@ namespace School.Financial.Dac.Impl
                 cmd.Parameters.AddWithValue("@PartnerId", data.PartnerId);
                 cmd.Parameters.AddWithValue("@Amount", data.Amount);
                 cmd.Parameters.AddWithValue("@PaymentType", data.PaymentType);
-                cmd.Parameters.AddWithValue("@IsTrackVat", data.IsTrackVat);
                 cmd.Parameters.AddWithValue("@VatInclude", data.VatInclude);
                 cmd.Parameters.AddWithValue("@BudgetId", data.BudgetId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
+                return (int)cmd.LastInsertedId;
             }
         }
 
@@ -203,12 +223,12 @@ namespace School.Financial.Dac.Impl
             }
         }
 
-        public void Upsert(Transaction data)
+        public int Upsert(Transaction data)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (@Id,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear,@Title,@Remark,@PartnerId,@Amount,@PaymentType,@IsTrackVat,@VatInclude,@budgetId,@CreatedDate)" +
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (@Id,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear,@Title,@Remark,@PartnerId,@Amount,@PaymentType,@VatInclude,@budgetId,@CreatedDate)" +
                     "ON DUPLICATE KEY UPDATE `IssueDate`=@IssueDate,`DuplicatePaymentType`=@DuplicatePaymentType,`DuplicatePaymentNumber`=@DuplicatePaymentNumber,`DuplicatePaymentYear`=@DuplicatePaymentYear,`Title`=@Title,`Amount`=@Amount,`PaymentType`=@PaymentType,`Remark`=@Remark", conn);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
@@ -220,12 +240,12 @@ namespace School.Financial.Dac.Impl
                 cmd.Parameters.AddWithValue("@PartnerId", data.PartnerId);
                 cmd.Parameters.AddWithValue("@Amount", data.Amount);
                 cmd.Parameters.AddWithValue("@PaymentType", data.PaymentType);
-                cmd.Parameters.AddWithValue("@IsTrackVat", data.IsTrackVat);
                 cmd.Parameters.AddWithValue("@VatInclude", data.VatInclude);
                 cmd.Parameters.AddWithValue("@budgetId", data.BudgetId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
+                return (int)cmd.LastInsertedId;
             }
         }
 
@@ -255,7 +275,6 @@ namespace School.Financial.Dac.Impl
                 PartnerId = reader["PartnerId"] == DBNull.Value ? default : Convert.ToInt32(reader["PartnerId"]),
                 Amount = Convert.ToDecimal(reader["Amount"]),
                 PaymentType = reader["PaymentType"] == DBNull.Value ? null : reader["PaymentType"].ToString(),
-                IsTrackVat = reader["IsTrackVat"] == DBNull.Value ? null : (bool?)reader["IsTrackVat"],
                 VatInclude = reader["VatInclude"] == DBNull.Value ? null : (decimal?)reader["VatInclude"],
                 BudgetId = Convert.ToInt32(reader["budgetId"]),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
@@ -276,7 +295,6 @@ namespace School.Financial.Dac.Impl
                 PartnerId = reader["PartnerId"] == DBNull.Value ? default : Convert.ToInt32(reader["PartnerId"]),
                 Amount = Convert.ToDecimal(reader["Amount"]),
                 PaymentType = reader["PaymentType"] == DBNull.Value ? null : reader["PaymentType"].ToString(),
-                IsTrackVat = reader["IsTrackVat"] == DBNull.Value ? null : (bool?)reader["IsTrackVat"],
                 VatInclude = reader["VatInclude"] == DBNull.Value ? null : (decimal?)reader["VatInclude"],
                 BudgetId = Convert.ToInt32(reader["budgetId"]),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),

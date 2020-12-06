@@ -8,6 +8,7 @@ namespace School.Financial.Dac
     {
         IEnumerable<Transaction> Get(DateTime month);
         IEnumerable<Transaction> Get(DateTime month, int budgetId);
+        IEnumerable<Transaction> GetTeackVat(DateTime month);
         IEnumerable<Transaction> GetDuplicatePayment();
 
         IEnumerable<TransactionWithPartner> GetWithVat(DateTime month);

@@ -29,10 +29,24 @@ namespace School.Financial.Controllers
 
         public IActionResult Index()
         {
-            var transactions = transactionDac.Get().OrderBy(x => x.IssueDate).ToList();
-            var budgets = budgetDac.Get().OrderBy(x => x.Name);
-            ViewBag.budgets = budgets;
-            return View(transactions);
+            var transactions = transactionDac.Get().ToList();
+            var budgets = budgetDac.Get().ToList();
+            budgets.Add(new Budget
+            {
+                Id = 0,
+                Name = "ภาษี ณ ที่จ่าย",
+            });
+            var vatTransactions = transactions.Where(x => x.VatInclude.HasValue && x.VatInclude > 0).ToList();
+            var partners = partnerDac.Get();
+            transactions.AddRange(vatTransactions.Select(x => new Transaction
+            {
+                Id = x.Id,
+                IssueDate = x.IssueDate,
+                Title = $"รับเงินภาษี ณ ที่จ่ายจาก {partners.FirstOrDefault(p => p.Id == x.PartnerId)?.Name}",
+                Amount = x.VatInclude.Value,
+            }));
+            ViewBag.budgets = budgets.OrderBy(x => x.Name);
+            return View(transactions.OrderBy(x => x.IssueDate).ThenBy(x => x.Id));
         }
 
         public IActionResult Details(int id)
@@ -57,11 +71,10 @@ namespace School.Financial.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateIncome(Transaction request)
         {
-            request.DuplicatePaymentType= string.Empty;
+            request.DuplicatePaymentType = string.Empty;
             request.DuplicatePaymentNumber = string.Empty;
             request.DuplicatePaymentYear = string.Empty;
             request.PartnerId = null;
-            request.IsTrackVat = null;
             request.VatInclude = null;
             request.Amount = Math.Abs(request.Amount);
 
@@ -73,9 +86,14 @@ namespace School.Financial.Controllers
 
         public IActionResult CreatePayment()
         {
-            var bidgets = budgetDac.Get().OrderBy(x => x.Name);
+            var budgets = budgetDac.Get().ToList();
             var partners = partnerDac.Get().OrderBy(x => x.Name);
-            ViewBag.Budets = bidgets;
+            budgets.Add(new Budget
+            {
+                Id = 0,
+                Name = "ภาษี ณ ที่จ่าย",
+            });
+            ViewBag.Budets = budgets.OrderBy(x => x.Name);
             ViewBag.Partners = partners;
             return View();
         }
@@ -90,8 +108,7 @@ namespace School.Financial.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreatePayment(Transaction request, string trackVat)
         {
-            request.IsTrackVat = trackVat == "on";
-            if (request.IsTrackVat.Value && request.PartnerId.HasValue)
+            if (request.PartnerId.HasValue)
             {
                 var partner = partnerDac.Get(request.PartnerId.Value);
                 request.VatInclude = partner.PartnerType switch
@@ -103,8 +120,18 @@ namespace School.Financial.Controllers
             }
             request.Amount = -Math.Abs(request.Amount);
 
+            if (request.BudgetId == 0)
+            {
+                request.DuplicatePaymentType = null;
+                request.DuplicatePaymentNumber = null;
+                request.DuplicatePaymentYear = null;
+                request.PaymentType = null;
+                request.PartnerId = null;
+            }
+
             transactionDac.Insert(request);
             CalculateBringForword(request.IssueDate, request.BudgetId);
+            CalculateBringForword(request.IssueDate, 0);
 
             return RedirectToAction(nameof(Index));
         }
@@ -112,10 +139,23 @@ namespace School.Financial.Controllers
         public IActionResult Edit(int id)
         {
             var transaction = transactionDac.Get(id);
-            var bidgets = budgetDac.Get().OrderBy(x => x.Name);
+            var budgets = budgetDac.Get().ToList();
             var partners = partnerDac.Get().OrderBy(x => x.Name);
-            ViewBag.Budets = bidgets;
+
+            budgets.Add(new Budget
+            {
+                Id = 0,
+                Name = "ภาษี ณ ที่จ่าย",
+            });
+
+            ViewBag.Budets = budgets.OrderBy(x => x.Name);
             ViewBag.Partners = partners;
+
+            if (transaction.Amount < 0)
+            {
+                transaction.Amount = Math.Abs(transaction.Amount);
+            }
+
             return View(transaction);
         }
 
@@ -130,11 +170,35 @@ namespace School.Financial.Controllers
             transaction.DuplicatePaymentNumber = request.DuplicatePaymentNumber;
             transaction.DuplicatePaymentYear = request.DuplicatePaymentYear;
             transaction.Title = request.Title;
-            transaction.Amount = request.Amount;
             transaction.Remark = request.Remark;
+
+            if (transaction.Amount < 0)
+            {
+                if (request.PartnerId.HasValue)
+                {
+                    var partner = partnerDac.Get(request.PartnerId.Value);
+                    transaction.VatInclude = partner.PartnerType switch
+                    {
+                        PartnerType.Shop => VatHelper.GetShopVatFromFullAmount(request.Amount),
+                        PartnerType.Person => VatHelper.GetPersonVatFromFullAmount(request.Amount),
+                        _ => 0,
+                    };
+                }
+                transaction.Amount = -Math.Abs(request.Amount);
+
+                if (request.BudgetId == 0)
+                {
+                    request.DuplicatePaymentType = null;
+                    request.DuplicatePaymentNumber = null;
+                    request.DuplicatePaymentYear = null;
+                    request.PaymentType = null;
+                    request.PartnerId = null;
+                }
+            }
 
             transactionDac.Update(transaction);
             CalculateBringForword(request.IssueDate, request.BudgetId);
+            CalculateBringForword(request.IssueDate, 0);
 
             return RedirectToAction(nameof(Index));
         }
@@ -149,8 +213,10 @@ namespace School.Financial.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id, Transaction request)
         {
+            var transaction = transactionDac.Get(id);
             transactionDac.Delete(id);
-            CalculateBringForword(request.IssueDate, request.BudgetId);
+            CalculateBringForword(transaction.IssueDate, transaction.BudgetId);
+            CalculateBringForword(transaction.IssueDate, 0);
 
             return RedirectToAction(nameof(Index));
         }

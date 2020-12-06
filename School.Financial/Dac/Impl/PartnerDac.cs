@@ -52,7 +52,7 @@ namespace School.Financial.Dac.Impl
             return null;
         }
 
-        public void Insert(Partner data)
+        public int Insert(Partner data)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
@@ -65,6 +65,7 @@ namespace School.Financial.Dac.Impl
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
+                return (int)cmd.LastInsertedId;
             }
         }
 
@@ -84,7 +85,7 @@ namespace School.Financial.Dac.Impl
             }
         }
 
-        public void Upsert(Partner data)
+        public int Upsert(Partner data)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
@@ -99,6 +100,7 @@ namespace School.Financial.Dac.Impl
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
+                return (int)cmd.LastInsertedId;
             }
         }
 

@@ -31,8 +31,6 @@ namespace School.Financial.Models
         public decimal Amount { get; set; }
         [Display(Name = "ประเภทรายจ่าย")]
         public string PaymentType { get; set; }
-        [Display(Name = "มีภาษีมูลค่าเพิ่ม")]
-        public bool? IsTrackVat { get; set; }
         [Display(Name = "ภาษีมูลค่าเพิ่ม")]
         public decimal? VatInclude { get; set; }
 
