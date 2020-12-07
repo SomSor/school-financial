@@ -1,8 +1,6 @@
-﻿using School.Financial.Models;
-
-namespace School.Financial.Dac
+﻿namespace School.Financial.Dac
 {
-    public interface IBudgetDac : IDataDac<Budget>
+    public interface IBudgetDac : IDataDac<Models.Budget>
     {
     }
 }

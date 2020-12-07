@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 07, 2020 at 12:48 PM
+-- Generation Time: Dec 07, 2020 at 02:14 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -117,6 +117,7 @@ CREATE TABLE `budget` (
   `Id` int(11) NOT NULL,
   `Name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `BankAccountId` int(11) NOT NULL,
+  `SchoolId` int(11) NOT NULL,
   `CreatedDate` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -124,21 +125,33 @@ CREATE TABLE `budget` (
 -- Dumping data for table `budget`
 --
 
-INSERT INTO `budget` (`Id`, `Name`, `BankAccountId`, `CreatedDate`) VALUES
-(7, 'อาหารกลางวัน', 3, '2020-10-21 00:00:00'),
-(8, 'อุดหนุนรายหัว', 3, '2020-10-21 00:00:00'),
-(9, 'นักเรียนประจำพักนอน', 2, '2020-10-21 00:00:00'),
-(11, 'เงินประกันสัญญา', 1, '2020-11-03 13:45:39'),
-(12, 'เรียนฟรี 15 ปี -อุปกรณ์', 2, '2020-11-03 13:45:57'),
-(13, 'เรียนฟรี 15 ปี -หนังสือ', 2, '2020-11-03 13:46:11'),
-(14, 'เรียนฟรี 15 ปี -เครื่องแบบ', 2, '2020-11-03 13:46:20'),
-(15, 'เรียนฟรี 15 ปี -กิจกรรม', 3, '2020-11-03 13:46:32'),
-(16, 'กองทุนหมุนเวียนส่งเสริมผลผลิต', 2, '2020-11-03 13:46:37'),
-(17, 'รายได้แผ่นดิน', 2, '2020-11-03 13:46:51'),
-(19, 'ปัจจัย  พฐ นร ยากจน มัธยม', 2, '2020-11-03 13:47:11'),
-(20, 'ปัจจัย  พฐ นร ยากจน ประถม', 2, '2020-11-03 13:47:21'),
-(21, 'กสศ', 3, '2020-11-03 13:47:31'),
-(22, 'รายได้สถานศึกษา', 2, '2020-11-03 13:47:41');
+INSERT INTO `budget` (`Id`, `Name`, `BankAccountId`, `SchoolId`, `CreatedDate`) VALUES
+(7, 'อาหารกลางวัน', 3, 1, '2020-10-21 00:00:00'),
+(8, 'อุดหนุนรายหัว', 3, 1, '2020-10-21 00:00:00'),
+(9, 'นักเรียนประจำพักนอน', 2, 1, '2020-10-21 00:00:00'),
+(11, 'เงินประกันสัญญา', 1, 1, '2020-11-03 13:45:39'),
+(12, 'เรียนฟรี 15 ปี -อุปกรณ์', 2, 1, '2020-11-03 13:45:57'),
+(13, 'เรียนฟรี 15 ปี -หนังสือ', 2, 1, '2020-11-03 13:46:11'),
+(14, 'เรียนฟรี 15 ปี -เครื่องแบบ', 2, 1, '2020-11-03 13:46:20'),
+(15, 'เรียนฟรี 15 ปี -กิจกรรม', 3, 1, '2020-11-03 13:46:32'),
+(16, 'กองทุนหมุนเวียนส่งเสริมผลผลิต', 2, 1, '2020-11-03 13:46:37'),
+(17, 'รายได้แผ่นดิน', 2, 1, '2020-11-03 13:46:51'),
+(19, 'ปัจจัย  พฐ นร ยากจน มัธยม', 2, 1, '2020-11-03 13:47:11'),
+(20, 'ปัจจัย  พฐ นร ยากจน ประถม', 2, 1, '2020-11-03 13:47:21'),
+(21, 'กสศ', 3, 1, '2020-11-03 13:47:31'),
+(22, 'รายได้สถานศึกษา', 2, 1, '2020-11-03 13:47:41');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `educationarea`
+--
+
+CREATE TABLE `educationarea` (
+  `Id` int(11) NOT NULL,
+  `Name` int(11) NOT NULL,
+  `CreatedDate` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -182,6 +195,39 @@ INSERT INTO `partner` (`Id`, `Name`, `VatNumber`, `Address`, `PartnerType`, `Cre
 (20, 'นายพิชิต ปัญญาวิชัย', '1570700051116', '179 หมู่ 7 ต.แม่จัน อ.แม่จัน จ.เชียงราย 57110', 'Person', '2020-11-25 14:58:22'),
 (21, 'บริษัท ทรู อินเตอร์เน็ต คอร์ปอเรชั่น จำกัด', '0105549025026', '18 อาคารทรูทาวเวอร์ ถนนรัชดาภิเษก แขวงห้วยขวาง เขตห้วยขวาง กทม 10310', 'Shop', '2020-11-25 14:59:22'),
 (22, 'นายวีระยุทธ เลิศไกรวัล', '3579900247680', '222 หมู่ 17 ตำบลรอบเวียง อำเภอเมืองเชียงราย จังหวัดเชียงราย 57000', 'Person', '2020-11-25 14:59:52');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `school`
+--
+
+CREATE TABLE `school` (
+  `Id` int(11) NOT NULL,
+  `Name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `EducationAreaId` int(11) NOT NULL,
+  `CreatedDate` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `school`
+--
+
+INSERT INTO `school` (`Id`, `Name`, `EducationAreaId`, `CreatedDate`) VALUES
+(1, 'โรงเรียนบ้านพญาไพร', 1, '2020-12-07 14:12:17');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `schoolyear`
+--
+
+CREATE TABLE `schoolyear` (
+  `Id` int(11) NOT NULL,
+  `Year` varchar(4) COLLATE utf8mb4_general_ci NOT NULL,
+  `StartDate` date NOT NULL,
+  `CreatedDate` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -267,9 +313,27 @@ ALTER TABLE `budget`
   ADD PRIMARY KEY (`Id`);
 
 --
+-- Indexes for table `educationarea`
+--
+ALTER TABLE `educationarea`
+  ADD PRIMARY KEY (`Id`);
+
+--
 -- Indexes for table `partner`
 --
 ALTER TABLE `partner`
+  ADD PRIMARY KEY (`Id`);
+
+--
+-- Indexes for table `school`
+--
+ALTER TABLE `school`
+  ADD PRIMARY KEY (`Id`);
+
+--
+-- Indexes for table `schoolyear`
+--
+ALTER TABLE `schoolyear`
   ADD PRIMARY KEY (`Id`);
 
 --
@@ -301,10 +365,28 @@ ALTER TABLE `budget`
   MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
+-- AUTO_INCREMENT for table `educationarea`
+--
+ALTER TABLE `educationarea`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `partner`
 --
 ALTER TABLE `partner`
   MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT for table `school`
+--
+ALTER TABLE `school`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `schoolyear`
+--
+ALTER TABLE `schoolyear`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `transaction`

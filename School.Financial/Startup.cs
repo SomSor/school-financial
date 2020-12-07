@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Linq;
 
 namespace School.Financial
 {
@@ -24,6 +22,7 @@ namespace School.Financial
             var webConfiguration = Configuration.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
             services.AddTransient(x => webConfiguration);
             services.AddTransient(x => new Dac.SchoolFinancialContext(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddTransient<Dac.ISchoolDac, Dac.Impl.SchoolDac>();
             services.AddTransient<Dac.IBankAccountDac, Dac.Impl.BankAccountDac>();
             services.AddTransient<Dac.IBudgetDac, Dac.Impl.BudgetDac>();
             services.AddTransient<Dac.IPartnerDac, Dac.Impl.PartnerDac>();

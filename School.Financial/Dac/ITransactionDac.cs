@@ -1,17 +1,16 @@
-﻿using School.Financial.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace School.Financial.Dac
 {
-    public interface ITransactionDac : IDataDac<Transaction>
+    public interface ITransactionDac : IDataDac<Models.Transaction>
     {
-        IEnumerable<Transaction> Get(DateTime month);
-        IEnumerable<Transaction> Get(DateTime month, int budgetId);
-        IEnumerable<Transaction> GetTeackVat(DateTime month);
-        IEnumerable<Transaction> GetDuplicatePayment();
+        IEnumerable<Models.Transaction> Get(DateTime month);
+        IEnumerable<Models.Transaction> Get(DateTime month, int budgetId);
+        IEnumerable<Models.Transaction> GetTeackVat(DateTime month);
+        IEnumerable<Models.Transaction> GetDuplicatePayment();
 
-        IEnumerable<TransactionWithPartner> GetWithVat(DateTime month);
-        IEnumerable<TransactionWithPartner> GetWithPartner();
+        IEnumerable<Models.TransactionWithPartner> GetWithVat(DateTime month);
+        IEnumerable<Models.TransactionWithPartner> GetWithPartner();
     }
 }
