@@ -5,22 +5,22 @@ using System.Collections.Generic;
 
 namespace School.Financial.Dac.Impl
 {
-    public class BudgetDac : IBudgetDac
+    public class BankAccountDac : IBankAccountDac
     {
         private readonly SchoolFinancialContext context;
 
-        public BudgetDac(SchoolFinancialContext context)
+        public BankAccountDac(SchoolFinancialContext context)
         {
             this.context = context;
         }
 
-        public IEnumerable<Budget> Get()
+        public IEnumerable<BankAccount> Get()
         {
-            var list = new List<Budget>();
+            var list = new List<BankAccount>();
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from Budget", conn);
+                MySqlCommand cmd = new MySqlCommand("select * from BankAccount", conn);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -33,12 +33,12 @@ namespace School.Financial.Dac.Impl
             return list;
         }
 
-        public Budget Get(int id)
+        public BankAccount Get(int id)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from Budget where id = @id", conn);
+                MySqlCommand cmd = new MySqlCommand("select * from BankAccount where id = @id", conn);
                 cmd.Parameters.AddWithValue("@id", id);
 
                 using (var reader = cmd.ExecuteReader())
@@ -52,14 +52,15 @@ namespace School.Financial.Dac.Impl
             return null;
         }
 
-        public int Insert(Budget data)
+        public int Insert(BankAccount data)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Budget` VALUES (0,@Name,@BankAccountId,@CreatedDate)", conn);
-                cmd.Parameters.AddWithValue("@Name", data.Name);
-                cmd.Parameters.AddWithValue("@BankAccountId", data.BankAccountId);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `BankAccount` VALUES (0,@BankName,@AccountName,@AccountNumber,@CreatedDate)", conn);
+                cmd.Parameters.AddWithValue("@BankName", data.BankName);
+                cmd.Parameters.AddWithValue("@AccountName", data.AccountName);
+                cmd.Parameters.AddWithValue("@AccountNumber", data.AccountNumber);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -67,29 +68,32 @@ namespace School.Financial.Dac.Impl
             }
         }
 
-        public void Update(Budget data)
+        public void Update(BankAccount data)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("UPDATE `Budget` SET `Name`=@Name WHERE `Id`=@Id", conn);
-                cmd.Parameters.AddWithValue("@Name", data.Name);
+                MySqlCommand cmd = new MySqlCommand("UPDATE `BankAccount` SET `BankName`=@BankName,`AccountName`=@AccountName,`AccountNumber`=@AccountNumber WHERE `Id`=@Id", conn);
+                cmd.Parameters.AddWithValue("@BankName", data.BankName);
+                cmd.Parameters.AddWithValue("@AccountName", data.AccountName);
+                cmd.Parameters.AddWithValue("@AccountNumber", data.AccountNumber);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
 
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public int Upsert(Budget data)
+        public int Upsert(BankAccount data)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Budget` VALUES (@Id,@Name,@BankAccountId,@CreatedDate)" +
-                    "ON DUPLICATE KEY UPDATE `Name`=@Name", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `BankAccount` VALUES (@Id,@BankName,@AccountName,@AccountNumber,@CreatedDate)" +
+                    "ON DUPLICATE KEY UPDATE `BankName`=@BankName,`AccountName`=@AccountName,`AccountNumber`=@AccountNumber", conn);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
-                cmd.Parameters.AddWithValue("@Name", data.Name);
-                cmd.Parameters.AddWithValue("@BankAccountId", data.BankAccountId);
+                cmd.Parameters.AddWithValue("@BankName", data.BankName);
+                cmd.Parameters.AddWithValue("@AccountName", data.AccountName);
+                cmd.Parameters.AddWithValue("@AccountNumber", data.AccountNumber);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -102,20 +106,21 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("DELETE FROM `Budget` WHERE `id`=@id", conn);
+                MySqlCommand cmd = new MySqlCommand("DELETE FROM `BankAccount` WHERE `id`=@id", conn);
                 cmd.Parameters.AddWithValue("@id", id);
 
                 cmd.ExecuteNonQuery();
             }
         }
 
-        private Budget ReadData(MySqlDataReader reader)
+        private BankAccount ReadData(MySqlDataReader reader)
         {
-            return new Budget()
+            return new BankAccount()
             {
                 Id = Convert.ToInt32(reader["Id"]),
-                Name = reader["Name"].ToString(),
-                BankAccountId = reader["BankAccountId"].ToString(),
+                BankName = reader["BankName"].ToString(),
+                AccountName = reader["AccountName"].ToString(),
+                AccountNumber = reader["AccountNumber"].ToString(),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
             };
         }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 06, 2020 at 03:15 PM
+-- Generation Time: Dec 07, 2020 at 12:48 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -21,6 +21,29 @@ SET time_zone = "+00:00";
 --
 -- Database: `schoolfinancial`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bankaccount`
+--
+
+CREATE TABLE `bankaccount` (
+  `Id` int(11) NOT NULL,
+  `BankName` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `AccountName` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `AccountNumber` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `CreatedDate` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `bankaccount`
+--
+
+INSERT INTO `bankaccount` (`Id`, `BankName`, `AccountName`, `AccountNumber`, `CreatedDate`) VALUES
+(1, 'ธนาคาร1', 'สีส้ม', '1111111111', '2020-12-07 12:44:03'),
+(2, 'ธนาคาร2', 'สีน้ำเงิน', '2222222222', '2020-12-07 12:44:03'),
+(3, 'ธนาคาร3', 'สีเหลือง', '3333333333', '2020-12-07 12:44:53');
 
 -- --------------------------------------------------------
 
@@ -93,6 +116,7 @@ INSERT INTO `bringforward` (`Id`, `Amount`, `Month`, `BudgetId`, `CreatedDate`) 
 CREATE TABLE `budget` (
   `Id` int(11) NOT NULL,
   `Name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `BankAccountId` int(11) NOT NULL,
   `CreatedDate` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -100,21 +124,21 @@ CREATE TABLE `budget` (
 -- Dumping data for table `budget`
 --
 
-INSERT INTO `budget` (`Id`, `Name`, `CreatedDate`) VALUES
-(7, 'อาหารกลางวัน', '2020-10-21 00:00:00'),
-(8, 'อุดหนุนรายหัว', '2020-10-21 00:00:00'),
-(9, 'นักเรียนประจำพักนอน', '2020-10-21 00:00:00'),
-(11, 'เงินประกันสัญญา', '2020-11-03 13:45:39'),
-(12, 'เรียนฟรี 15 ปี -อุปกรณ์', '2020-11-03 13:45:57'),
-(13, 'เรียนฟรี 15 ปี -หนังสือ', '2020-11-03 13:46:11'),
-(14, 'เรียนฟรี 15 ปี -เครื่องแบบ', '2020-11-03 13:46:20'),
-(15, 'เรียนฟรี 15 ปี -กิจกรรม', '2020-11-03 13:46:32'),
-(16, 'กองทุนหมุนเวียนส่งเสริมผลผลิต', '2020-11-03 13:46:37'),
-(17, 'รายได้แผ่นดิน', '2020-11-03 13:46:51'),
-(19, 'ปัจจัย  พฐ นร ยากจน มัธยม', '2020-11-03 13:47:11'),
-(20, 'ปัจจัย  พฐ นร ยากจน ประถม', '2020-11-03 13:47:21'),
-(21, 'กสศ', '2020-11-03 13:47:31'),
-(22, 'รายได้สถานศึกษา', '2020-11-03 13:47:41');
+INSERT INTO `budget` (`Id`, `Name`, `BankAccountId`, `CreatedDate`) VALUES
+(7, 'อาหารกลางวัน', 3, '2020-10-21 00:00:00'),
+(8, 'อุดหนุนรายหัว', 3, '2020-10-21 00:00:00'),
+(9, 'นักเรียนประจำพักนอน', 2, '2020-10-21 00:00:00'),
+(11, 'เงินประกันสัญญา', 1, '2020-11-03 13:45:39'),
+(12, 'เรียนฟรี 15 ปี -อุปกรณ์', 2, '2020-11-03 13:45:57'),
+(13, 'เรียนฟรี 15 ปี -หนังสือ', 2, '2020-11-03 13:46:11'),
+(14, 'เรียนฟรี 15 ปี -เครื่องแบบ', 2, '2020-11-03 13:46:20'),
+(15, 'เรียนฟรี 15 ปี -กิจกรรม', 3, '2020-11-03 13:46:32'),
+(16, 'กองทุนหมุนเวียนส่งเสริมผลผลิต', 2, '2020-11-03 13:46:37'),
+(17, 'รายได้แผ่นดิน', 2, '2020-11-03 13:46:51'),
+(19, 'ปัจจัย  พฐ นร ยากจน มัธยม', 2, '2020-11-03 13:47:11'),
+(20, 'ปัจจัย  พฐ นร ยากจน ประถม', 2, '2020-11-03 13:47:21'),
+(21, 'กสศ', 3, '2020-11-03 13:47:31'),
+(22, 'รายได้สถานศึกษา', 2, '2020-11-03 13:47:41');
 
 -- --------------------------------------------------------
 
@@ -225,6 +249,12 @@ INSERT INTO `transaction` (`Id`, `IssueDate`, `DuplicatePaymentType`, `Duplicate
 --
 
 --
+-- Indexes for table `bankaccount`
+--
+ALTER TABLE `bankaccount`
+  ADD PRIMARY KEY (`Id`);
+
+--
 -- Indexes for table `bringforward`
 --
 ALTER TABLE `bringforward`
@@ -251,6 +281,12 @@ ALTER TABLE `transaction`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `bankaccount`
+--
+ALTER TABLE `bankaccount`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `bringforward`

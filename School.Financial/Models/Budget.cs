@@ -9,5 +9,6 @@ namespace School.Financial.Models
         /// </summary>
         [Display(Name = "ประเภท")]
         public string Name { get; set; }
+        public string BankAccountId { get; set; }
     }
 }
