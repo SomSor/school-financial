@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 07, 2020 at 02:14 PM
+-- Generation Time: Dec 07, 2020 at 02:29 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -149,9 +149,16 @@ INSERT INTO `budget` (`Id`, `Name`, `BankAccountId`, `SchoolId`, `CreatedDate`) 
 
 CREATE TABLE `educationarea` (
   `Id` int(11) NOT NULL,
-  `Name` int(11) NOT NULL,
-  `CreatedDate` int(11) NOT NULL
+  `Name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `CreatedDate` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `educationarea`
+--
+
+INSERT INTO `educationarea` (`Id`, `Name`, `CreatedDate`) VALUES
+(1, 'เขต 1', '2020-12-07 12:44:53');
 
 -- --------------------------------------------------------
 
@@ -368,7 +375,7 @@ ALTER TABLE `budget`
 -- AUTO_INCREMENT for table `educationarea`
 --
 ALTER TABLE `educationarea`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `partner`

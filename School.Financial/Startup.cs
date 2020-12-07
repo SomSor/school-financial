@@ -22,6 +22,7 @@ namespace School.Financial
             var webConfiguration = Configuration.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
             services.AddTransient(x => webConfiguration);
             services.AddTransient(x => new Dac.SchoolFinancialContext(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddTransient<Dac.IEducationAreaDac, Dac.Impl.EducationAreaDac>();
             services.AddTransient<Dac.ISchoolDac, Dac.Impl.SchoolDac>();
             services.AddTransient<Dac.IBankAccountDac, Dac.Impl.BankAccountDac>();
             services.AddTransient<Dac.IBudgetDac, Dac.Impl.BudgetDac>();
