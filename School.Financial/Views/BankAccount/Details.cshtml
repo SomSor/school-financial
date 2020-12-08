@@ -1,54 +1,48 @@
 ﻿@model School.Financial.Models.BankAccount
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "รายละเอียดบัญชีธนาคาร";
 }
 
-<h1>Details</h1>
+<h1>รายละเอียด</h1>
 
 <div>
-    <h4>BankAccount</h4>
+    <h4>บัญชีธนาคาร</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BankName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BankName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AccountName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AccountName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AccountNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AccountNumber)
-        </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Id)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Id)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BankName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BankName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AccountName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AccountName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AccountNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AccountNumber)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedDate)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDateString)
-        </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10 showdatetime">
             @Html.DisplayFor(model => model.CreatedDateString)
         </dd>
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">แก้ไข</a> |
+    <a asp-action="Index">กลับ</a>
 </div>
