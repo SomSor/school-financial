@@ -1,12 +1,12 @@
 ﻿@model School.Financial.Models.Partner
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "เพิ่มนิติบุคคล/ร้านค้า";
 }
 
-<h1>Create</h1>
+<h1>เพิ่ม</h1>
 
-<h4>Partner</h4>
+<h4>นิติบุคคล/ร้านค้า</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -30,20 +30,20 @@
             <div class="form-group">
                 <label asp-for="PartnerType" class="control-label"></label>
                 <select asp-for="PartnerType" class="form-control">
-                    <option>Normal</option>
-                    <option>Person</option>
-                    <option>Shop</option>
+                    <option value="Normal">ไม่ระบุ</option>
+                    <option value="Person">นิติบุคคล</option>
+                    <option value="Shop">ร้านค้า</option>
                 </select>
                 <span asp-validation-for="PartnerType" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="สร้าง" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">กลับ</a>
 </div>
 

@@ -1,22 +1,17 @@
 ﻿@model School.Financial.Models.Partner
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "แก้ไขนิติบุคคล/ร้านค้า";
 }
 
-<h1>Edit</h1>
+<h1>แก้ไข</h1>
 
-<h4>Partner</h4>
+<h4>นิติบุคคล/ร้านค้า</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -34,17 +29,21 @@
             </div>
             <div class="form-group">
                 <label asp-for="PartnerType" class="control-label"></label>
-                <input asp-for="PartnerType" class="form-control" />
+                <select asp-for="PartnerType" class="form-control">
+                    <option value="Normal">ไม่ระบุ</option>
+                    <option value="Person">นิติบุคคล</option>
+                    <option value="Shop">ร้านค้า</option>
+                </select>
                 <span asp-validation-for="PartnerType" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="แก้ไข" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">กลับ</a>
 </div>
 
