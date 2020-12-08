@@ -7,27 +7,38 @@ namespace School.Financial.Controllers
 {
     public class SchoolController : Controller
     {
+        private readonly IEducationAreaDac educationAreaDac;
         private readonly ISchoolDac schoolDac;
 
-        public SchoolController(ISchoolDac schoolDac)
+        public SchoolController(
+            IEducationAreaDac educationAreaDac,
+            ISchoolDac schoolDac
+            )
         {
+            this.educationAreaDac = educationAreaDac;
             this.schoolDac = schoolDac;
         }
 
         public IActionResult Index()
         {
             var schools = schoolDac.Get().OrderBy(x => x.Name);
+            var educationAreas = educationAreaDac.Get();
+            ViewBag.educationAreas = educationAreas;
             return View(schools);
         }
 
         public IActionResult Details(int id)
         {
             var school = schoolDac.Get(id);
+            var educationArea = educationAreaDac.Get(school.EducationAreaId);
+            ViewBag.educationArea = educationArea;
             return View(school);
         }
 
         public IActionResult Create()
         {
+            var educationAreas = educationAreaDac.Get();
+            ViewBag.educationAreas = educationAreas;
             return View();
         }
 
@@ -49,6 +60,8 @@ namespace School.Financial.Controllers
         public IActionResult Edit(int id)
         {
             var school = schoolDac.Get(id);
+            var educationAreas = educationAreaDac.Get();
+            ViewBag.educationAreas = educationAreas;
             return View(school);
         }
 
@@ -74,6 +87,8 @@ namespace School.Financial.Controllers
         public IActionResult Delete(int id)
         {
             var school = schoolDac.Get(id);
+            var educationArea = educationAreaDac.Get(school.EducationAreaId);
+            ViewBag.educationArea = educationArea;
             return View(school);
         }
 

@@ -1,8 +1,12 @@
-﻿namespace School.Financial.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace School.Financial.Models
 {
     public class SchoolData : DbModelBase
     {
+        [Display(Name = "โรงเรียน")]
         public string Name { get; set; }
+        [Display(Name = "พื้นที่การศึกษา")]
         public int EducationAreaId { get; set; }
     }
 }
