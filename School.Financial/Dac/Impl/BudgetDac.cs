@@ -57,9 +57,10 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Budget` VALUES (0,@Name,@BankAccountId,@CreatedDate)", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Budget` VALUES (0,@Name,@BankAccountId,@SchoolId,@CreatedDate)", conn);
                 cmd.Parameters.AddWithValue("@Name", data.Name);
                 cmd.Parameters.AddWithValue("@BankAccountId", data.BankAccountId);
+                cmd.Parameters.AddWithValue("@SchoolId", data.SchoolId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -85,11 +86,12 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Budget` VALUES (@Id,@Name,@BankAccountId,@CreatedDate)" +
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Budget` VALUES (@Id,@Name,@BankAccountId,@SchoolId,@CreatedDate)" +
                     "ON DUPLICATE KEY UPDATE `Name`=@Name", conn);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
                 cmd.Parameters.AddWithValue("@Name", data.Name);
                 cmd.Parameters.AddWithValue("@BankAccountId", data.BankAccountId);
+                cmd.Parameters.AddWithValue("@SchoolId", data.SchoolId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -115,7 +117,8 @@ namespace School.Financial.Dac.Impl
             {
                 Id = Convert.ToInt32(reader["Id"]),
                 Name = reader["Name"].ToString(),
-                BankAccountId = reader["BankAccountId"].ToString(),
+                BankAccountId = Convert.ToInt32(reader["BankAccountId"]),
+                SchoolId = Convert.ToInt32(reader["SchoolId"]),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
             };
         }

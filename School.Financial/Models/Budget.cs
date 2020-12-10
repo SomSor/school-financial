@@ -4,11 +4,10 @@ namespace School.Financial.Models
 {
     public class Budget : DbModelBase
     {
-        /// <summary>
-        /// ประเภท
-        /// </summary>
-        [Display(Name = "ประเภท")]
+        [Display(Name = "ประเภทงบประมาณ")]
         public string Name { get; set; }
-        public string BankAccountId { get; set; }
+        [Display(Name = "บัญชีธนาคาร")]
+        public int BankAccountId { get; set; }
+        public int SchoolId { get; set; }
     }
 }

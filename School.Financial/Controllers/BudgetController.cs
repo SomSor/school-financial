@@ -1,33 +1,48 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using School.Financial.Dac;
 using School.Financial.Models;
+using School.Financial.Services;
 using System.Linq;
 
 namespace School.Financial.Controllers
 {
     public class BudgetController : Controller
     {
+        private readonly IBankAccountDac bankAccountDac;
         private readonly IBudgetDac budgetDac;
+        private readonly IIdentityService identityService;
 
-        public BudgetController(IBudgetDac budgetDac)
+        public BudgetController(
+            IBankAccountDac bankAccountDac,
+            IBudgetDac budgetDac,
+            IIdentityService identityService
+            )
         {
+            this.bankAccountDac = bankAccountDac;
             this.budgetDac = budgetDac;
+            this.identityService = identityService;
         }
 
         public IActionResult Index()
         {
             var budgets = budgetDac.Get().OrderBy(x => x.Name);
+            var bankAccounts = bankAccountDac.Get();
+            ViewBag.bankAccounts = bankAccounts;
             return View(budgets);
         }
 
         public IActionResult Details(int id)
         {
             var budget = budgetDac.Get(id);
+            var bankAccount = bankAccountDac.Get(budget.BankAccountId);
+            ViewBag.bankAccount = bankAccount;
             return View(budget);
         }
 
         public IActionResult Create()
         {
+            var bankAccounts = bankAccountDac.Get();
+            ViewBag.bankAccounts = bankAccounts;
             return View();
         }
 
@@ -37,6 +52,8 @@ namespace School.Financial.Controllers
         {
             try
             {
+                var school = identityService.GetCurrentSchool();
+                request.SchoolId = school.Id;
                 budgetDac.Insert(request);
                 return RedirectToAction(nameof(Index));
             }
@@ -49,6 +66,8 @@ namespace School.Financial.Controllers
         public IActionResult Edit(int id)
         {
             var budget = budgetDac.Get(id);
+            var bankAccount = bankAccountDac.Get(budget.BankAccountId);
+            ViewBag.bankAccount = bankAccount;
             return View(budget);
         }
 
@@ -74,6 +93,8 @@ namespace School.Financial.Controllers
         public IActionResult Delete(int id)
         {
             var budget = budgetDac.Get(id);
+            var bankAccount = bankAccountDac.Get(budget.BankAccountId);
+            ViewBag.bankAccount = bankAccount;
             return View(budget);
         }
 

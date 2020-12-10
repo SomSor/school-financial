@@ -22,6 +22,7 @@ namespace School.Financial
             var webConfiguration = Configuration.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
             services.AddTransient(x => webConfiguration);
             services.AddTransient(x => new Dac.SchoolFinancialContext(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddTransient<Dac.IEducationAreaDac, Dac.Impl.EducationAreaDac>();
             services.AddTransient<Dac.ISchoolDac, Dac.Impl.SchoolDac>();
             services.AddTransient<Dac.IBankAccountDac, Dac.Impl.BankAccountDac>();
@@ -29,6 +30,8 @@ namespace School.Financial
             services.AddTransient<Dac.IPartnerDac, Dac.Impl.PartnerDac>();
             services.AddTransient<Dac.ITransactionDac, Dac.Impl.TransactionDac>();
             services.AddTransient<Dac.IBringForwardDac, Dac.Impl.BringForwardDac>();
+
+            services.AddTransient<Services.IIdentityService, Services.Impl.IdentityService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
