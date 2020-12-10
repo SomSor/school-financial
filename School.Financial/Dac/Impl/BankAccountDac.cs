@@ -57,10 +57,11 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `BankAccount` VALUES (0,@BankName,@AccountName,@AccountNumber,@CreatedDate)", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `BankAccount` VALUES (0,@BankName,@AccountName,@AccountNumber,@SchoolId,@CreatedDate)", conn);
                 cmd.Parameters.AddWithValue("@BankName", data.BankName);
                 cmd.Parameters.AddWithValue("@AccountName", data.AccountName);
                 cmd.Parameters.AddWithValue("@AccountNumber", data.AccountNumber);
+                cmd.Parameters.AddWithValue("@SchoolId", data.SchoolId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -88,12 +89,13 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `BankAccount` VALUES (@Id,@BankName,@AccountName,@AccountNumber,@CreatedDate)" +
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `BankAccount` VALUES (@Id,@BankName,@AccountName,@AccountNumber,@SchoolId,@CreatedDate)" +
                     "ON DUPLICATE KEY UPDATE `BankName`=@BankName,`AccountName`=@AccountName,`AccountNumber`=@AccountNumber", conn);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
                 cmd.Parameters.AddWithValue("@BankName", data.BankName);
                 cmd.Parameters.AddWithValue("@AccountName", data.AccountName);
                 cmd.Parameters.AddWithValue("@AccountNumber", data.AccountNumber);
+                cmd.Parameters.AddWithValue("@SchoolId", data.SchoolId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -121,6 +123,7 @@ namespace School.Financial.Dac.Impl
                 BankName = reader["BankName"].ToString(),
                 AccountName = reader["AccountName"].ToString(),
                 AccountNumber = reader["AccountNumber"].ToString(),
+                SchoolId = Convert.ToInt32(reader["SchoolId"]),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
             };
         }

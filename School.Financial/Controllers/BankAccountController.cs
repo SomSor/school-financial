@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using School.Financial.Dac;
 using School.Financial.Models;
+using School.Financial.Services;
 using System.Linq;
 
 namespace School.Financial.Controllers
@@ -8,10 +9,15 @@ namespace School.Financial.Controllers
     public class BankAccountController : Controller
     {
         private readonly IBankAccountDac bankAccountDac;
+        private readonly IIdentityService identityService;
 
-        public BankAccountController(IBankAccountDac bankAccountDac)
+        public BankAccountController(
+            IBankAccountDac bankAccountDac,
+            IIdentityService identityService
+            )
         {
             this.bankAccountDac = bankAccountDac;
+            this.identityService = identityService;
         }
 
         public IActionResult Index()
@@ -40,6 +46,8 @@ namespace School.Financial.Controllers
         {
             try
             {
+                var school = identityService.GetCurrentSchool();
+                request.SchoolId = school.Id;
                 bankAccountDac.Insert(request);
                 return RedirectToAction(nameof(Index));
             }

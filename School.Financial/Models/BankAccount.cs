@@ -10,5 +10,6 @@ namespace School.Financial.Models
         public string AccountName { get; set; }
         [Display(Name = "เลขบัญชี")]
         public string AccountNumber { get; set; }
+        public int SchoolId { get; set; }
     }
 }
