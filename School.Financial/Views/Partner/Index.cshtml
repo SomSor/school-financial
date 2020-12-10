@@ -27,7 +27,7 @@
                 <td>@item.VatNumber</td>
                 <td>@item.Address</td>
                 <td>@item.PartnerTypeString</td>
-                <td>
+                <td class="text-right">
                     <a asp-action="Edit" asp-route-id="@item.Id" class="text-success"><span class="glyphicon glyphicon-edit"></span></a>
                     <a asp-action="Details" asp-route-id="@item.Id"><span class="glyphicon glyphicon-search"></span></a>
                     <a asp-action="Delete" asp-route-id="@item.Id" class="text-danger"><span class="glyphicon glyphicon-trash"></span></a>
