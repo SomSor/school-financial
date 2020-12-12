@@ -1,7 +1,10 @@
 ﻿@model School.Financial.Models.Transaction
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "รายละเอียดบันทึกรายการ";
+
+    var budget = ViewBag.budget as Budget;
+    var partner = ViewBag.partner as Partner;
 }
 
 <h1>รายละเอียด</h1>
@@ -24,10 +27,29 @@
             @Html.DisplayFor(model => model.Id)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.IssueDate)
+            @Html.DisplayNameFor(model => model.BudgetId)
         </dt>
         <dd class="col-sm-10">
+            @budget.Name
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IssueDate)
+        </dt>
+        <dd class="col-sm-10 showdate">
             @Html.DisplayFor(model => model.IssueDateString)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DuplicatePaymentType)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.PaymentType == PaymentType.DuplicatePayment || Model.PaymentType == PaymentType.Debtor)
+            {
+                @($"{Model.DuplicatePaymentType}{Model.DuplicatePaymentNumber}/{Model.DuplicatePaymentYear}");
+            }
+            else
+            {
+                @($"{Model.DuplicatePaymentType}{Model.DuplicatePaymentNumber}");
+            }
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
@@ -47,17 +69,26 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Remark)
         </dd>
+        @if (Model.IsPayment)
+        {
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.PartnerId)
+            </dt>
+            <dd class="col-sm-10">
+                @partner?.Name
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.VatInclude)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.VatIncludeString)
+            </dd>
+        }
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedDate)
         </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.BudgetId)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.BudgetId)
+        <dd class="col-sm-10 showdatetime">
+            @Html.DisplayFor(model => model.CreatedDateString)
         </dd>
     </dl>
 </div>

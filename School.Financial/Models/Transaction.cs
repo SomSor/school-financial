@@ -5,14 +5,8 @@ namespace School.Financial.Models
 {
     public class Transaction : DbModelBase
     {
-        /// <summary>
-        /// วันที่ลงรายการ
-        /// </summary>
         [Display(Name = "วันที่ลงรายการ")]
         public DateTime IssueDate { get; set; }
-        /// <summary>
-        /// เลขที่ใบสำคัญคู่จ่าย
-        /// </summary>
         [Display(Name = "เลขที่ใบสำคัญ")]
         public string DuplicatePaymentType { get; set; }
         public string DuplicatePaymentNumber { get; set; }
@@ -23,7 +17,6 @@ namespace School.Financial.Models
         public string Remark { get; set; }
         [Display(Name = "ผู้รับเงิน")]
         public int? PartnerId { get; set; }
-
         /// <summary>
         /// + -
         /// </summary>
@@ -33,9 +26,9 @@ namespace School.Financial.Models
         public string PaymentType { get; set; }
         [Display(Name = "ภาษีมูลค่าเพิ่ม")]
         public decimal? VatInclude { get; set; }
-
         [Display(Name = "ประเภทงบประมาณ")]
         public int BudgetId { get; set; }
+        public int SchoolId { get; set; }
 
         public string IssueDateString { get { return IssueDate.ToString(WebConfiguration.DateTimeFormat); } }
         public string AmountString { get { return Amount.ToString(WebConfiguration.MoneyFormat); } }

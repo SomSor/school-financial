@@ -2,6 +2,7 @@
 using School.Financial.Dac;
 using School.Financial.Helpers;
 using School.Financial.Models;
+using School.Financial.Services;
 using System;
 using System.Linq;
 
@@ -13,23 +14,29 @@ namespace School.Financial.Controllers
         private readonly IPartnerDac partnerDac;
         private readonly ITransactionDac transactionDac;
         private readonly IBringForwardDac bringForwardDac;
+        private readonly IIdentityService identityService;
+
+        private SchoolData _currentSchoolData { get; set; }
+        public SchoolData CurrentSchoolData { get { return _currentSchoolData ??= identityService.GetCurrentSchool(); } }
 
         public TransactionController(
             IBudgetDac budgetDac,
             IPartnerDac partnerDac,
             ITransactionDac transactionDac,
-            IBringForwardDac bringForwardDac
+            IBringForwardDac bringForwardDac,
+            IIdentityService identityService
             )
         {
             this.transactionDac = transactionDac;
             this.bringForwardDac = bringForwardDac;
+            this.identityService = identityService;
             this.budgetDac = budgetDac;
             this.partnerDac = partnerDac;
         }
 
         public IActionResult Index()
         {
-            var transactions = transactionDac.Get().ToList();
+            var transactions = transactionDac.Get().Where(x => x.SchoolId == CurrentSchoolData.Id).ToList();
             var budgets = budgetDac.Get().ToList();
             budgets.Add(new Budget
             {
@@ -52,6 +59,10 @@ namespace School.Financial.Controllers
         public IActionResult Details(int id)
         {
             var transaction = transactionDac.Get(id);
+            var budget = budgetDac.Get(transaction.BudgetId);
+            var partner = transaction.PartnerId.HasValue ? partnerDac.Get(transaction.PartnerId.Value) : null;
+            ViewBag.budget = budget;
+            ViewBag.partner = partner;
             return View(transaction);
         }
 
@@ -129,7 +140,7 @@ namespace School.Financial.Controllers
                 request.PartnerId = null;
             }
 
-            transactionDac.Insert(request);
+            transactionDac.InsertPayment(request);
             CalculateBringForword(request.IssueDate, request.BudgetId);
             CalculateBringForword(request.IssueDate, 0);
 
@@ -206,6 +217,10 @@ namespace School.Financial.Controllers
         public IActionResult Delete(int id)
         {
             var transaction = transactionDac.Get(id);
+            var budget = budgetDac.Get(transaction.BudgetId);
+            var partner = transaction.PartnerId.HasValue ? partnerDac.Get(transaction.PartnerId.Value) : null;
+            ViewBag.budget = budget;
+            ViewBag.partner = partner;
             return View(transaction);
         }
 

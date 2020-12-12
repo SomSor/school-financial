@@ -11,6 +11,9 @@ namespace School.Financial.Controllers
         private readonly IBankAccountDac bankAccountDac;
         private readonly IIdentityService identityService;
 
+        private SchoolData _currentSchoolData { get; set; }
+        public SchoolData CurrentSchoolData { get { return _currentSchoolData ??= identityService.GetCurrentSchool(); } }
+
         public BankAccountController(
             IBankAccountDac bankAccountDac,
             IIdentityService identityService
@@ -23,6 +26,7 @@ namespace School.Financial.Controllers
         public IActionResult Index()
         {
             var bankAccounts = bankAccountDac.Get()
+                .Where(x => x.SchoolId == CurrentSchoolData.Id)
                 .OrderBy(x => x.BankName)
                 .ThenBy(x => x.AccountNumber)
                 .ThenBy(x => x.AccountName);

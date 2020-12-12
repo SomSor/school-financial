@@ -12,6 +12,9 @@ namespace School.Financial.Controllers
         private readonly IBudgetDac budgetDac;
         private readonly IIdentityService identityService;
 
+        private SchoolData _currentSchoolData { get; set; }
+        public SchoolData CurrentSchoolData { get { return _currentSchoolData ??= identityService.GetCurrentSchool(); } }
+
         public BudgetController(
             IBankAccountDac bankAccountDac,
             IBudgetDac budgetDac,
@@ -25,7 +28,7 @@ namespace School.Financial.Controllers
 
         public IActionResult Index()
         {
-            var budgets = budgetDac.Get().OrderBy(x => x.Name);
+            var budgets = budgetDac.Get().Where(x => x.SchoolId == CurrentSchoolData.Id).OrderBy(x => x.Name);
             var bankAccounts = bankAccountDac.Get();
             ViewBag.bankAccounts = bankAccounts;
             return View(budgets);
