@@ -28,6 +28,7 @@ namespace School.Financial
             services.AddTransient<Dac.IBankAccountDac, Dac.Impl.BankAccountDac>();
             services.AddTransient<Dac.IBudgetDac, Dac.Impl.BudgetDac>();
             services.AddTransient<Dac.IPartnerDac, Dac.Impl.PartnerDac>();
+            services.AddTransient<Dac.ISchoolYearDac, Dac.Impl.SchoolYearDac>();
             services.AddTransient<Dac.ITransactionDac, Dac.Impl.TransactionDac>();
             services.AddTransient<Dac.IBringForwardDac, Dac.Impl.BringForwardDac>();
 

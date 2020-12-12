@@ -12,5 +12,7 @@ namespace School.Financial.Dac
 
         IEnumerable<Models.TransactionWithPartner> GetWithVat(DateTime month);
         IEnumerable<Models.TransactionWithPartner> GetWithPartner();
+
+        int InsertPayment(Models.Transaction data);
     }
 }

@@ -1,0 +1,44 @@
+﻿@model School.Financial.Models.SchoolYear
+
+@{
+    ViewData["Title"] = "ยืนยันการลบปีการศึกษา";
+}
+
+<h1>ลบ</h1>
+
+<h3>ยืนยันการลบ?</h3>
+<div>
+    <h4>ปีการศึกษา</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Year)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Year)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+        <dd class="col-sm-10 showdate">
+            @Html.DisplayFor(model => model.StartDateString)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedDate)
+        </dt>
+        <dd class="col-sm-10 showdatetime">
+            @Html.DisplayFor(model => model.CreatedDateString)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="submit" value="ลบ" class="btn btn-danger" /> |
+        <a asp-action="Index">กลับ</a>
+    </form>
+</div>

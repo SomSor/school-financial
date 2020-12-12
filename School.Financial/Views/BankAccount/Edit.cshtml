@@ -38,3 +38,7 @@
     <a asp-action="Index">กลับ</a>
 </div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

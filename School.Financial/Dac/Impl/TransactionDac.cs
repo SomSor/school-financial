@@ -204,6 +204,32 @@ namespace School.Financial.Dac.Impl
             }
         }
 
+        public int InsertPayment(Transaction data)
+        {
+            using (MySqlConnection conn = context.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear,@Title,@Remark,@PartnerId,@Amount,@PaymentType,@VatInclude,@BudgetId,@SchoolId,@CreatedDate)", conn);
+                cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
+                //TODO: auto running DuplicatePaymentNumber
+                cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentNumber", data.DuplicatePaymentNumber);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentYear", data.DuplicatePaymentYear);
+                cmd.Parameters.AddWithValue("@Title", data.Title);
+                cmd.Parameters.AddWithValue("@Remark", data.Remark);
+                cmd.Parameters.AddWithValue("@PartnerId", data.PartnerId);
+                cmd.Parameters.AddWithValue("@Amount", data.Amount);
+                cmd.Parameters.AddWithValue("@PaymentType", data.PaymentType);
+                cmd.Parameters.AddWithValue("@VatInclude", data.VatInclude);
+                cmd.Parameters.AddWithValue("@BudgetId", data.BudgetId);
+                cmd.Parameters.AddWithValue("@SchoolId", data.SchoolId);
+                cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
+
+                cmd.ExecuteNonQuery();
+                return (int)cmd.LastInsertedId;
+            }
+        }
+
         public void Update(Transaction data)
         {
             using (MySqlConnection conn = context.GetConnection())

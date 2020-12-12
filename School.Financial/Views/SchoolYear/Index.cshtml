@@ -1,0 +1,36 @@
+﻿@model IEnumerable<School.Financial.Models.SchoolYear>
+
+@{
+    ViewData["Title"] = "ปีการศึกษา";
+}
+
+<h1>ปีการศึกษา</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create"><span class="glyphicon glyphicon-plus"></span> เพิ่มปีการศึกษา</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Year)</th>
+            <th>@Html.DisplayNameFor(model => model.StartDate)</th>
+            <th>@Html.DisplayNameFor(model => model.CreatedDateString)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Year</td>
+                <td class="showdate">@item.StartDateString</td>
+                <td class="showdatetime">@item.CreatedDateString</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="text-success"><span class="glyphicon glyphicon-edit"></span></a>
+                    <a asp-action="Details" asp-route-id="@item.Id"><span class="glyphicon glyphicon-search"></span></a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="text-danger"><span class="glyphicon glyphicon-trash"></span></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
