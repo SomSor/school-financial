@@ -3,9 +3,9 @@ var clientDateTimeFormat = 'LLL';
 var clientTimeFormat = 'LT';
 var clientDayDateTimeFormat = 'LLLL';
 
-var serverDateFormat = 'DD/MM/YYYY Z';
-var serverDateTimeFormat = 'DD/MM/YYYY H:mm Z';
-var serverTimeFormat = 'LT Z';
+var serverDateFormat = 'YYYY-MM-DD Z';
+var serverDateTimeFormat = 'YYYY-MM-DD H:mm Z';
+var serverTimeFormat = 'H:mm Z';
 
 $(() => {
     $('.showtime').each(function () {
@@ -57,7 +57,6 @@ $(() => {
                 $('input.datepicker').each(function () { if ($(this).val()) $(this).val(moment($(this).val(), clientDateFormat).format(serverDateFormat)); });
                 $('input.datetimepicker').each(function () { if ($(this).val()) $(this).val(moment($(this).val(), clientDateTimeFormat).format(serverDateTimeFormat)); });
                 $('input.timepicker').each(function () { if ($(this).val()) $(this).val(moment($(this).val(), clientTimeFormat).format(serverTimeFormat)); });
-                //$('input.monthpicker').each(function () { if ($(this).val()) $(this).val(moment($(this).val(), "YYYY-MM").format(serverTimeFormat)); });
             } catch (error) {
                 console.log(error);
             }

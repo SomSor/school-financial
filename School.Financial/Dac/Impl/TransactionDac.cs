@@ -58,7 +58,7 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from Transaction where month(IssueDate) = month(@month) and year(IssueDate) = year(@month)", conn);
+                MySqlCommand cmd = new MySqlCommand("select * from Transaction where day(IssueDate) <= day(@month) and month(IssueDate) = month(@month) and year(IssueDate) = year(@month)", conn);
                 cmd.Parameters.AddWithValue("@month", month);
 
                 using (var reader = cmd.ExecuteReader())

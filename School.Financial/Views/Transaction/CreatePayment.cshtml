@@ -104,8 +104,6 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
     <script>
         function OnBudgetChanged(sender) {
             if ($(sender).val() == "0") {
