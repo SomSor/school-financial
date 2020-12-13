@@ -26,6 +26,8 @@ namespace School.Financial.Models
         public string PaymentType { get; set; }
         [Display(Name = "ภาษีมูลค่าเพิ่ม")]
         public decimal? VatInclude { get; set; }
+        [Display(Name = "ประเภทสินค้า")]
+        public string ProductType { get; set; }
         [Display(Name = "ประเภทงบประมาณ")]
         public int BudgetId { get; set; }
         public int SchoolId { get; set; }

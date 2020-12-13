@@ -184,7 +184,10 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear,@Title,@Remark,@PartnerId,@Amount,@PaymentType,@VatInclude,@BudgetId,@SchoolId,@CreatedDate)", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (" +
+                    "0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear," +
+                    "@Title,@Remark,@PartnerId,@Amount,@PaymentType," +
+                    "@VatInclude,@ProductType,@BudgetId,@SchoolId,@CreatedDate)", conn);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentNumber", data.DuplicatePaymentNumber);
@@ -195,6 +198,7 @@ namespace School.Financial.Dac.Impl
                 cmd.Parameters.AddWithValue("@Amount", data.Amount);
                 cmd.Parameters.AddWithValue("@PaymentType", data.PaymentType);
                 cmd.Parameters.AddWithValue("@VatInclude", data.VatInclude);
+                cmd.Parameters.AddWithValue("@ProductType", data.ProductType);
                 cmd.Parameters.AddWithValue("@BudgetId", data.BudgetId);
                 cmd.Parameters.AddWithValue("@SchoolId", data.SchoolId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
@@ -209,7 +213,10 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear,@Title,@Remark,@PartnerId,@Amount,@PaymentType,@VatInclude,@BudgetId,@SchoolId,@CreatedDate)", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (" +
+                    "0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear," +
+                    "@Title,@Remark,@PartnerId,@Amount,@PaymentType," +
+                    "@VatInclude,@ProductType,@BudgetId,@SchoolId,@CreatedDate)", conn);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
                 //TODO: auto running DuplicatePaymentNumber
                 cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
@@ -221,6 +228,7 @@ namespace School.Financial.Dac.Impl
                 cmd.Parameters.AddWithValue("@Amount", data.Amount);
                 cmd.Parameters.AddWithValue("@PaymentType", data.PaymentType);
                 cmd.Parameters.AddWithValue("@VatInclude", data.VatInclude);
+                cmd.Parameters.AddWithValue("@ProductType", data.ProductType);
                 cmd.Parameters.AddWithValue("@BudgetId", data.BudgetId);
                 cmd.Parameters.AddWithValue("@SchoolId", data.SchoolId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
@@ -235,15 +243,21 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("UPDATE `Transaction` SET `IssueDate`=@IssueDate,`DuplicatePaymentType`=@DuplicatePaymentType,`DuplicatePaymentNumber`=@DuplicatePaymentNumber,`DuplicatePaymentYear`=@DuplicatePaymentYear,`Title`=@Title,`Amount`=@Amount,`PaymentType`=@PaymentType,`Remark`=@Remark WHERE `Id`=@Id", conn);
+                MySqlCommand cmd = new MySqlCommand("UPDATE `Transaction` SET " +
+                    "`IssueDate`=@IssueDate,`DuplicatePaymentType`=@DuplicatePaymentType,`DuplicatePaymentNumber`=@DuplicatePaymentNumber,`DuplicatePaymentYear`=@DuplicatePaymentYear,`Title`=@Title," +
+                    "`Remark`=@Remark,`PartnerId`=@PartnerId,`Amount`=@Amount,`PaymentType`=@PaymentType,`VatInclude`=@VatInclude," +
+                    "`ProductType`=@ProductType WHERE `Id`=@Id", conn);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentNumber", data.DuplicatePaymentNumber);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentYear", data.DuplicatePaymentYear);
                 cmd.Parameters.AddWithValue("@Title", data.Title);
+                cmd.Parameters.AddWithValue("@Remark", data.Remark);
+                cmd.Parameters.AddWithValue("@PartnerId", data.PartnerId);
                 cmd.Parameters.AddWithValue("@Amount", data.Amount);
                 cmd.Parameters.AddWithValue("@PaymentType", data.PaymentType);
-                cmd.Parameters.AddWithValue("@Remark", data.Remark);
+                cmd.Parameters.AddWithValue("@VatInclude", data.VatInclude);
+                cmd.Parameters.AddWithValue("@ProductType", data.ProductType);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
 
                 cmd.ExecuteNonQuery();
@@ -255,8 +269,14 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (@Id,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear,@Title,@Remark,@PartnerId,@Amount,@PaymentType,@VatInclude,@BudgetId,@SchoolId,@CreatedDate)" +
-                    "ON DUPLICATE KEY UPDATE `IssueDate`=@IssueDate,`DuplicatePaymentType`=@DuplicatePaymentType,`DuplicatePaymentNumber`=@DuplicatePaymentNumber,`DuplicatePaymentYear`=@DuplicatePaymentYear,`Title`=@Title,`Amount`=@Amount,`PaymentType`=@PaymentType,`Remark`=@Remark", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (" +
+                    "@Id,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear," +
+                    "@Title,@Remark,@PartnerId,@Amount,@PaymentType," +
+                    "@VatInclude,@ProductType,@BudgetId,@SchoolId,@CreatedDate)" +
+                    "ON DUPLICATE KEY UPDATE " +
+                    "`IssueDate`=@IssueDate,`DuplicatePaymentType`=@DuplicatePaymentType,`DuplicatePaymentNumber`=@DuplicatePaymentNumber,`DuplicatePaymentYear`=@DuplicatePaymentYear,`Title`=@Title," +
+                    "`Remark`=@Remark,`PartnerId`=@PartnerId,`Amount`=@Amount,`PaymentType`=@PaymentType,`VatInclude`=@VatInclude," +
+                    "`ProductType`=@ProductType", conn);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
@@ -268,6 +288,7 @@ namespace School.Financial.Dac.Impl
                 cmd.Parameters.AddWithValue("@Amount", data.Amount);
                 cmd.Parameters.AddWithValue("@PaymentType", data.PaymentType);
                 cmd.Parameters.AddWithValue("@VatInclude", data.VatInclude);
+                cmd.Parameters.AddWithValue("@ProductType", data.ProductType);
                 cmd.Parameters.AddWithValue("@BudgetId", data.BudgetId);
                 cmd.Parameters.AddWithValue("@SchoolId", data.SchoolId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
@@ -304,6 +325,7 @@ namespace School.Financial.Dac.Impl
                 Amount = Convert.ToDecimal(reader["Amount"]),
                 PaymentType = reader["PaymentType"] == DBNull.Value ? null : reader["PaymentType"].ToString(),
                 VatInclude = reader["VatInclude"] == DBNull.Value ? null : (decimal?)reader["VatInclude"],
+                ProductType = reader["ProductType"] == DBNull.Value ? null : reader["ProductType"].ToString(),
                 BudgetId = Convert.ToInt32(reader["BudgetId"]),
                 SchoolId = Convert.ToInt32(reader["SchoolId"]),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
@@ -325,6 +347,7 @@ namespace School.Financial.Dac.Impl
                 Amount = Convert.ToDecimal(reader["Amount"]),
                 PaymentType = reader["PaymentType"] == DBNull.Value ? null : reader["PaymentType"].ToString(),
                 VatInclude = reader["VatInclude"] == DBNull.Value ? null : (decimal?)reader["VatInclude"],
+                ProductType = reader["ProductType"] == DBNull.Value ? null : reader["ProductType"].ToString(),
                 BudgetId = Convert.ToInt32(reader["BudgetId"]),
                 SchoolId = Convert.ToInt32(reader["SchoolId"]),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),

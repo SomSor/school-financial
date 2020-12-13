@@ -162,11 +162,6 @@ namespace School.Financial.Controllers
             ViewBag.Budets = budgets.OrderBy(x => x.Name);
             ViewBag.Partners = partners;
 
-            if (transaction.Amount < 0)
-            {
-                transaction.Amount = Math.Abs(transaction.Amount);
-            }
-
             return View(transaction);
         }
 
@@ -182,6 +177,7 @@ namespace School.Financial.Controllers
             transaction.DuplicatePaymentYear = request.DuplicatePaymentYear;
             transaction.Title = request.Title;
             transaction.Remark = request.Remark;
+            transaction.ProductType = request.ProductType;
 
             if (transaction.Amount < 0)
             {
