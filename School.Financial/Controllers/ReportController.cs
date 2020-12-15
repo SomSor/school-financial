@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using School.Financial.Dac;
 using School.Financial.Models;
+using School.Financial.Services;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace School.Financial.Controllers
 {
@@ -13,18 +17,24 @@ namespace School.Financial.Controllers
         private readonly IPartnerDac partnerDac;
         private readonly ITransactionDac transactionDac;
         private readonly IBringForwardDac bringForwardDac;
+        private readonly IIdentityService identityService;
+
+        private SchoolData _currentSchoolData { get; set; }
+        public SchoolData CurrentSchoolData { get { return _currentSchoolData ??= identityService.GetCurrentSchool(); } }
 
         public ReportController(
             IBudgetDac budgetDac,
             IPartnerDac partnerDac,
             ITransactionDac transactionDac,
-            IBringForwardDac bringForwardDac
+            IBringForwardDac bringForwardDac,
+            IIdentityService identityService
             )
         {
             this.budgetDac = budgetDac;
             this.partnerDac = partnerDac;
             this.transactionDac = transactionDac;
             this.bringForwardDac = bringForwardDac;
+            this.identityService = identityService;
         }
 
         public ActionResult Index()
@@ -56,6 +66,81 @@ namespace School.Financial.Controllers
                 }).ToList(),
             };
             return View(response);
+        }
+
+        public ActionResult OverAllReportFile(DateTime? month)
+        {
+            if (month == null) month = DateTime.UtcNow;
+
+            var budgets = budgetDac.Get().OrderBy(x => x.Name);
+            var transactions = transactionDac.Get(month.Value).ToList();
+            var bringForwordThisMonths = bringForwardDac.Get(month.Value);
+            transactions.InsertRange(0, bringForwordThisMonths.Select(b => new Transaction
+            {
+                IssueDate = new DateTime(month.Value.Year, month.Value.Month, 1),
+                Title = "ยอดยกมา",
+                Amount = b?.Amount ?? 0,
+                BudgetId = b.BudgetId,
+            }));
+            var response = new OverAllReport
+            {
+                Budgets = budgets.OrderBy(x => x.Name).Select(x => new OverAllReportDetail
+                {
+                    Budget = x,
+                    Transactions = transactions.Where(t => t.BudgetId == x.Id).OrderBy(x => x.IssueDate).ThenBy(x => x.Id).ToList(),
+                }).ToList(),
+            };
+
+            var content = System.IO.File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "ReportSrc/overallreport.xml"));
+
+            var tableRowIndex = content.IndexOf("{tablerow-title}");
+            var startRowIndex = content.Substring(0, tableRowIndex).LastIndexOf("<Row");
+            var endRowIndex = content.IndexOf("</Row>", tableRowIndex) + 6;
+
+            var rowContentRaw = content.Substring(startRowIndex, endRowIndex - startRowIndex);
+
+            content = content.Replace("{month}", month.Value.ToString("MMMM", CultureInfo.CreateSpecificCulture("th-TH")));
+            content = content.Replace("{schoolname}", CurrentSchoolData.Name);
+            content = content.Replace("{date}", month.Value.ToString("dd MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+
+            var RefersToText = "RefersTo=\"=Sheet1!R1C1:R";
+            var RefersToStartIndex = content.IndexOf(RefersToText) + RefersToText.Length;
+            var RefersToEndIndex = content.IndexOf("\"", RefersToStartIndex);
+            var RefersTo = content.Substring(RefersToStartIndex, RefersToEndIndex - RefersToStartIndex).Split("C");
+
+            var oldVal = $"{RefersToText}{RefersTo[0]}C{RefersTo[1]}\"";
+            var newVal = $"{RefersToText}{int.Parse(RefersTo[0]) + budgets.Count()}C{RefersTo[1]}\"";
+            content = content.Replace(oldVal, newVal);
+
+            var expandedRowCountText = "ExpandedRowCount=\"";
+            var expandedRowCountStartIndex = content.IndexOf(expandedRowCountText) + expandedRowCountText.Length;
+            var expandedRowCountEndIndex = content.IndexOf("\"", expandedRowCountStartIndex);
+            var expandedRowCount = content.Substring(expandedRowCountStartIndex, expandedRowCountEndIndex - expandedRowCountStartIndex);
+
+            oldVal = $"{expandedRowCountText}{expandedRowCount}\"";
+            newVal = $"{expandedRowCountText}{int.Parse(expandedRowCount) + budgets.Count()}\"";
+            content = content.Replace(oldVal, newVal);
+
+            var rowContent = string.Empty;
+            foreach (var item in response.Budgets)
+            {
+                var bankSum = item.Transactions.Sum(t => t.Amount).ToString();
+                rowContent += rowContentRaw
+                    .Replace("{tablerow-title}", item.Budget.Name)
+                    .Replace("Type=\"String\">{tablerow-cach}", "Type=\"Number\">0")
+                    .Replace("Type=\"String\">{tablerow-bank}", $"Type=\"Number\">{bankSum}")
+                    .Replace("Type=\"String\">{tablerow-deposit}", "Type=\"Number\">0")
+                    .Replace("Type=\"String\">{tablerow-total}", $"Type=\"Number\">{bankSum}");
+            }
+            content = content.Replace(rowContentRaw, rowContent);
+
+            var bankSumTotal = transactions.Sum(t => t.Amount).ToString();
+            content = content.Replace("Type=\"String\">{total-cash}", "Type=\"Number\">0");
+            content = content.Replace("Type=\"String\">{total-bank}", $"Type=\"Number\">{bankSumTotal}");
+            content = content.Replace("Type=\"String\">{total-deposit}", "Type=\"Number\">0");
+            content = content.Replace("Type=\"String\">{total}", $"Type=\"Number\">{bankSumTotal}");
+
+            return File(Encoding.UTF8.GetBytes(content), "application/vnd.ms-excel", "OverAllReport.xls");
         }
 
         public ActionResult OverAllVatReport(DateTime? month)

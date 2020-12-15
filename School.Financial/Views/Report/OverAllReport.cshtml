@@ -5,6 +5,7 @@
 }
 
 <h1>รายงานเงินคงเหลือประจำวัน</h1>
+<a asp-action="OverAllReportFile" asp-route-month="@ViewBag?.month?.ToString("yyyy-MM-dd hh:mm:ss")">Excel</a>
 <form>
     <input name="month" class="datepicker" type="text" value="@ViewBag?.month?.ToString("yyyy-MM-dd hh:mm:ss")" />
     <button type="submit">Ok</button>
