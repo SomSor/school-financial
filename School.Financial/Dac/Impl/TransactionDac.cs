@@ -179,6 +179,29 @@ namespace School.Financial.Dac.Impl
             return list;
         }
 
+        public TransactionWithPartner GetWithPartner(int id)
+        {
+            using (MySqlConnection conn = context.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select tx.*," +
+                    "pn.Id as pn_Id,pn.Name as pn_Name,pn.VatNumber as pn_VatNumber,pn.Address as pn_Address,pn.PartnerType as pn_PartnerType,pn.CreatedDate as pn_CreatedDate " +
+                    "from Transaction as tx " +
+                    "left join Partner as pn on tx.PartnerId = pn.Id " +
+                    "where tx.Id = @id", conn);
+                cmd.Parameters.AddWithValue("@id", id);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return ReadDataWithPartner(reader);
+                    }
+                }
+            }
+            return null;
+        }
+
         public int Insert(Transaction data)
         {
             using (MySqlConnection conn = context.GetConnection())

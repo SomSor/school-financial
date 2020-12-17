@@ -5,11 +5,18 @@
 }
 
 <h1>รายงานเงินคงเหลือประจำวัน</h1>
-<a asp-action="OverAllReportFile" asp-route-month="@ViewBag?.month?.ToString("yyyy-MM-dd hh:mm:ss")">Excel</a>
 <form>
-    <input name="month" class="datepicker" type="text" value="@ViewBag?.month?.ToString("yyyy-MM-dd hh:mm:ss")" />
-    <button type="submit">Ok</button>
+    <div class="row">
+        <div class="col-sm-2">
+            <input name="month" class="form-control datepicker" type="text" value="@ViewBag?.month?.ToString("yyyy-MM-dd hh:mm:ss")" />
+        </div>
+        <div class="col-sm-6">
+            <button type="submit" class="btn btn-primary">Ok</button>
+            <a class="btn btn-success" asp-action="OverAllReportFile" asp-route-month="@ViewBag?.month?.ToString("yyyy-MM-dd hh:mm:ss")">Excel file</a>
+        </div>
+    </div>
 </form>
+<br />
 <table class="table">
     <thead>
         <tr>
@@ -26,9 +33,9 @@
             <tr>
                 <td>@item.Budget.Name</td>
                 <td class="text-right">0.00</td>
-                <td class="text-right">@(item.Transactions.Sum(x => x.Amount))</td>
+                <td class="text-right">@(item.Transactions.Sum(x => x.Amount).ToString("#,##0.00"))</td>
                 <td class="text-right">0.00</td>
-                <td class="text-right">@(item.Transactions.Sum(x => x.Amount))</td>
+                <td class="text-right">@(item.Transactions.Sum(x => x.Amount).ToString("#,##0.00"))</td>
             </tr>
         }
     </tbody>

@@ -207,6 +207,39 @@ namespace School.Financial.Controllers
             return View(transactions);
         }
 
+        public ActionResult ChequeReportFile(int id)
+        {
+            var transaction = transactionDac.GetWithPartner(id);
+            var content = System.IO.File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "ReportSrc/chequereport.xml"));
+
+            content = content.Replace("{book}", "1");
+            content = content.Replace("{number}", transaction.Id.ToString());
+            content = content.Replace("{schoolname}", CurrentSchoolData.Name);
+            content = content.Replace("{schoolvatid}", CurrentSchoolData.Name);
+            content = content.Replace("{schooladdress}", CurrentSchoolData.Address);
+            content = content.Replace("{name}", transaction.Partner.Name);
+            content = content.Replace("{address}", transaction.Partner.Address);
+            if (transaction.Partner.PartnerType == PartnerType.Person)
+            {
+                content = content.Replace("{pid}", transaction.Partner.VatNumber);
+                content = content.Replace("{vatid}", string.Empty);
+            }
+            else
+            {
+                content = content.Replace("{pid}", string.Empty);
+                content = content.Replace("{vatid}", transaction.Partner.VatNumber);
+            }
+            content = content.Replace("{product}", transaction.ProductType);
+            content = content.Replace("{date1}", transaction.IssueDate.ToString("dd MMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+            content = content.Replace("{amountbefore}", (Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
+            content = content.Replace("{vat}", transaction.VatInclude.Value.ToString("#,##0.00"));
+            content = content.Replace("{vatread}", Helpers.VatHelper.ThaiBaht(transaction.VatInclude.ToString()));
+            content = content.Replace("{date2}", transaction.IssueDate.ToString("dd MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+            content = content.Replace("{amountread}", Helpers.VatHelper.ThaiBaht((Math.Abs(transaction.Amount) - transaction.VatInclude).ToString()));
+
+            return File(Encoding.UTF8.GetBytes(content), "application/vnd.ms-excel", "ChequeReport.xls");
+        }
+
         public ActionResult DuplicatePaymentReport()
         {
             var transactions = transactionDac.GetDuplicatePayment().OrderBy(x => x.IssueDate).ThenBy(x => x.Id).ToList();
