@@ -57,9 +57,10 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `School` VALUES (0,@Name,@Address,@EducationAreaId,@CreatedDate)", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `School` VALUES (0,@Name,@Address,@VatId,@EducationAreaId,@CreatedDate)", conn);
                 cmd.Parameters.AddWithValue("@Name", data.Name);
                 cmd.Parameters.AddWithValue("@Address", data.Address);
+                cmd.Parameters.AddWithValue("@VatId", data.VatId);
                 cmd.Parameters.AddWithValue("@EducationAreaId", data.EducationAreaId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
@@ -73,9 +74,10 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("UPDATE `School` SET `Name`=@Name,`Address`=@Address,`EducationAreaId`=@EducationAreaId WHERE `Id`=@Id", conn);
+                MySqlCommand cmd = new MySqlCommand("UPDATE `School` SET `Name`=@Name,`Address`=@Address,`VatId`=@VatId,`EducationAreaId`=@EducationAreaId WHERE `Id`=@Id", conn);
                 cmd.Parameters.AddWithValue("@Name", data.Name);
                 cmd.Parameters.AddWithValue("@Address", data.Address);
+                cmd.Parameters.AddWithValue("@VatId", data.VatId);
                 cmd.Parameters.AddWithValue("@EducationAreaId", data.EducationAreaId);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
 
@@ -88,11 +90,12 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `School` VALUES (@Id,@Name,@Address,@EducationAreaId,@CreatedDate)" +
-                    "ON DUPLICATE KEY UPDATE `Name`=@Name,`Address`=@Address,`EducationAreaId`=@EducationAreaId", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `School` VALUES (@Id,@Name,@Address,@VatId,@EducationAreaId,@CreatedDate)" +
+                    "ON DUPLICATE KEY UPDATE `Name`=@Name,`Address`=@Address,`VatId`=@VatId,`EducationAreaId`=@EducationAreaId", conn);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
                 cmd.Parameters.AddWithValue("@Name", data.Name);
                 cmd.Parameters.AddWithValue("@Address", data.Address);
+                cmd.Parameters.AddWithValue("@VatId", data.VatId);
                 cmd.Parameters.AddWithValue("@EducationAreaId", data.EducationAreaId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
@@ -120,6 +123,7 @@ namespace School.Financial.Dac.Impl
                 Id = Convert.ToInt32(reader["Id"]),
                 Name = reader["Name"].ToString(),
                 Address = reader["Address"].ToString(),
+                VatId = reader["VatId"].ToString(),
                 EducationAreaId = Convert.ToInt32(reader["EducationAreaId"]),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
             };

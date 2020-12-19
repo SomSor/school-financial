@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GemBox.Spreadsheet;
+using Microsoft.AspNetCore.Mvc;
 using School.Financial.Dac;
 using School.Financial.Models;
 using School.Financial.Services;
@@ -210,34 +211,46 @@ namespace School.Financial.Controllers
         public ActionResult ChequeReportFile(int id)
         {
             var transaction = transactionDac.GetWithPartner(id);
-            var content = System.IO.File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "ReportSrc/chequereport.xml"));
+            var FileName = Path.Combine(Directory.GetCurrentDirectory(), "ReportSrc/chequereport.xlsx");
 
-            content = content.Replace("{book}", "1");
-            content = content.Replace("{number}", transaction.Id.ToString());
-            content = content.Replace("{schoolname}", CurrentSchoolData.Name);
-            content = content.Replace("{schoolvatid}", CurrentSchoolData.Name);
-            content = content.Replace("{schooladdress}", CurrentSchoolData.Address);
-            content = content.Replace("{name}", transaction.Partner.Name);
-            content = content.Replace("{address}", transaction.Partner.Address);
+            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
+            var workbook = ExcelFile.Load(FileName, LoadOptions.XlsxDefault);
+
+            workbook.Worksheets[0].Cells[2, 17].SetValue("1");
+            workbook.Worksheets[0].Cells[3, 17].SetValue(transaction.Id.ToString());
+            workbook.Worksheets[0].Cells[5, 3].SetValue(CurrentSchoolData.Name);
+            workbook.Worksheets[0].Cells[5, 17].SetValue(CurrentSchoolData.VatId);
+            workbook.Worksheets[0].Cells[7, 3].SetValue(CurrentSchoolData.Address);
+            workbook.Worksheets[0].Cells[11, 3].SetValue(transaction.Partner.Name);
+            workbook.Worksheets[0].Cells[13, 3].SetValue(transaction.Partner.Address);
             if (transaction.Partner.PartnerType == PartnerType.Person)
             {
-                content = content.Replace("{pid}", transaction.Partner.VatNumber);
-                content = content.Replace("{vatid}", string.Empty);
+                workbook.Worksheets[0].Cells[10, 17].SetValue(transaction.Partner.VatNumber);
+                workbook.Worksheets[0].Cells[11, 17].SetValue(string.Empty);
             }
             else
             {
-                content = content.Replace("{pid}", string.Empty);
-                content = content.Replace("{vatid}", transaction.Partner.VatNumber);
+                workbook.Worksheets[0].Cells[10, 17].SetValue(string.Empty);
+                workbook.Worksheets[0].Cells[11, 17].SetValue(transaction.Partner.VatNumber);
             }
-            content = content.Replace("{product}", transaction.ProductType);
-            content = content.Replace("{date1}", transaction.IssueDate.ToString("dd MMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
-            content = content.Replace("{amountbefore}", (Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
-            content = content.Replace("{vat}", transaction.VatInclude.Value.ToString("#,##0.00"));
-            content = content.Replace("{vatread}", Helpers.VatHelper.ThaiBaht(transaction.VatInclude.ToString()));
-            content = content.Replace("{date2}", transaction.IssueDate.ToString("dd MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
-            content = content.Replace("{amountread}", Helpers.VatHelper.ThaiBaht((Math.Abs(transaction.Amount) - transaction.VatInclude).ToString()));
+            workbook.Worksheets[0].Cells[42, 6].SetValue(transaction.ProductType);
+            workbook.Worksheets[0].Cells[42, 12].SetValue(transaction.IssueDate.ToString("d MMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+            workbook.Worksheets[0].Cells[42, 14].SetValue((Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
+            workbook.Worksheets[0].Cells[42, 16].SetValue(transaction.VatInclude.Value.ToString("#,##0.00"));
+            workbook.Worksheets[0].Cells[48, 14].SetValue((Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
+            workbook.Worksheets[0].Cells[48, 16].SetValue(transaction.VatInclude.Value.ToString("#,##0.00"));
+            workbook.Worksheets[0].Cells[50, 8].SetValue(Helpers.VatHelper.ThaiBaht(transaction.VatInclude.ToString()));
+            workbook.Worksheets[0].Cells[58, 10].SetValue(transaction.IssueDate.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+            workbook.Worksheets[0].Cells[62, 12].SetValue(transaction.IssueDate.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+            workbook.Worksheets[0].Cells[64, 5].SetValue(transaction.Partner.Name);
+            workbook.Worksheets[0].Cells[66, 6].SetValue(Helpers.VatHelper.ThaiBaht((Math.Abs(transaction.Amount) - transaction.VatInclude).ToString()));
+            workbook.Worksheets[0].Cells[67, 13].SetValue((Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
 
-            return File(Encoding.UTF8.GetBytes(content), "application/vnd.ms-excel", "ChequeReport.xls");
+            var contentStream = new MemoryStream();
+            workbook.Worksheets[0].PrintOptions.PaperType = PaperType.A4;
+            workbook.Save(contentStream, SaveOptions.PdfDefault);
+
+            return File(contentStream, "application/pdf", "ChequeReport.pdf");
         }
 
         public ActionResult DuplicatePaymentReport()

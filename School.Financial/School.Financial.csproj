@@ -5,18 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GemBox.Spreadsheet" Version="47.0.1044" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
-    <PackageReference Include="MySql.Data" Version="8.0.21" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\reports\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="wwwroot\reports\overallreport.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <PackageReference Include="MySql.Data" Version="8.0.22" />
   </ItemGroup>
 
 </Project>
