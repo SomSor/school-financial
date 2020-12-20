@@ -94,11 +94,11 @@ namespace School.Financial.Controllers
             worksheet.Cells[0, Col.C].SetValue(CurrentSchoolData.Name);
             worksheet.Cells[2, Col.C].SetValue(month.Value.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
 
-            var bankSumTotal = transactions.Sum(t => t.Amount).ToString("#,##0.00");
-            worksheet.Cells[5, Col.D].SetValue("0");
+            var bankSumTotal = (double)transactions.Sum(t => t.Amount);
+            worksheet.Cells[5, Col.D].SetValue(0);
             worksheet.Cells[5, Col.E].SetValue(bankSumTotal);
-            worksheet.Cells[5, Col.E].SetValue("0");
-            worksheet.Cells[5, Col.F].SetValue(bankSumTotal);
+            worksheet.Cells[5, Col.F].SetValue(0);
+            worksheet.Cells[5, Col.G].SetValue(bankSumTotal);
 
             var issuer = identityService.GetUser();
             worksheet.Cells[7, Col.D].SetValue(issuer.Name);
@@ -111,12 +111,14 @@ namespace School.Financial.Controllers
             var currentRowIndex = tableRowIndex;
             foreach (var item in budgets)
             {
+                worksheet.Rows[currentRowIndex].Style.NumberFormat = NumberFormatBuilder.Accounting(2);
+
                 worksheet.Rows.InsertCopy(currentRowIndex, worksheet.Rows[currentRowIndex]);
-                var bankSum = transactions.Where(t => t.BudgetId == item.Id)
+                var bankSum = (double)transactions.Where(t => t.BudgetId == item.Id)
                     .OrderBy(x => x.IssueDate)
                     .ThenBy(x => x.Id)
                     .ToList()
-                    .Sum(t => t.Amount).ToString();
+                    .Sum(t => t.Amount);
 
                 worksheet.Cells[currentRowIndex, Col.A].SetValue(item.Name);
                 worksheet.Cells[currentRowIndex, Col.D].SetValue(0);
@@ -217,7 +219,7 @@ namespace School.Financial.Controllers
             var workbook = ExcelFile.Load(FileName, LoadOptions.XlsxDefault);
             var worksheet = workbook.Worksheets[0];
 
-            worksheet.Cells[2, 17].SetValue("1");
+            worksheet.Cells[2, 17].SetValue(1);
             worksheet.Cells[3, 17].SetValue(transaction.Id.ToString());
             worksheet.Cells[5, 3].SetValue(CurrentSchoolData.Name);
             worksheet.Cells[5, 17].SetValue(CurrentSchoolData.VatId);
@@ -236,16 +238,16 @@ namespace School.Financial.Controllers
             }
             worksheet.Cells[42, 6].SetValue(transaction.ProductType);
             worksheet.Cells[42, 12].SetValue(transaction.IssueDate.ToString("d MMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
-            worksheet.Cells[42, 14].SetValue((Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
-            worksheet.Cells[42, 16].SetValue(transaction.VatInclude.Value.ToString("#,##0.00"));
-            worksheet.Cells[48, 14].SetValue((Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
-            worksheet.Cells[48, 16].SetValue(transaction.VatInclude.Value.ToString("#,##0.00"));
-            worksheet.Cells[50, 8].SetValue(Helpers.VatHelper.ThaiBaht(transaction.VatInclude.ToString()));
+            worksheet.Cells[42, 14].SetValue((double)(Math.Abs(transaction.Amount) - transaction.VatInclude.Value));
+            worksheet.Cells[42, 16].SetValue((double)transaction.VatInclude.Value);
+            worksheet.Cells[48, 14].SetValue((double)(Math.Abs(transaction.Amount) - transaction.VatInclude.Value));
+            worksheet.Cells[48, 16].SetValue((double)transaction.VatInclude.Value);
+            worksheet.Cells[50, 8].SetValue(VatHelper.ThaiBaht(transaction.VatInclude.ToString()));
             worksheet.Cells[58, 10].SetValue(transaction.IssueDate.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
             worksheet.Cells[62, 12].SetValue(transaction.IssueDate.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
             worksheet.Cells[64, 5].SetValue(transaction.Partner.Name);
-            worksheet.Cells[66, 6].SetValue(Helpers.VatHelper.ThaiBaht((Math.Abs(transaction.Amount) - transaction.VatInclude).ToString()));
-            worksheet.Cells[67, 13].SetValue((Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
+            worksheet.Cells[66, 6].SetValue(VatHelper.ThaiBaht((Math.Abs(transaction.Amount) - transaction.VatInclude).ToString()));
+            worksheet.Cells[67, 13].SetValue((double)(Math.Abs(transaction.Amount) - transaction.VatInclude.Value));
 
             var contentStream = new MemoryStream();
             worksheet.PrintOptions.PaperType = PaperType.A4;

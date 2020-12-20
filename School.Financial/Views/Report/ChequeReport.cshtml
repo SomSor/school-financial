@@ -37,7 +37,7 @@
                 <td class="text-right">@item.VatIncludeString</td>
                 <td class="text-right">@item.TotalAmountChequeString</td>
                 <td></td>
-                <td><a asp-action="ChequeReportFile" asp-route-id="@item.Id">Excel file</a></td>
+                <td><a asp-action="ChequeReportFile" asp-route-id="@item.Id"><span class="glyphicon glyphicon-download"></span> Dowload</a></td>
             </tr>
         }
     </tbody>
