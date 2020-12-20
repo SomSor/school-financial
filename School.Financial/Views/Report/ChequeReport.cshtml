@@ -7,10 +7,11 @@
 }
 
 <h1>ออกเช็ค</h1>
+<a asp-action="WithdrawReportFile" onclick="return WithdrawReportFile(this)"><span class="glyphicon glyphicon-download"></span> บันทึกขอเบิก</a>
 <table class="table">
     <thead>
         <tr>
-            <th>ลำดับที่</th>
+            <th><input type="checkbox" onchange="SelectAll(this)" /></th>
             <th>ชื่อ</th>
             <th>นิติบุคล/ร้านค้า</th>
             <th>รายการจ่าย</th>
@@ -27,7 +28,7 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@(index++)</td>
+                <td><input type="checkbox" id="@item.Id" class="chkSelect" /> @(index++)</td>
                 <td>@item.Partner.Name</td>
                 <td>@item.Partner.PartnerType</td>
                 <td>@item.Title</td>
@@ -37,8 +38,23 @@
                 <td class="text-right">@item.VatIncludeString</td>
                 <td class="text-right">@item.TotalAmountChequeString</td>
                 <td></td>
-                <td><a asp-action="ChequeReportFile" asp-route-id="@item.Id"><span class="glyphicon glyphicon-download"></span> Dowload</a></td>
+                <td><a asp-action="VatCertificateFile" asp-route-id="@item.Id"><span class="glyphicon glyphicon-download"></span> รับรองหักภาษี</a></td>
             </tr>
         }
     </tbody>
 </table>
+<a asp-action="WithdrawReportFile" onclick="return WithdrawReportFile(this)"><span class="glyphicon glyphicon-download"></span> บันทึกขอเบิก</a>
+
+@section scripts{
+    <script>
+        function SelectAll(sender) {
+            $(".chkSelect").each((i, it) => $(it).prop("checked", $(sender).prop("checked")));
+        }
+
+        function WithdrawReportFile(sender) {
+            var ids = $.map($(".chkSelect:checked"), it => $(it).prop("id"));
+            if (confirm("ต้องการออก บันทึกขอเบิก " + ids.length + " รายการ ใช่หรือไม่?")) { $(sender).prop("href", "/Report/WithdrawReportFile?ids=" + ids)}
+            else return false;
+        }
+    </script>
+}

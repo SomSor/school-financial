@@ -14,6 +14,26 @@ namespace School.Financial.Dac.Impl
             this.context = context;
         }
 
+        public IEnumerable<Transaction> Get(string ids)
+        {
+            var list = new List<Transaction>();
+            using (MySqlConnection conn = context.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select * from Transaction where FIND_IN_SET(id, @ids)", conn);
+                cmd.Parameters.AddWithValue("@ids", ids);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(ReadData(reader));
+                    }
+                }
+            }
+            return list;
+        }
+
         public IEnumerable<Transaction> Get()
         {
             var list = new List<Transaction>();

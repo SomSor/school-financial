@@ -103,6 +103,7 @@ namespace School.Financial.Controllers
             var issuer = identityService.GetUser();
             worksheet.Cells[7, Col.D].SetValue(issuer.Name);
             worksheet.Cells[8, Col.D].SetValue($"ตำแหน่ง เจ้าหน้าที่การเงิน{CurrentSchoolData.Name}");
+            //TODO: school director
             worksheet.Cells[14, Col.D].SetValue("นายสุขสันต์ สอนนวล");
             worksheet.Cells[15, Col.D].SetValue($"ผู้อำนวยการ{CurrentSchoolData.Name}");
             worksheet.Cells[17, Col.A].SetValue($"ข้าพเจ้า/ผู้รับมอบหมายได้รับเงินสดตามรายการข้างต้นแล้ว เมื่อวันที่ {month.Value.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH"))}");
@@ -143,7 +144,7 @@ namespace School.Financial.Controllers
             worksheet.PrintOptions.PaperType = PaperType.A4;
             workbook.Save(contentStream, SaveOptions.PdfDefault);
 
-            return File(contentStream, "application/pdf", "OverAllReport.pdf");
+            return File(contentStream, "application/pdf", $"OverAllReport-{month:yyyyMMdd}.pdf");
         }
 
         public ActionResult OverAllVatReport(DateTime? month)
@@ -210,50 +211,94 @@ namespace School.Financial.Controllers
             return View(transactions);
         }
 
-        public ActionResult ChequeReportFile(int id)
+        public ActionResult VatCertificateFile(int id)
         {
             var transaction = transactionDac.GetWithPartner(id);
-            var FileName = Path.Combine(Directory.GetCurrentDirectory(), "ReportSrc/chequereport.xlsx");
+            var FileName = Path.Combine(Directory.GetCurrentDirectory(), "ReportSrc/vatcertificate.xlsx");
 
             SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
             var workbook = ExcelFile.Load(FileName, LoadOptions.XlsxDefault);
             var worksheet = workbook.Worksheets[0];
 
-            worksheet.Cells[2, 17].SetValue(1);
-            worksheet.Cells[3, 17].SetValue(transaction.Id.ToString());
-            worksheet.Cells[5, 3].SetValue(CurrentSchoolData.Name);
-            worksheet.Cells[5, 17].SetValue(CurrentSchoolData.VatId);
-            worksheet.Cells[7, 3].SetValue(CurrentSchoolData.Address);
-            worksheet.Cells[11, 3].SetValue(transaction.Partner.Name);
-            worksheet.Cells[13, 3].SetValue(transaction.Partner.Address);
+            worksheet.Cells[2, Col.R].SetValue(1);
+            worksheet.Cells[3, Col.R].SetValue(transaction.Id.ToString());
+            worksheet.Cells[5, Col.D].SetValue(CurrentSchoolData.Name);
+            worksheet.Cells[5, Col.R].SetValue(CurrentSchoolData.VatId);
+            worksheet.Cells[7, Col.D].SetValue(CurrentSchoolData.Address);
+            worksheet.Cells[11, Col.D].SetValue(transaction.Partner.Name);
+            worksheet.Cells[13, Col.D].SetValue(transaction.Partner.Address);
             if (transaction.Partner.PartnerType == PartnerType.Person)
             {
-                worksheet.Cells[10, 17].SetValue(transaction.Partner.VatNumber);
-                worksheet.Cells[11, 17].SetValue(string.Empty);
+                worksheet.Cells[10, Col.R].SetValue(transaction.Partner.VatNumber);
+                worksheet.Cells[11, Col.R].SetValue(string.Empty);
             }
             else
             {
                 worksheet.Cells[10, 17].SetValue(string.Empty);
                 worksheet.Cells[11, 17].SetValue(transaction.Partner.VatNumber);
             }
-            worksheet.Cells[42, 6].SetValue(transaction.ProductType);
-            worksheet.Cells[42, 12].SetValue(transaction.IssueDate.ToString("d MMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
-            worksheet.Cells[42, 14].SetValue((double)(Math.Abs(transaction.Amount) - transaction.VatInclude.Value));
-            worksheet.Cells[42, 16].SetValue((double)transaction.VatInclude.Value);
-            worksheet.Cells[48, 14].SetValue((double)(Math.Abs(transaction.Amount) - transaction.VatInclude.Value));
-            worksheet.Cells[48, 16].SetValue((double)transaction.VatInclude.Value);
-            worksheet.Cells[50, 8].SetValue(VatHelper.ThaiBaht(transaction.VatInclude.ToString()));
-            worksheet.Cells[58, 10].SetValue(transaction.IssueDate.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
-            worksheet.Cells[62, 12].SetValue(transaction.IssueDate.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
-            worksheet.Cells[64, 5].SetValue(transaction.Partner.Name);
-            worksheet.Cells[66, 6].SetValue(VatHelper.ThaiBaht((Math.Abs(transaction.Amount) - transaction.VatInclude).ToString()));
-            worksheet.Cells[67, 13].SetValue((double)(Math.Abs(transaction.Amount) - transaction.VatInclude.Value));
+            worksheet.Cells[42, Col.G].SetValue(transaction.ProductType);
+            worksheet.Cells[42, Col.M].SetValue(transaction.IssueDate.ToString("d MMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+            worksheet.Cells[42, Col.O].SetValue((double)(Math.Abs(transaction.Amount) - transaction.VatInclude.Value));
+            worksheet.Cells[42, Col.Q].SetValue((double)transaction.VatInclude.Value);
+            worksheet.Cells[48, Col.O].SetValue((double)(Math.Abs(transaction.Amount) - transaction.VatInclude.Value));
+            worksheet.Cells[48, Col.Q].SetValue((double)transaction.VatInclude.Value);
+            worksheet.Cells[50, Col.I].SetValue(VatHelper.ThaiBaht(transaction.VatInclude.ToString()));
+            worksheet.Cells[58, Col.K].SetValue(transaction.IssueDate.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+            worksheet.Cells[62, Col.M].SetValue(transaction.IssueDate.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+            worksheet.Cells[64, Col.F].SetValue(transaction.Partner.Name);
+            worksheet.Cells[66, Col.G].SetValue(VatHelper.ThaiBaht((Math.Abs(transaction.Amount) - transaction.VatInclude).ToString()));
+            worksheet.Cells[67, Col.M].SetValue((double)(Math.Abs(transaction.Amount) - transaction.VatInclude.Value));
 
             var contentStream = new MemoryStream();
             worksheet.PrintOptions.PaperType = PaperType.A4;
             workbook.Save(contentStream, SaveOptions.PdfDefault);
 
-            return File(contentStream, "application/pdf", "ChequeReport.pdf");
+            return File(contentStream, "application/pdf", $"VatCertificate-{id}.pdf");
+        }
+
+        public ActionResult WithdrawReportFile(string ids, DateTime? date)
+        {
+            if (date == null) date = DateTime.UtcNow;
+
+            var transactions = transactionDac.Get(ids).OrderBy(x => x.IssueDate);
+            var FileName = Path.Combine(Directory.GetCurrentDirectory(), "ReportSrc/withdrawreport.xlsx");
+
+            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
+            var workbook = ExcelFile.Load(FileName, LoadOptions.XlsxDefault);
+            var worksheet = workbook.Worksheets[0];
+
+            worksheet.Cells[3, Col.A].SetValue($"ส่วนราชการ {CurrentSchoolData.Name}");
+            worksheet.Cells[4, Col.B].SetValue($"บง.01/2563");
+            worksheet.Cells[4, Col.F].SetValue(date.Value.ToString("d MMMM yyyy", CultureInfo.GetCultureInfo("th-TH")));
+            worksheet.Cells[6, Col.B].SetValue($"ผู้อำนวยการ{CurrentSchoolData.Name}");
+            var issuer = identityService.GetUser();
+            worksheet.Cells[8, Col.B].SetValue($"ด้วยข้าพเจ้า {issuer.Name} ตำแหน่ง {issuer.Position}");
+            worksheet.Cells[9, Col.A].SetValue($"{CurrentSchoolData.Name} ทำหน้าที่ หัวหน้างานการเงิน ขออนุมัติเบิก-จ่าย");
+            var amount = (double)Math.Abs(transactions.Sum(t => t.Amount));
+            worksheet.Cells[12, Col.A].SetValue(amount);
+            worksheet.Cells[12, Col.C].SetValue($"({VatHelper.ThaiBaht(amount.ToString())})");
+            worksheet.Cells[17, Col.D].SetValue($"({issuer.Name})");
+            //TODO: school director
+            worksheet.Cells[24, Col.E].SetValue("นายสุขสันต์ สอนนวล");
+            worksheet.Cells[25, Col.E].SetValue($"ตำแหน่ง ผู้อำนวยการ{CurrentSchoolData.Name}");
+
+            var tableRowIndex = 11;
+            var currentRowIndex = tableRowIndex;
+            foreach (var item in transactions)
+            {
+                worksheet.Rows.InsertEmpty(currentRowIndex);
+                worksheet.Rows[currentRowIndex].Style.Font = worksheet.Cells[0, 0].Style.Font;
+                worksheet.Cells[currentRowIndex, Col.A].SetValue($"- {item.Title}");
+
+                currentRowIndex++;
+            }
+
+            var contentStream = new MemoryStream();
+            worksheet.PrintOptions.PaperType = PaperType.A4;
+            workbook.Save(contentStream, SaveOptions.PdfDefault);
+
+            return File(contentStream, "application/pdf", $"WithdrawReport-{date:yyyyMMdd}.pdf");
         }
 
         public ActionResult DuplicatePaymentReport()

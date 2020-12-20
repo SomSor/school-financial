@@ -5,6 +5,7 @@ namespace School.Financial.Dac
 {
     public interface ITransactionDac : IDataDac<Models.Transaction>
     {
+        IEnumerable<Models.Transaction> Get(string ids);
         IEnumerable<Models.Transaction> Get(DateTime month);
         IEnumerable<Models.Transaction> Get(DateTime month, int budgetId);
         IEnumerable<Models.Transaction> GetTeackVat(DateTime month);

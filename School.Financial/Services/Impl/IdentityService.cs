@@ -12,7 +12,8 @@ namespace School.Financial.Services.Impl
         {
             return new
             {
-                Name = "นางสาวภานุมาศ ศรีกัน"
+                Name = "นางสาวภานุมาศ ศรีกัน",
+                Position = "ครู"
             };
         }
 
