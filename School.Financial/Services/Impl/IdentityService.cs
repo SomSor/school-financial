@@ -8,6 +8,14 @@ namespace School.Financial.Services.Impl
     {
         private readonly ISchoolDac schoolDac;
 
+        public dynamic GetUser()
+        {
+            return new
+            {
+                Name = "นางสาวภานุมาศ ศรีกัน"
+            };
+        }
+
         public IdentityService(ISchoolDac schoolDac)
         {
             this.schoolDac = schoolDac;

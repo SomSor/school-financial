@@ -1,6 +1,7 @@
 ﻿using GemBox.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
 using School.Financial.Dac;
+using School.Financial.Helpers;
 using School.Financial.Models;
 using School.Financial.Services;
 using System;
@@ -8,7 +9,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace School.Financial.Controllers
 {
@@ -83,65 +83,65 @@ namespace School.Financial.Controllers
                 Amount = b?.Amount ?? 0,
                 BudgetId = b.BudgetId,
             }));
-            var response = new OverAllReport
+
+            var FileName = Path.Combine(Directory.GetCurrentDirectory(), "ReportSrc/overallreport.xlsx");
+
+            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
+            var workbook = ExcelFile.Load(FileName, LoadOptions.XlsxDefault);
+            var worksheet = workbook.Worksheets[0];
+
+            worksheet.Cells[0, Col.A].SetValue(month.Value.ToString("MMMM", CultureInfo.CreateSpecificCulture("th-TH")));
+            worksheet.Cells[0, Col.C].SetValue(CurrentSchoolData.Name);
+            worksheet.Cells[2, Col.C].SetValue(month.Value.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+
+            var bankSumTotal = transactions.Sum(t => t.Amount).ToString("#,##0.00");
+            worksheet.Cells[5, Col.D].SetValue("0");
+            worksheet.Cells[5, Col.E].SetValue(bankSumTotal);
+            worksheet.Cells[5, Col.E].SetValue("0");
+            worksheet.Cells[5, Col.F].SetValue(bankSumTotal);
+
+            var issuer = identityService.GetUser();
+            worksheet.Cells[7, Col.D].SetValue(issuer.Name);
+            worksheet.Cells[8, Col.D].SetValue($"ตำแหน่ง เจ้าหน้าที่การเงิน{CurrentSchoolData.Name}");
+            worksheet.Cells[14, Col.D].SetValue("นายสุขสันต์ สอนนวล");
+            worksheet.Cells[15, Col.D].SetValue($"ผู้อำนวยการ{CurrentSchoolData.Name}");
+            worksheet.Cells[17, Col.A].SetValue($"ข้าพเจ้า/ผู้รับมอบหมายได้รับเงินสดตามรายการข้างต้นแล้ว เมื่อวันที่ {month.Value.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH"))}");
+
+            var tableRowIndex = 5;
+            var currentRowIndex = tableRowIndex;
+            foreach (var item in budgets)
             {
-                Budgets = budgets.OrderBy(x => x.Name).Select(x => new OverAllReportDetail
-                {
-                    Budget = x,
-                    Transactions = transactions.Where(t => t.BudgetId == x.Id).OrderBy(x => x.IssueDate).ThenBy(x => x.Id).ToList(),
-                }).ToList(),
-            };
+                worksheet.Rows.InsertCopy(currentRowIndex, worksheet.Rows[currentRowIndex]);
+                var bankSum = transactions.Where(t => t.BudgetId == item.Id)
+                    .OrderBy(x => x.IssueDate)
+                    .ThenBy(x => x.Id)
+                    .ToList()
+                    .Sum(t => t.Amount).ToString();
 
-            var content = System.IO.File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "ReportSrc/overallreport.xml"));
+                worksheet.Cells[currentRowIndex, Col.A].SetValue(item.Name);
+                worksheet.Cells[currentRowIndex, Col.D].SetValue(0);
+                worksheet.Cells[currentRowIndex, Col.E].SetValue(bankSum);
+                worksheet.Cells[currentRowIndex, Col.F].SetValue(0);
+                worksheet.Cells[currentRowIndex, Col.G].SetValue(bankSum);
 
-            var tableRowIndex = content.IndexOf("{tablerow-title}");
-            var startRowIndex = content.Substring(0, tableRowIndex).LastIndexOf("<Row");
-            var endRowIndex = content.IndexOf("</Row>", tableRowIndex) + 6;
+                worksheet.Cells[currentRowIndex, Col.A].Style.Borders[IndividualBorder.Top | IndividualBorder.Bottom].LineStyle = LineStyle.None;
+                worksheet.Cells[currentRowIndex, Col.A].Style.Borders[IndividualBorder.Left | IndividualBorder.Right].LineStyle = LineStyle.Thin;
+                worksheet.Cells[currentRowIndex, Col.D].Style = worksheet.Cells[currentRowIndex, Col.A].Style;
+                worksheet.Cells[currentRowIndex, Col.E].Style = worksheet.Cells[currentRowIndex, Col.A].Style;
+                worksheet.Cells[currentRowIndex, Col.F].Style = worksheet.Cells[currentRowIndex, Col.A].Style;
+                worksheet.Cells[currentRowIndex, Col.G].Style = worksheet.Cells[currentRowIndex, Col.A].Style;
 
-            var rowContentRaw = content.Substring(startRowIndex, endRowIndex - startRowIndex);
-
-            content = content.Replace("{month}", month.Value.ToString("MMMM", CultureInfo.CreateSpecificCulture("th-TH")));
-            content = content.Replace("{schoolname}", CurrentSchoolData.Name);
-            content = content.Replace("{date}", month.Value.ToString("dd MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
-
-            var RefersToText = "RefersTo=\"=Sheet1!R1C1:R";
-            var RefersToStartIndex = content.IndexOf(RefersToText) + RefersToText.Length;
-            var RefersToEndIndex = content.IndexOf("\"", RefersToStartIndex);
-            var RefersTo = content.Substring(RefersToStartIndex, RefersToEndIndex - RefersToStartIndex).Split("C");
-
-            var oldVal = $"{RefersToText}{RefersTo[0]}C{RefersTo[1]}\"";
-            var newVal = $"{RefersToText}{int.Parse(RefersTo[0]) + budgets.Count()}C{RefersTo[1]}\"";
-            content = content.Replace(oldVal, newVal);
-
-            var expandedRowCountText = "ExpandedRowCount=\"";
-            var expandedRowCountStartIndex = content.IndexOf(expandedRowCountText) + expandedRowCountText.Length;
-            var expandedRowCountEndIndex = content.IndexOf("\"", expandedRowCountStartIndex);
-            var expandedRowCount = content.Substring(expandedRowCountStartIndex, expandedRowCountEndIndex - expandedRowCountStartIndex);
-
-            oldVal = $"{expandedRowCountText}{expandedRowCount}\"";
-            newVal = $"{expandedRowCountText}{int.Parse(expandedRowCount) + budgets.Count()}\"";
-            content = content.Replace(oldVal, newVal);
-
-            var rowContent = string.Empty;
-            foreach (var item in response.Budgets)
-            {
-                var bankSum = item.Transactions.Sum(t => t.Amount).ToString();
-                rowContent += rowContentRaw
-                    .Replace("{tablerow-title}", item.Budget.Name)
-                    .Replace("Type=\"String\">{tablerow-cach}", "Type=\"Number\">0")
-                    .Replace("Type=\"String\">{tablerow-bank}", $"Type=\"Number\">{bankSum}")
-                    .Replace("Type=\"String\">{tablerow-deposit}", "Type=\"Number\">0")
-                    .Replace("Type=\"String\">{tablerow-total}", $"Type=\"Number\">{bankSum}");
+                currentRowIndex++;
             }
-            content = content.Replace(rowContentRaw, rowContent);
 
-            var bankSumTotal = transactions.Sum(t => t.Amount).ToString();
-            content = content.Replace("Type=\"String\">{total-cash}", "Type=\"Number\">0");
-            content = content.Replace("Type=\"String\">{total-bank}", $"Type=\"Number\">{bankSumTotal}");
-            content = content.Replace("Type=\"String\">{total-deposit}", "Type=\"Number\">0");
-            content = content.Replace("Type=\"String\">{total}", $"Type=\"Number\">{bankSumTotal}");
+            worksheet.Cells.GetSubrange($"A{tableRowIndex}", $"G{tableRowIndex + budgets.Count()}").Style.Borders[IndividualBorder.Top | IndividualBorder.Bottom].LineStyle = LineStyle.Thin;
+            worksheet.Cells.GetSubrange($"D{tableRowIndex + budgets.Count() + 1}", $"G{tableRowIndex + budgets.Count() + 1}").Style.Borders[IndividualBorder.Top].LineStyle = LineStyle.Thick;
 
-            return File(Encoding.UTF8.GetBytes(content), "application/vnd.ms-excel", "OverAllReport.xls");
+            var contentStream = new MemoryStream();
+            worksheet.PrintOptions.PaperType = PaperType.A4;
+            workbook.Save(contentStream, SaveOptions.PdfDefault);
+
+            return File(contentStream, "application/pdf", "OverAllReport.pdf");
         }
 
         public ActionResult OverAllVatReport(DateTime? month)
@@ -215,39 +215,40 @@ namespace School.Financial.Controllers
 
             SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
             var workbook = ExcelFile.Load(FileName, LoadOptions.XlsxDefault);
+            var worksheet = workbook.Worksheets[0];
 
-            workbook.Worksheets[0].Cells[2, 17].SetValue("1");
-            workbook.Worksheets[0].Cells[3, 17].SetValue(transaction.Id.ToString());
-            workbook.Worksheets[0].Cells[5, 3].SetValue(CurrentSchoolData.Name);
-            workbook.Worksheets[0].Cells[5, 17].SetValue(CurrentSchoolData.VatId);
-            workbook.Worksheets[0].Cells[7, 3].SetValue(CurrentSchoolData.Address);
-            workbook.Worksheets[0].Cells[11, 3].SetValue(transaction.Partner.Name);
-            workbook.Worksheets[0].Cells[13, 3].SetValue(transaction.Partner.Address);
+            worksheet.Cells[2, 17].SetValue("1");
+            worksheet.Cells[3, 17].SetValue(transaction.Id.ToString());
+            worksheet.Cells[5, 3].SetValue(CurrentSchoolData.Name);
+            worksheet.Cells[5, 17].SetValue(CurrentSchoolData.VatId);
+            worksheet.Cells[7, 3].SetValue(CurrentSchoolData.Address);
+            worksheet.Cells[11, 3].SetValue(transaction.Partner.Name);
+            worksheet.Cells[13, 3].SetValue(transaction.Partner.Address);
             if (transaction.Partner.PartnerType == PartnerType.Person)
             {
-                workbook.Worksheets[0].Cells[10, 17].SetValue(transaction.Partner.VatNumber);
-                workbook.Worksheets[0].Cells[11, 17].SetValue(string.Empty);
+                worksheet.Cells[10, 17].SetValue(transaction.Partner.VatNumber);
+                worksheet.Cells[11, 17].SetValue(string.Empty);
             }
             else
             {
-                workbook.Worksheets[0].Cells[10, 17].SetValue(string.Empty);
-                workbook.Worksheets[0].Cells[11, 17].SetValue(transaction.Partner.VatNumber);
+                worksheet.Cells[10, 17].SetValue(string.Empty);
+                worksheet.Cells[11, 17].SetValue(transaction.Partner.VatNumber);
             }
-            workbook.Worksheets[0].Cells[42, 6].SetValue(transaction.ProductType);
-            workbook.Worksheets[0].Cells[42, 12].SetValue(transaction.IssueDate.ToString("d MMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
-            workbook.Worksheets[0].Cells[42, 14].SetValue((Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
-            workbook.Worksheets[0].Cells[42, 16].SetValue(transaction.VatInclude.Value.ToString("#,##0.00"));
-            workbook.Worksheets[0].Cells[48, 14].SetValue((Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
-            workbook.Worksheets[0].Cells[48, 16].SetValue(transaction.VatInclude.Value.ToString("#,##0.00"));
-            workbook.Worksheets[0].Cells[50, 8].SetValue(Helpers.VatHelper.ThaiBaht(transaction.VatInclude.ToString()));
-            workbook.Worksheets[0].Cells[58, 10].SetValue(transaction.IssueDate.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
-            workbook.Worksheets[0].Cells[62, 12].SetValue(transaction.IssueDate.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
-            workbook.Worksheets[0].Cells[64, 5].SetValue(transaction.Partner.Name);
-            workbook.Worksheets[0].Cells[66, 6].SetValue(Helpers.VatHelper.ThaiBaht((Math.Abs(transaction.Amount) - transaction.VatInclude).ToString()));
-            workbook.Worksheets[0].Cells[67, 13].SetValue((Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
+            worksheet.Cells[42, 6].SetValue(transaction.ProductType);
+            worksheet.Cells[42, 12].SetValue(transaction.IssueDate.ToString("d MMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+            worksheet.Cells[42, 14].SetValue((Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
+            worksheet.Cells[42, 16].SetValue(transaction.VatInclude.Value.ToString("#,##0.00"));
+            worksheet.Cells[48, 14].SetValue((Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
+            worksheet.Cells[48, 16].SetValue(transaction.VatInclude.Value.ToString("#,##0.00"));
+            worksheet.Cells[50, 8].SetValue(Helpers.VatHelper.ThaiBaht(transaction.VatInclude.ToString()));
+            worksheet.Cells[58, 10].SetValue(transaction.IssueDate.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+            worksheet.Cells[62, 12].SetValue(transaction.IssueDate.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
+            worksheet.Cells[64, 5].SetValue(transaction.Partner.Name);
+            worksheet.Cells[66, 6].SetValue(Helpers.VatHelper.ThaiBaht((Math.Abs(transaction.Amount) - transaction.VatInclude).ToString()));
+            worksheet.Cells[67, 13].SetValue((Math.Abs(transaction.Amount) - transaction.VatInclude.Value).ToString("#,##0.00"));
 
             var contentStream = new MemoryStream();
-            workbook.Worksheets[0].PrintOptions.PaperType = PaperType.A4;
+            worksheet.PrintOptions.PaperType = PaperType.A4;
             workbook.Save(contentStream, SaveOptions.PdfDefault);
 
             return File(contentStream, "application/pdf", "ChequeReport.pdf");
