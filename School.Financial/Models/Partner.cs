@@ -12,6 +12,8 @@ namespace School.Financial.Models
         public string Address { get; set; }
         [Display(Name = "ประเภท")]
         public string PartnerType { get; set; }
+        [Display(Name = "บุคคลากรภายใน")]
+        public bool IsInternal { get; set; }
 
         public string PartnerTypeString => PartnerType switch
         {

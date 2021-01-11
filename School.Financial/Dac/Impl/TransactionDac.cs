@@ -222,18 +222,39 @@ namespace School.Financial.Dac.Impl
             return null;
         }
 
+        public Transaction GetLastDuplicatePaymentNumber(string year)
+        {
+            using (MySqlConnection conn = context.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select * from Transaction where DuplicatePaymentYear=@DuplicatePaymentYear and " +
+                    "DuplicatePaymentNumber=(select max(convert(DuplicatePaymentNumber,UNSIGNED INTEGER)) from transaction where DuplicatePaymentYear=@DuplicatePaymentYear and Amount<0)", conn);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentYear", year);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return ReadData(reader);
+                    }
+                }
+            }
+            return default;
+        }
+
         public int Insert(Transaction data)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
                 MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (" +
-                    "0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear," +
+                    "0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentCount,@DuplicatePaymentYear," +
                     "@Title,@Remark,@PartnerId,@Amount,@PaymentType," +
                     "@VatInclude,@ProductType,@BudgetId,@SchoolId,@CreatedDate)", conn);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentNumber", data.DuplicatePaymentNumber);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentCount", data.DuplicatePaymentCount);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentYear", data.DuplicatePaymentYear);
                 cmd.Parameters.AddWithValue("@Title", data.Title);
                 cmd.Parameters.AddWithValue("@Remark", data.Remark);
@@ -257,13 +278,14 @@ namespace School.Financial.Dac.Impl
             {
                 conn.Open();
                 MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (" +
-                    "0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear," +
+                    "0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentCount,@DuplicatePaymentYear," +
                     "@Title,@Remark,@PartnerId,@Amount,@PaymentType," +
                     "@VatInclude,@ProductType,@BudgetId,@SchoolId,@CreatedDate)", conn);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
                 //TODO: auto running DuplicatePaymentNumber
                 cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentNumber", data.DuplicatePaymentNumber);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentCount", data.DuplicatePaymentCount);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentYear", data.DuplicatePaymentYear);
                 cmd.Parameters.AddWithValue("@Title", data.Title);
                 cmd.Parameters.AddWithValue("@Remark", data.Remark);
@@ -287,12 +309,14 @@ namespace School.Financial.Dac.Impl
             {
                 conn.Open();
                 MySqlCommand cmd = new MySqlCommand("UPDATE `Transaction` SET " +
-                    "`IssueDate`=@IssueDate,`DuplicatePaymentType`=@DuplicatePaymentType,`DuplicatePaymentNumber`=@DuplicatePaymentNumber,`DuplicatePaymentYear`=@DuplicatePaymentYear,`Title`=@Title," +
+                    "`IssueDate`=@IssueDate,`DuplicatePaymentType`=@DuplicatePaymentType,`DuplicatePaymentNumber`=@DuplicatePaymentNumber," +
+                    "`DuplicatePaymentCount`=@DuplicatePaymentCount,`DuplicatePaymentYear`=@DuplicatePaymentYear,`Title`=@Title," +
                     "`Remark`=@Remark,`PartnerId`=@PartnerId,`Amount`=@Amount,`PaymentType`=@PaymentType,`VatInclude`=@VatInclude," +
                     "`ProductType`=@ProductType WHERE `Id`=@Id", conn);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentNumber", data.DuplicatePaymentNumber);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentCount", data.DuplicatePaymentCount);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentYear", data.DuplicatePaymentYear);
                 cmd.Parameters.AddWithValue("@Title", data.Title);
                 cmd.Parameters.AddWithValue("@Remark", data.Remark);
@@ -313,17 +337,19 @@ namespace School.Financial.Dac.Impl
             {
                 conn.Open();
                 MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (" +
-                    "@Id,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentYear," +
+                    "@Id,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentCount,@DuplicatePaymentYear," +
                     "@Title,@Remark,@PartnerId,@Amount,@PaymentType," +
                     "@VatInclude,@ProductType,@BudgetId,@SchoolId,@CreatedDate)" +
                     "ON DUPLICATE KEY UPDATE " +
-                    "`IssueDate`=@IssueDate,`DuplicatePaymentType`=@DuplicatePaymentType,`DuplicatePaymentNumber`=@DuplicatePaymentNumber,`DuplicatePaymentYear`=@DuplicatePaymentYear,`Title`=@Title," +
+                    "`IssueDate`=@IssueDate,`DuplicatePaymentType`=@DuplicatePaymentType,`DuplicatePaymentNumber`=@DuplicatePaymentNumber," +
+                    "`DuplicatePaymentCount`=@DuplicatePaymentCount,`DuplicatePaymentYear`=@DuplicatePaymentYear,`Title`=@Title," +
                     "`Remark`=@Remark,`PartnerId`=@PartnerId,`Amount`=@Amount,`PaymentType`=@PaymentType,`VatInclude`=@VatInclude," +
                     "`ProductType`=@ProductType", conn);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentNumber", data.DuplicatePaymentNumber);
+                cmd.Parameters.AddWithValue("@DuplicatePaymentCount", data.DuplicatePaymentCount);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentYear", data.DuplicatePaymentYear);
                 cmd.Parameters.AddWithValue("@Title", data.Title);
                 cmd.Parameters.AddWithValue("@Remark", data.Remark);
@@ -361,6 +387,7 @@ namespace School.Financial.Dac.Impl
                 IssueDate = Convert.ToDateTime(reader["IssueDate"]),
                 DuplicatePaymentType = reader["DuplicatePaymentType"] == DBNull.Value ? null : reader["DuplicatePaymentType"].ToString(),
                 DuplicatePaymentNumber = reader["DuplicatePaymentNumber"] == DBNull.Value ? null : reader["DuplicatePaymentNumber"].ToString(),
+                DuplicatePaymentCount = reader["DuplicatePaymentCount"] == DBNull.Value ? default : Convert.ToInt32(reader["DuplicatePaymentCount"]),
                 DuplicatePaymentYear = reader["DuplicatePaymentYear"] == DBNull.Value ? null : reader["DuplicatePaymentYear"].ToString(),
                 Title = reader["Title"].ToString(),
                 Remark = reader["Remark"] == DBNull.Value ? null : reader["Remark"].ToString(),
@@ -383,6 +410,7 @@ namespace School.Financial.Dac.Impl
                 IssueDate = Convert.ToDateTime(reader["IssueDate"]),
                 DuplicatePaymentType = reader["DuplicatePaymentType"] == DBNull.Value ? null : reader["DuplicatePaymentType"].ToString(),
                 DuplicatePaymentNumber = reader["DuplicatePaymentNumber"] == DBNull.Value ? null : reader["DuplicatePaymentNumber"].ToString(),
+                DuplicatePaymentCount = reader["DuplicatePaymentCount"] == DBNull.Value ? default : Convert.ToInt32(reader["DuplicatePaymentCount"]),
                 DuplicatePaymentYear = reader["DuplicatePaymentYear"] == DBNull.Value ? null : reader["DuplicatePaymentYear"].ToString(),
                 Title = reader["Title"].ToString(),
                 Remark = reader["Remark"] == DBNull.Value ? null : reader["Remark"].ToString(),

@@ -36,14 +36,7 @@
             @Html.DisplayNameFor(model => model.DuplicatePaymentType)
         </dt>
         <dd class="col-sm-10">
-            @if (Model.PaymentType == PaymentType.DuplicatePayment || Model.PaymentType == PaymentType.Debtor)
-            {
-                @($"{Model.DuplicatePaymentType}{Model.DuplicatePaymentNumber}/{Model.DuplicatePaymentYear}");
-            }
-            else
-            {
-                @($"{Model.DuplicatePaymentType}{Model.DuplicatePaymentNumber}");
-            }
+            @Html.DisplayFor(model => model.DuplicatePaymentString)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)

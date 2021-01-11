@@ -4,5 +4,6 @@
     {
         dynamic GetUser();
         Models.SchoolData GetCurrentSchool();
+        Models.SchoolConfig GetConfig();
     }
 }

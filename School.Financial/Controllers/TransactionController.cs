@@ -19,6 +19,9 @@ namespace School.Financial.Controllers
         private SchoolData _currentSchoolData { get; set; }
         public SchoolData CurrentSchoolData { get { return _currentSchoolData ??= identityService.GetCurrentSchool(); } }
 
+        private SchoolConfig _currentSchoolConfig { get; set; }
+        public SchoolConfig CurrentSchoolConfig { get { return _currentSchoolConfig ??= identityService.GetConfig(); } }
+
         public TransactionController(
             IBudgetDac budgetDac,
             IPartnerDac partnerDac,
@@ -53,7 +56,7 @@ namespace School.Financial.Controllers
                 Amount = x.VatInclude.Value,
             }));
             ViewBag.budgets = budgets.OrderBy(x => x.Name);
-            return View(transactions.OrderBy(x => x.IssueDate).ThenBy(x => x.Id));
+            return View(transactions.OrderBy(x => x.IssueDate).ThenBy(x => x.DuplicatePaymentNumber));
         }
 
         public IActionResult Details(int id)
@@ -88,6 +91,7 @@ namespace School.Financial.Controllers
             request.PartnerId = null;
             request.VatInclude = null;
             request.Amount = Math.Abs(request.Amount);
+            request.SchoolId = CurrentSchoolData.Id;
 
             transactionDac.Insert(request);
             CalculateBringForword(request.IssueDate, request.BudgetId);
@@ -106,6 +110,7 @@ namespace School.Financial.Controllers
             });
             ViewBag.Budets = budgets.OrderBy(x => x.Name);
             ViewBag.Partners = partners;
+            ViewBag.SchoolYear = CurrentSchoolConfig.SchoolYear;
             return View();
         }
 
@@ -117,7 +122,7 @@ namespace School.Financial.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreatePayment(Transaction request, string trackVat)
+        public IActionResult CreatePayment(Transaction request, string trackVat, int DPYCount)
         {
             if (request.PartnerId.HasValue)
             {
@@ -128,13 +133,21 @@ namespace School.Financial.Controllers
                     PartnerType.Person => VatHelper.GetPersonVatFromFullAmount(request.Amount),
                     _ => 0,
                 };
+                var lastDuplicatePaymentNumber = transactionDac.GetLastDuplicatePaymentNumber(CurrentSchoolConfig.SchoolYear);
+                var nextNumber = int.Parse(lastDuplicatePaymentNumber?.DuplicatePaymentNumber ?? "1") + (lastDuplicatePaymentNumber?.DuplicatePaymentCount ?? 0);
+                request.DuplicatePaymentType = partner.IsInternal ? "บค." : "บจ.";
+                request.DuplicatePaymentNumber = nextNumber.ToString();
+                request.DuplicatePaymentCount = DPYCount < 1 ? 1 : DPYCount;
+                request.DuplicatePaymentYear = CurrentSchoolConfig.SchoolYear;
             }
             request.Amount = -Math.Abs(request.Amount);
+            request.SchoolId = CurrentSchoolData.Id;
 
             if (request.BudgetId == 0)
             {
                 request.DuplicatePaymentType = null;
                 request.DuplicatePaymentNumber = null;
+                request.DuplicatePaymentCount = null;
                 request.DuplicatePaymentYear = null;
                 request.PaymentType = null;
                 request.PartnerId = null;

@@ -49,16 +49,7 @@
             remain += item.Amount;
             <tr>
                 <td class="showdate">@item.IssueDateString</td>
-                <td>
-                    @if (item.PaymentType == PaymentType.DuplicatePayment || item.PaymentType == PaymentType.Debtor)
-                    {
-                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}/{item.DuplicatePaymentYear}");
-                    }
-                    else
-                    {
-                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}");
-                    }
-                </td>
+                <td>@item.DuplicatePaymentString</td>
                 <td>@item.Title</td>
                 @if (item.Amount >= 0)
                 {

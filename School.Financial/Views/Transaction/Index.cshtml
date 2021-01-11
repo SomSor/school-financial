@@ -31,16 +31,7 @@
             <tr>
                 <td class="showdate">@item.IssueDateString</td>
                 <td>@(budgets.FirstOrDefault(x => x.Id == item.BudgetId)?.Name)</td>
-                <td>
-                    @if (item.PaymentType == PaymentType.DuplicatePayment || item.PaymentType == PaymentType.Debtor)
-                    {
-                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}/{item.DuplicatePaymentYear}");
-                    }
-                    else
-                    {
-                        @($"{item.DuplicatePaymentType}{item.DuplicatePaymentNumber}");
-                    }
-                </td>
+                <td>@item.DuplicatePaymentString</td>
                 <td>@item.Title</td>
                 @if (item.Amount >= 0)
                 {

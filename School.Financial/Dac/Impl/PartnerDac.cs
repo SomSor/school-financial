@@ -57,11 +57,12 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Partner` VALUES (0,@Name,@VatNumber,@Address,@PartnerType,@CreatedDate)", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Partner` VALUES (0,@Name,@VatNumber,@Address,@PartnerType,@IsInternal,@CreatedDate)", conn);
                 cmd.Parameters.AddWithValue("@Name", data.Name);
                 cmd.Parameters.AddWithValue("@VatNumber", data.VatNumber);
                 cmd.Parameters.AddWithValue("@Address", data.Address);
                 cmd.Parameters.AddWithValue("@PartnerType", data.PartnerType);
+                cmd.Parameters.AddWithValue("@IsInternal", data.IsInternal);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -90,13 +91,14 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Partner` VALUES (@Id,@Name,@VatNumber,@Address,@PartnerType,@CreatedDate)" +
-                    "ON DUPLICATE KEY UPDATE `Name`=@Name,`VatNumber`=@VatNumber,`Address`=@Address,`PartnerType`=@PartnerType", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `Partner` VALUES (@Id,@Name,@VatNumber,@Address,@PartnerType,@IsInternal,@CreatedDate)" +
+                    "ON DUPLICATE KEY UPDATE `Name`=@Name,`VatNumber`=@VatNumber,`Address`=@Address,`PartnerType`=@PartnerType,`IsInternal`=@IsInternal", conn);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
                 cmd.Parameters.AddWithValue("@Name", data.Name);
                 cmd.Parameters.AddWithValue("@VatNumber", data.VatNumber);
                 cmd.Parameters.AddWithValue("@Address", data.Address);
                 cmd.Parameters.AddWithValue("@PartnerType", data.PartnerType);
+                cmd.Parameters.AddWithValue("@IsInternal", data.IsInternal);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -125,6 +127,7 @@ namespace School.Financial.Dac.Impl
                 VatNumber = reader["VatNumber"] == DBNull.Value ? null : reader["VatNumber"].ToString(),
                 Address = reader["Address"] == DBNull.Value ? null : reader["Address"].ToString(),
                 PartnerType = reader["PartnerType"] == DBNull.Value ? null : reader["PartnerType"].ToString(),
+                IsInternal = Convert.ToBoolean(reader["IsInternal"]),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
             };
         }

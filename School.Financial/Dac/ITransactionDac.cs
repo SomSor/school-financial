@@ -15,6 +15,8 @@ namespace School.Financial.Dac
         IEnumerable<Models.TransactionWithPartner> GetWithPartner();
         Models.TransactionWithPartner GetWithPartner(int id);
 
+        Models.Transaction GetLastDuplicatePaymentNumber(string year);
+
         int InsertPayment(Models.Transaction data);
     }
 }
