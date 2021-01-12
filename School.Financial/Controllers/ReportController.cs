@@ -231,11 +231,13 @@ namespace School.Financial.Controllers
             {
                 worksheet.Cells[10, Col.R].SetValue(transaction.Partner.VatNumber);
                 worksheet.Cells[11, Col.R].SetValue(string.Empty);
+                worksheet.Cells[17, Col.Q].SetValue("☑ (4) ภ.ง.ด.3");
             }
             else
             {
                 worksheet.Cells[10, 17].SetValue(string.Empty);
                 worksheet.Cells[11, 17].SetValue(transaction.Partner.VatNumber);
+                worksheet.Cells[17, Col.Q].SetValue("☑ (7) ภ.ง.ด.53");
             }
             worksheet.Cells[42, Col.G].SetValue(transaction.ProductType);
             worksheet.Cells[42, Col.M].SetValue(transaction.IssueDate.ToString("d MMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));

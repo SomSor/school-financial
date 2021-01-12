@@ -69,8 +69,8 @@
             <div class="form-group" id="div_PaymentType">
                 <label asp-for="PaymentType" class="control-label"></label>
                 <select asp-for="PaymentType" class="form-control">
-                    <option>ใบสำคัญ</option>
-                    <option>ลูกหนี้</option>
+                    <option value="DuplicatePayment">ใบสำคัญ</option>
+                    <option value="Debtor">ลูกหนี้</option>
                     <option value="">ไม่ระบุ</option>
                 </select>
                 <span asp-validation-for="PaymentType" class="text-danger"></span>
