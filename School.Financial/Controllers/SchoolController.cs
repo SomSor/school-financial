@@ -21,7 +21,7 @@ namespace School.Financial.Controllers
 
         public IActionResult Index()
         {
-            var schools = schoolDac.Get().OrderBy(x => x.Name);
+            var schools = schoolDac.Get().OrderBy(x => x.sc_name);
             var educationAreas = educationAreaDac.Get();
             ViewBag.educationAreas = educationAreas;
             return View(schools);
@@ -30,7 +30,7 @@ namespace School.Financial.Controllers
         public IActionResult Details(int id)
         {
             var school = schoolDac.Get(id);
-            var educationArea = educationAreaDac.Get(school.EducationAreaId);
+            var educationArea = educationAreaDac.Get(school.areacode);
             ViewBag.educationArea = educationArea;
             return View(school);
         }
@@ -73,7 +73,7 @@ namespace School.Financial.Controllers
             {
                 var school = schoolDac.Get(id);
 
-                school.Name = request.Name;
+                school.sc_name = request.sc_name;
 
                 schoolDac.Update(school);
                 return RedirectToAction(nameof(Index));
@@ -87,7 +87,7 @@ namespace School.Financial.Controllers
         public IActionResult Delete(int id)
         {
             var school = schoolDac.Get(id);
-            var educationArea = educationAreaDac.Get(school.EducationAreaId);
+            var educationArea = educationAreaDac.Get(school.areacode);
             ViewBag.educationArea = educationArea;
             return View(school);
         }

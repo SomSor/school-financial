@@ -13,9 +13,14 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" required />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="sao_type" class="control-label"></label>
+                <input asp-for="sao_type" class="form-control" required />
+                <span asp-validation-for="sao_type" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="sao_name" class="control-label"></label>
+                <input asp-for="sao_name" class="form-control" required />
+                <span asp-validation-for="sao_name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="แก้ไข" class="btn btn-primary" />

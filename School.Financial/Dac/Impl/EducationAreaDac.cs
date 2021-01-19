@@ -20,7 +20,7 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from EducationArea", conn);
+                MySqlCommand cmd = new MySqlCommand("select * from sao", conn);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -38,7 +38,26 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from EducationArea where id = @id", conn);
+                MySqlCommand cmd = new MySqlCommand("select * from sao where sao_id = @id", conn);
+                cmd.Parameters.AddWithValue("@id", id);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return ReadData(reader);
+                    }
+                }
+            }
+            return null;
+        }
+
+        public EducationArea Get(string id)
+        {
+            using (MySqlConnection conn = context.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select * from sao where sao_id = @id", conn);
                 cmd.Parameters.AddWithValue("@id", id);
 
                 using (var reader = cmd.ExecuteReader())
@@ -57,8 +76,9 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `EducationArea` VALUES (0,@Name,@CreatedDate)", conn);
-                cmd.Parameters.AddWithValue("@Name", data.Name);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `sao`(`sao_id`, `sao_type`, `sao_name`) VALUES (@Id,=@Type,@Name)", conn);
+                cmd.Parameters.AddWithValue("@Type", data.sao_type);
+                cmd.Parameters.AddWithValue("@Name", data.sao_name);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -71,9 +91,10 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("UPDATE `EducationArea` SET `Name`=@Name WHERE `Id`=@Id", conn);
-                cmd.Parameters.AddWithValue("@Name", data.Name);
-                cmd.Parameters.AddWithValue("@Id", data.Id);
+                MySqlCommand cmd = new MySqlCommand("UPDATE `sao` SET `sao_type`=@Type,`sao_name`=@Name WHERE `sao_id`=@Id", conn);
+                cmd.Parameters.AddWithValue("@Type", data.sao_type);
+                cmd.Parameters.AddWithValue("@Name", data.sao_name);
+                cmd.Parameters.AddWithValue("@Id", data.sao_id);
 
                 cmd.ExecuteNonQuery();
             }
@@ -84,11 +105,11 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `EducationArea` VALUES (@Id,@Name,@CreatedDate)" +
-                    "ON DUPLICATE KEY UPDATE `Name`=@Name", conn);
-                cmd.Parameters.AddWithValue("@Id", data.Id);
-                cmd.Parameters.AddWithValue("@Name", data.Name);
-                cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `sao`(`sao_id`, `sao_type`, `sao_name`) VALUES (@Id,=@Type,@Name)" +
+                    "ON DUPLICATE KEY UPDATE `sao_type`=@Type,`sao_name`=@Name", conn);
+                cmd.Parameters.AddWithValue("@Id", data.sao_id);
+                cmd.Parameters.AddWithValue("@Type", data.sao_type);
+                cmd.Parameters.AddWithValue("@Name", data.sao_name);
 
                 cmd.ExecuteNonQuery();
                 return (int)cmd.LastInsertedId;
@@ -100,7 +121,7 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("DELETE FROM `EducationArea` WHERE `id`=@id", conn);
+                MySqlCommand cmd = new MySqlCommand("DELETE FROM `sao` WHERE `sao_id`=@id", conn);
                 cmd.Parameters.AddWithValue("@id", id);
 
                 cmd.ExecuteNonQuery();
@@ -111,9 +132,9 @@ namespace School.Financial.Dac.Impl
         {
             return new EducationArea()
             {
-                Id = Convert.ToInt32(reader["Id"]),
-                Name = reader["Name"].ToString(),
-                CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
+                sao_id = reader["sao_id"].ToString(),
+                sao_type = reader["sao_type"].ToString(),
+                sao_name = reader["sao_name"].ToString(),
             };
         }
     }

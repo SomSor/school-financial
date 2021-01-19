@@ -11,26 +11,26 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
+            @Html.DisplayNameFor(model => model.sao_id)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id)
+            @Html.DisplayFor(model => model.sao_id)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.sao_type)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.sao_type)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDate)
+            @Html.DisplayNameFor(model => model.sao_name)
         </dt>
-        <dd class="col-sm-10 showdatetime">
-            @Html.DisplayFor(model => model.CreatedDateString)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.sao_name)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">แก้ไข</a> |
+    <a asp-action="Edit" asp-route-id="@Model.sao_id">แก้ไข</a> |
     <a asp-action="Index">กลับ</a>
 </div>

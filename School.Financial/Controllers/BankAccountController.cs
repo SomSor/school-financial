@@ -26,7 +26,7 @@ namespace School.Financial.Controllers
         public IActionResult Index()
         {
             var bankAccounts = bankAccountDac.Get()
-                .Where(x => x.SchoolId == CurrentSchoolData.Id)
+                .Where(x => x.SchoolId == CurrentSchoolData.sc_id)
                 .OrderBy(x => x.BankName)
                 .ThenBy(x => x.AccountNumber)
                 .ThenBy(x => x.AccountName);
@@ -51,7 +51,7 @@ namespace School.Financial.Controllers
             try
             {
                 var school = identityService.GetCurrentSchool();
-                request.SchoolId = school.Id;
+                request.SchoolId = school.sc_id;
                 bankAccountDac.Insert(request);
                 return RedirectToAction(nameof(Index));
             }

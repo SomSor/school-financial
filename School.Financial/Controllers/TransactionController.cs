@@ -39,7 +39,7 @@ namespace School.Financial.Controllers
 
         public IActionResult Index()
         {
-            var transactions = transactionDac.Get().Where(x => x.SchoolId == CurrentSchoolData.Id).ToList();
+            var transactions = transactionDac.Get().Where(x => x.SchoolId == CurrentSchoolData.sc_id).ToList();
             var budgets = budgetDac.Get().ToList();
             budgets.Add(new Budget
             {
@@ -91,7 +91,7 @@ namespace School.Financial.Controllers
             request.PartnerId = null;
             request.VatInclude = null;
             request.Amount = Math.Abs(request.Amount);
-            request.SchoolId = CurrentSchoolData.Id;
+            request.SchoolId = CurrentSchoolData.sc_id;
 
             transactionDac.Insert(request);
             CalculateBringForword(request.IssueDate, request.BudgetId);
@@ -141,7 +141,7 @@ namespace School.Financial.Controllers
                 request.DuplicatePaymentYear = CurrentSchoolConfig.SchoolYear;
             }
             request.Amount = -Math.Abs(request.Amount);
-            request.SchoolId = CurrentSchoolData.Id;
+            request.SchoolId = CurrentSchoolData.sc_id;
 
             if (request.BudgetId == 0)
             {

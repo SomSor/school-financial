@@ -15,16 +15,101 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" required />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="sc_id" class="control-label"></label>
+                <input asp-for="sc_id" class="form-control" required />
+                <span asp-validation-for="sc_id" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="EducationAreaId" class="control-label"></label>
-                <select asp-for="EducationAreaId" asp-items="@(new SelectList(educationAreas,"Id","Name"))" class="form-control" required>
+                <label asp-for="smis" class="control-label"></label>
+                <input asp-for="smis" class="form-control" required />
+                <span asp-validation-for="smis" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="sc_code" class="control-label"></label>
+                <input asp-for="sc_code" class="form-control" required />
+                <span asp-validation-for="sc_code" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="sc_name" class="control-label"></label>
+                <input asp-for="sc_name" class="form-control" required />
+                <span asp-validation-for="sc_name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="areacode" class="control-label"></label>
+                <select asp-for="areacode" asp-items="@(new SelectList(educationAreas,"sao_id","sao_name"))" class="form-control" required>
                     <option value="">เลือก ...</option>
                 </select>
-                <span asp-validation-for="EducationAreaId" class="text-danger"></span>
+                <span asp-validation-for="areacode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="sc_network" class="control-label"></label>
+                <input asp-for="sc_network" class="form-control" required />
+                <span asp-validation-for="sc_network" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="aumphur" class="control-label"></label>
+                <input asp-for="aumphur" class="form-control" required />
+                <span asp-validation-for="aumphur" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="province" class="control-label"></label>
+                <input asp-for="province" class="form-control" required />
+                <span asp-validation-for="province" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="spt" class="control-label"></label>
+                <input asp-for="spt" class="form-control" required />
+                <span asp-validation-for="spt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="add1" class="control-label"></label>
+                <input asp-for="add1" class="form-control" required />
+                <span asp-validation-for="add1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="add2" class="control-label"></label>
+                <input asp-for="add2" class="form-control" required />
+                <span asp-validation-for="add2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="tumbol" class="control-label"></label>
+                <input asp-for="tumbol" class="form-control" required />
+                <span asp-validation-for="tumbol" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="p_code" class="control-label"></label>
+                <input asp-for="p_code" class="form-control" required />
+                <span asp-validation-for="p_code" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="tel" class="control-label"></label>
+                <input asp-for="tel" class="form-control" required />
+                <span asp-validation-for="tel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="low_class" class="control-label"></label>
+                <input asp-for="low_class" class="form-control" required />
+                <span asp-validation-for="low_class" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="top_class" class="control-label"></label>
+                <input asp-for="top_class" class="form-control" required />
+                <span asp-validation-for="top_class" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="lat" class="control-label"></label>
+                <input asp-for="lat" class="form-control" required />
+                <span asp-validation-for="lat" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="lng" class="control-label"></label>
+                <input asp-for="lng" class="form-control" required />
+                <span asp-validation-for="lng" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VatId" class="control-label"></label>
+                <input asp-for="VatId" class="form-control" required />
+                <span asp-validation-for="VatId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="แก้ไข" class="btn btn-primary" />

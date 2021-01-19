@@ -28,7 +28,7 @@ namespace School.Financial.Controllers
 
         public IActionResult Index()
         {
-            var budgets = budgetDac.Get().Where(x => x.SchoolId == CurrentSchoolData.Id).OrderBy(x => x.Name);
+            var budgets = budgetDac.Get().Where(x => x.SchoolId == CurrentSchoolData.sc_id).OrderBy(x => x.Name);
             var bankAccounts = bankAccountDac.Get();
             ViewBag.bankAccounts = bankAccounts;
             return View(budgets);
@@ -56,7 +56,7 @@ namespace School.Financial.Controllers
             try
             {
                 var school = identityService.GetCurrentSchool();
-                request.SchoolId = school.Id;
+                request.SchoolId = school.sc_id;
                 budgetDac.Insert(request);
                 return RedirectToAction(nameof(Index));
             }

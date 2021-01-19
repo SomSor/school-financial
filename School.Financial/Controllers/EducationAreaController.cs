@@ -16,7 +16,7 @@ namespace School.Financial.Controllers
 
         public IActionResult Index()
         {
-            var educationAreas = educationAreaDac.Get().OrderBy(x => x.Name);
+            var educationAreas = educationAreaDac.Get().OrderBy(x => x.sao_name);
             return View(educationAreas);
         }
 
@@ -60,7 +60,7 @@ namespace School.Financial.Controllers
             {
                 var educationArea = educationAreaDac.Get(id);
 
-                educationArea.Name = request.Name;
+                educationArea.sao_name = request.sao_name;
 
                 educationAreaDac.Update(educationArea);
                 return RedirectToAction(nameof(Index));

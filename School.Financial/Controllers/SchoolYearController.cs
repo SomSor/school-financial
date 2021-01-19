@@ -26,7 +26,7 @@ namespace School.Financial.Controllers
         public IActionResult Index()
         {
             var schoolYears = schoolYearDac.Get()
-                .Where(x => x.SchoolId == CurrentSchoolData.Id)
+                .Where(x => x.SchoolId == CurrentSchoolData.sc_id)
                 .OrderBy(x => x.Year);
             return View(schoolYears);
         }
@@ -49,7 +49,7 @@ namespace School.Financial.Controllers
             try
             {
                 var school = identityService.GetCurrentSchool();
-                request.SchoolId = school.Id;
+                request.SchoolId = school.sc_id;
                 schoolYearDac.Insert(request);
                 return RedirectToAction(nameof(Index));
             }

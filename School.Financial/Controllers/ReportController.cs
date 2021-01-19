@@ -91,7 +91,7 @@ namespace School.Financial.Controllers
             var worksheet = workbook.Worksheets[0];
 
             worksheet.Cells[0, Col.A].SetValue(month.Value.ToString("MMMM", CultureInfo.CreateSpecificCulture("th-TH")));
-            worksheet.Cells[0, Col.C].SetValue(CurrentSchoolData.Name);
+            worksheet.Cells[0, Col.C].SetValue(CurrentSchoolData.sc_name);
             worksheet.Cells[2, Col.C].SetValue(month.Value.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH")));
 
             var bankSumTotal = (double)transactions.Sum(t => t.Amount);
@@ -102,10 +102,10 @@ namespace School.Financial.Controllers
 
             var issuer = identityService.GetUser();
             worksheet.Cells[7, Col.D].SetValue(issuer.Name);
-            worksheet.Cells[8, Col.D].SetValue($"ตำแหน่ง เจ้าหน้าที่การเงิน{CurrentSchoolData.Name}");
+            worksheet.Cells[8, Col.D].SetValue($"ตำแหน่ง เจ้าหน้าที่การเงิน{CurrentSchoolData.sc_name}");
             //TODO: school director
             worksheet.Cells[14, Col.D].SetValue("นายสุขสันต์ สอนนวล");
-            worksheet.Cells[15, Col.D].SetValue($"ผู้อำนวยการ{CurrentSchoolData.Name}");
+            worksheet.Cells[15, Col.D].SetValue($"ผู้อำนวยการ{CurrentSchoolData.sc_name}");
             worksheet.Cells[17, Col.A].SetValue($"ข้าพเจ้า/ผู้รับมอบหมายได้รับเงินสดตามรายการข้างต้นแล้ว เมื่อวันที่ {month.Value.ToString("d MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH"))}");
 
             var tableRowIndex = 5;
@@ -222,7 +222,7 @@ namespace School.Financial.Controllers
 
             worksheet.Cells[2, Col.R].SetValue(1);
             worksheet.Cells[3, Col.R].SetValue(transaction.Id.ToString());
-            worksheet.Cells[5, Col.D].SetValue(CurrentSchoolData.Name);
+            worksheet.Cells[5, Col.D].SetValue(CurrentSchoolData.sc_name);
             worksheet.Cells[5, Col.R].SetValue(CurrentSchoolData.VatId);
             worksheet.Cells[7, Col.D].SetValue(CurrentSchoolData.Address);
             worksheet.Cells[11, Col.D].SetValue(transaction.Partner.Name);
@@ -270,20 +270,20 @@ namespace School.Financial.Controllers
             var workbook = ExcelFile.Load(FileName, LoadOptions.XlsxDefault);
             var worksheet = workbook.Worksheets[0];
 
-            worksheet.Cells[3, Col.A].SetValue($"ส่วนราชการ {CurrentSchoolData.Name}");
+            worksheet.Cells[3, Col.A].SetValue($"ส่วนราชการ {CurrentSchoolData.sc_name}");
             worksheet.Cells[4, Col.B].SetValue($"บง.01/2563");
             worksheet.Cells[4, Col.F].SetValue(date.Value.ToString("d MMMM yyyy", CultureInfo.GetCultureInfo("th-TH")));
-            worksheet.Cells[6, Col.B].SetValue($"ผู้อำนวยการ{CurrentSchoolData.Name}");
+            worksheet.Cells[6, Col.B].SetValue($"ผู้อำนวยการ{CurrentSchoolData.sc_name}");
             var issuer = identityService.GetUser();
             worksheet.Cells[8, Col.B].SetValue($"ด้วยข้าพเจ้า {issuer.Name} ตำแหน่ง {issuer.Position}");
-            worksheet.Cells[9, Col.A].SetValue($"{CurrentSchoolData.Name} ทำหน้าที่ หัวหน้างานการเงิน ขออนุมัติเบิก-จ่าย");
+            worksheet.Cells[9, Col.A].SetValue($"{CurrentSchoolData.sc_name} ทำหน้าที่ หัวหน้างานการเงิน ขออนุมัติเบิก-จ่าย");
             var amount = (double)Math.Abs(transactions.Sum(t => t.Amount));
             worksheet.Cells[12, Col.A].SetValue(amount);
             worksheet.Cells[12, Col.C].SetValue($"({VatHelper.ThaiBaht(amount.ToString())})");
             worksheet.Cells[17, Col.D].SetValue($"({issuer.Name})");
             //TODO: school director
             worksheet.Cells[24, Col.E].SetValue("นายสุขสันต์ สอนนวล");
-            worksheet.Cells[25, Col.E].SetValue($"ตำแหน่ง ผู้อำนวยการ{CurrentSchoolData.Name}");
+            worksheet.Cells[25, Col.E].SetValue($"ตำแหน่ง ผู้อำนวยการ{CurrentSchoolData.sc_name}");
 
             var tableRowIndex = 11;
             var currentRowIndex = tableRowIndex;
