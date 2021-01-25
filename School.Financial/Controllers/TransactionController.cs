@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using School.Financial.Dac;
 using School.Financial.Helpers;
 using School.Financial.Models;
@@ -8,6 +9,7 @@ using System.Linq;
 
 namespace School.Financial.Controllers
 {
+    [Authorize]
     public class TransactionController : Controller
     {
         private readonly IBudgetDac budgetDac;

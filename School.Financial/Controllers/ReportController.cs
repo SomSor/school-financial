@@ -1,4 +1,5 @@
 ﻿using GemBox.Spreadsheet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using School.Financial.Dac;
 using School.Financial.Helpers;
@@ -12,6 +13,7 @@ using System.Linq;
 
 namespace School.Financial.Controllers
 {
+    [Authorize]
     public class ReportController : Controller
     {
         private readonly IBudgetDac budgetDac;

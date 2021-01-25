@@ -30,7 +30,7 @@ namespace School.Financial.Services.Impl
         public SchoolData GetCurrentSchool()
         {
             //TODO: get current school
-            return schoolDac.Get().FirstOrDefault();
+            return schoolDac.Get(1057120596);
         }
 
         public SchoolConfig GetConfig()

@@ -19,39 +19,62 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Transaction" asp-action="Index">บันทึกรายการ</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Report" asp-action="Index">รายงาน</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a href="#" class="nav-link text-dark dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">ข้อมูล <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="EducationArea" asp-action="Index">เขตพื้นที่</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="School" asp-action="Index">โรงเรียน</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="BankAccount" asp-action="Index">บัญชีธนาคาร</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Budget" asp-action="Index">งบประมาณ</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Partner" asp-action="Index">นิติบุคล/ร้านค้า</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="SchoolYear" asp-action="Index">ปีการศึกษา</a>
-                                </li>
-                            </ul>
-                        </li>
+                        @if (Context.User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Transaction" asp-action="Index">บันทึกรายการ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Report" asp-action="Index">รายงาน</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link text-dark dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">ข้อมูล <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="EducationArea" asp-action="Index">เขตพื้นที่</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="School" asp-action="Index">โรงเรียน</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="BankAccount" asp-action="Index">บัญชีธนาคาร</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Budget" asp-action="Index">งบประมาณ</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Partner" asp-action="Index">นิติบุคล/ร้านค้า</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="SchoolYear" asp-action="Index">ปีการศึกษา</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav">
+                        @if (Context.User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item"><a class="nav-link text-dark">@User.Identity.Name</a></li>
+                            <li class="nav-item">
+                                <form class="form-inline" method="post" asp-controller="Account" asp-action="SignOut">
+                                    <button type="submit" class="nav-link btn btn-link text-dark">ออกจากระบบ</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">ลงทะเบียน</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="SignIn">เข้าสู่ระบบ</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

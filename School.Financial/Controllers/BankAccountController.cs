@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using School.Financial.Dac;
 using School.Financial.Models;
 using School.Financial.Services;
@@ -6,6 +7,7 @@ using System.Linq;
 
 namespace School.Financial.Controllers
 {
+    [Authorize]
     public class BankAccountController : Controller
     {
         private readonly IBankAccountDac bankAccountDac;

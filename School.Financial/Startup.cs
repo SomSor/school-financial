@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace School.Financial
 {
@@ -21,8 +23,14 @@ namespace School.Financial
             services.AddControllersWithViews();
             var webConfiguration = Configuration.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
             services.AddTransient(x => webConfiguration);
-            services.AddTransient(x => new Dac.SchoolFinancialContext(Configuration.GetConnectionString("DefaultConnection")));
+            var connectionString = Environment.GetEnvironmentVariable("MYSQLCONNSTR_localdb");
+            connectionString = connectionString
+                .Replace("Data Source=", "server=")
+                .Replace("127.0.0.1:", "127.0.0.1;port=")
+                .Replace("User Id=", "userid=");
+            services.AddTransient(x => new Dac.SchoolFinancialContext(connectionString));
 
+            services.AddTransient<Dac.IUserInfoDac, Dac.Impl.UserInfoDac>();
             services.AddTransient<Dac.IEducationAreaDac, Dac.Impl.EducationAreaDac>();
             services.AddTransient<Dac.ISchoolDac, Dac.Impl.SchoolDac>();
             services.AddTransient<Dac.IBankAccountDac, Dac.Impl.BankAccountDac>();
@@ -33,6 +41,13 @@ namespace School.Financial
             services.AddTransient<Dac.IBringForwardDac, Dac.Impl.BringForwardDac>();
 
             services.AddTransient<Services.IIdentityService, Services.Impl.IdentityService>();
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Account/Index";
+
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +68,7 @@ namespace School.Financial
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

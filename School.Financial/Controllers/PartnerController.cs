@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using School.Financial.Dac;
 using School.Financial.Models;
@@ -6,6 +7,7 @@ using System.Linq;
 
 namespace School.Financial.Controllers
 {
+    [Authorize]
     public class PartnerController : Controller
     {
         private readonly IPartnerDac partnerDac;

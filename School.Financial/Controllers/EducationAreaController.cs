@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using School.Financial.Dac;
 using School.Financial.Models;
 using System.Linq;
 
 namespace School.Financial.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class EducationAreaController : Controller
     {
         private readonly IEducationAreaDac educationAreaDac;
