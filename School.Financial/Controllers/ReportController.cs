@@ -292,8 +292,15 @@ namespace School.Financial.Controllers
             foreach (var item in transactions)
             {
                 worksheet.Rows.InsertEmpty(currentRowIndex);
+                var range = worksheet.Cells.GetSubrange($"A{currentRowIndex}", $"J{currentRowIndex}");
+                range.Merged = false;
+                range = worksheet.Cells.GetSubrange($"B{currentRowIndex}", $"J{currentRowIndex}");
+                range.Merged = true;
                 worksheet.Rows[currentRowIndex].Style.Font = worksheet.Cells[0, 0].Style.Font;
-                worksheet.Cells[currentRowIndex, Col.A].SetValue($"- {item.Title}");
+                worksheet.Cells[currentRowIndex, Col.B].SetValue($"- {item.Title}");
+
+                worksheet.Cells[currentRowIndex, Col.B].Style.WrapText = true;
+                worksheet.Rows[currentRowIndex].AutoFit();
 
                 currentRowIndex++;
             }

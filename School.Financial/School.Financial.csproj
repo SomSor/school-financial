@@ -4,10 +4,37 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>School.Financial.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="ReportSrc\overallreport.xlsx" />
+    <None Remove="ReportSrc\vatcertificate.xlsx" />
+    <None Remove="ReportSrc\withdrawreport.xlsx" />
+    <None Remove="School.Financial.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="ReportSrc\overallreport.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ReportSrc\vatcertificate.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ReportSrc\withdrawreport.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="School.Financial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="GemBox.Spreadsheet" Version="47.0.1044" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="MySql.Data" Version="8.0.22" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.7" />
     <PackageReference Include="System.ServiceModel.Security" Version="4.8.0" />
   </ItemGroup>
 

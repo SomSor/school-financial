@@ -50,6 +50,7 @@ namespace School.Financial.Models
             }
         }
         public string AmountString { get { return Amount.ToString(WebConfiguration.MoneyFormat); } }
+        public string AmountPositiveString { get { return Math.Abs(Amount).ToString(WebConfiguration.MoneyFormat); } }
         public decimal TotalAmount { get { return Amount + (VatInclude ?? 0); } }
         public string AmountAbsString { get { return Math.Abs(Amount).ToString(WebConfiguration.MoneyFormat); } }
         public string VatIncludeString { get { return VatInclude.HasValue ? Math.Abs(VatInclude.Value).ToString(WebConfiguration.MoneyFormat) : "-"; } }
