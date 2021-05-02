@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>School.Financial</name>
+    </assembly>
+    <members>
+        <member name="T:School.Financial.ApiModels.TransactionIncomeRequest">
+            <summary>
+            รายรับ
+            </summary>
+        </member>
+        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.BudgetId">
+            <summary>
+            ประเภทงบประมาณ
+            </summary>
+        </member>
+        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.IssueDate">
+            <summary>
+            วันที่ลงรายการ
+            </summary>
+        </member>
+        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.DuplicatePaymentType">
+            <summary>
+            ประเภทใบสำคัญ บ.ร / ไม่ระบุ
+            </summary>
+        </member>
+        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.DuplicatePaymentNumber">
+            <summary>
+            เลขที่ใบสำคัญ
+            </summary>
+        </member>
+        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.Title">
+            <summary>
+            รายการ
+            </summary>
+        </member>
+        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.Remark">
+            <summary>
+            หมายเหตุ
+            </summary>
+        </member>
+        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.Amount">
+            <summary>
+            จำนวนเงิน
+            </summary>
+        </member>
+        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.SchoolId">
+            <summary>
+            โรงเรียน
+            </summary>
+        </member>
+        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.Incomes">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:School.Financial.Controllers.ApiTransactionController.CreatePayment(School.Financial.ApiModels.TransactionIncomeRequest)">
+            <summary>
+            สร้างรายการรายรับ
+            </summary>
+            <param name="request">รายรับ</param>
+            <returns></returns>
+        </member>
+        <member name="M:School.Financial.Controllers.TransactionController.CreateIncome(School.Financial.Models.Transaction)">
+            <summary>
+            
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:School.Financial.Controllers.TransactionController.CreatePayment(School.Financial.Models.Transaction,System.String,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="request"></param>
+            <param name="trackVat">on/null</param>
+            <returns></returns>
+        </member>
+        <member name="P:School.Financial.Models.DbModelBase.Id">
+            <summary>
+            รหัส
+            </summary>
+        </member>
+        <member name="P:School.Financial.Models.DbModelBase.CreatedDate">
+            <summary>
+            วันที่สร้างข้อมูล
+            </summary>
+        </member>
+        <member name="P:School.Financial.Models.Transaction.Amount">
+            <summary>
+            + -
+            </summary>
+        </member>
+        <member name="F:School.Financial.Models.PaymentType.Debtor">
+            <summary>
+            ลูกหนี้
+            </summary>
+        </member>
+        <member name="F:School.Financial.Models.PaymentType.DuplicatePayment">
+            <summary>
+            ใบสำคัญ
+            </summary>
+        </member>
+        <member name="M:School.Financial.Dac.IDataDac`1.Insert(`0)">
+            <summary>
+            
+            </summary>
+            <param name="Budget"></param>
+            <returns>Last inserted id</returns>
+        </member>
+        <member name="M:School.Financial.Dac.IDataDac`1.Upsert(`0)">
+            <summary>
+            
+            </summary>
+            <param name="Budget"></param>
+            <returns>Last inserted id</returns>
+        </member>
+    </members>
+</doc>

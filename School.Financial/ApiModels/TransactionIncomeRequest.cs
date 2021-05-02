@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace School.Financial.ApiModels
 {
@@ -15,6 +16,10 @@ namespace School.Financial.ApiModels
         /// วันที่ลงรายการ
         /// </summary>
         public DateTime IssueDate { get; set; }
+        /// <summary>
+        /// ประเภทใบสำคัญ บ.ร / ไม่ระบุ
+        /// </summary>
+        public string DuplicatePaymentType { get; set; }
         /// <summary>
         /// เลขที่ใบสำคัญ
         /// </summary>
@@ -35,5 +40,15 @@ namespace School.Financial.ApiModels
         /// โรงเรียน
         /// </summary>
         public int SchoolId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public IEnumerable<IncomeDetailRequest> Incomes { get; set; }
+    }
+
+    public class IncomeDetailRequest
+    {
+        public string Title { get; set; }
+        public string Amount { get; set; }
     }
 }
