@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using School.Financial.ApiModels;
 using School.Financial.Dac;
 using School.Financial.Helpers;
 using School.Financial.Models;
@@ -85,17 +86,17 @@ namespace School.Financial.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateIncome(Transaction request)
+        public IActionResult CreateIncome(TransactionIncomeRequest request)
         {
             request.DuplicatePaymentType = string.Empty;
             request.DuplicatePaymentNumber = string.Empty;
-            request.DuplicatePaymentYear = string.Empty;
-            request.PartnerId = null;
-            request.VatInclude = null;
+            //request.DuplicatePaymentYear = string.Empty;
+            //request.PartnerId = null;
+            //request.VatInclude = null;
             request.Amount = Math.Abs(request.Amount);
             request.SchoolId = CurrentSchoolData.sc_id;
 
-            transactionDac.Insert(request);
+            //transactionDac.Insert(request);
             CalculateBringForword(request.IssueDate, request.BudgetId);
 
             return RedirectToAction(nameof(Index));

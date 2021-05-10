@@ -4,15 +4,16 @@
     ViewData["Title"] = "บันทึกรายรับ";
 
     var budgets = ViewBag.budgets as IEnumerable<School.Financial.Models.Budget>;
+    var incReqModel = new School.Financial.ApiModels.IncomeDetailRequest();
 }
 
 <h1>สร้าง</h1>
 
 <h4>บันทึกรายรับ</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="CreateIncome">
+<form asp-action="CreateIncome">
+    <div class="row">
+        <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="BudgetId" class="control-label"></label>
@@ -56,13 +57,132 @@
                 <input asp-for="Remark" class="form-control" />
                 <span asp-validation-for="Remark" class="text-danger"></span>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label asp-for="Incomes" class="control-label"></label>
+                <table class="table" id="addnumbertable">
+                    <thead>
+                        <tr>
+                            <td></td>
+                            <td><label asp-for="@incReqModel.Title"></label></td>
+                            <td><label asp-for="@incReqModel.Amount"></label></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="vertical-align:top;" class="addnumberrow">
+                            <td class="text-center padding-top"><b class="numrow">1</b></td>
+                            <td><input type="text" class="form-control Title" name="Incomes[0].Title" autocomplete="off" onkeyup="AddNewBox(this, 'addnumbertable')"></td>
+                            <td><input type="number" class="form-control Amount" name="Incomes[0].Amount" autocomplete="off" value="0" onkeyup="AddNewBox(this, 'addnumbertable')"></td>
+                            <td><a href="#" class="deleteBtn" onclick="DeleteRow(this, 'addnumbertable')" tabindex="-1" style="display:none">X</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div id="validationsummaryaddnumbertable" class="col-sm-offset-1 col-sm-9 text-danger" asp-validation-summary="All"></div>
+            </div>
             <div class="form-group">
                 <input type="submit" value="สร้าง" class="btn btn-primary" />
             </div>
-        </form>
+        </div>
     </div>
-</div>
+</form>
 
 <div>
     <a asp-action="Index">กลับ</a>
 </div>
+
+@section scripts
+{
+    <script>
+        function AddNumberBox(sender, tableName) {
+            var allRows = $("#" + tableName + " .addnumberrow");
+            if ($(sender).parent().parent().find(".numrow").html() == allRows.length) {
+                var newRow = allRows.first().clone();
+                newRow.find(".numrow").html(parseInt(allRows.length) + 1);
+
+                var Title = newRow.find(".Title");
+                Title.attr("name", "Incomes[" + allRows.length + "].Number");
+                Title.prop("value", "");
+
+                var Amount = newRow.find(".Amount");
+                Amount.attr("name", "Incomes[" + allRows.length + "].Stock");
+                Amount.prop("value", "1");
+
+                var newDeleteBtn = newRow.find(".deleteBtn");
+                newDeleteBtn.css("display", "none");
+
+                var lastRow = allRows.last();
+                var deleteBtn = lastRow.find(".deleteBtn");
+                deleteBtn.css("display", "unset");
+
+                $("#" + tableName + " .addnumberrow").last().after(newRow);
+            }
+        }
+
+        function DeleteRow(sender, tableName) {
+            var allRows = $(sender).parentsUntil("table").find(".addnumberrow");
+            var deletingRow = $(sender).parent().parent();
+            if (deletingRow.find(".numrow").html() < allRows.length) {
+                deletingRow.remove();
+
+                var i = 0;
+                $("#" + tableName).find(".addnumberrow").each(function () {
+                    $(this).find(".numrow").html(i + 1);
+                    $(this).find(".Title").attr("name", "Incomes[" + i + "].Number");
+
+                    var Amount = $(this).find(".Amount");
+                    Amount.prop("name", "Incomes[" + i + "].Stock");
+                    i++;
+                });
+            }
+        }
+
+        function ValidateNumber(tableName) {
+            //var numbertxts = $("#" + tableName + " .numbertxt").filter(function () {
+            //    return $(this).val().length > 0;
+            //});
+            //if (numbertxts.length == 0) {
+            //    $("#" + tableName + " .addnumberrow").first().focus();
+            //    $("#validationsummary" + tableName).html("<ui><li>กรอกสลากอย่างน้อย 1 สลาก</li></oi>");
+            //    return false;
+            //}
+
+            //var numbertxtsfiltered = numbertxts.filter(function () {
+            //    return $(this).val().length != 6 || isNaN($(this).val());
+            //});
+            //if (numbertxtsfiltered.length > 0) {
+            //    numbertxtsfiltered.first().focus();
+            //    $("#validationsummary" + tableName).html("<ui><li>เลขสลากต้องเป็นตัวเลข 6 หลัก</li></oi>");
+            //    return false;
+            //}
+
+            //var stocktxts = $("#" + tableName + " .stocktxt").filter(function () {
+            //    return ($(this).val() == "" || isNaN($(this).val()) || parseInt($(this).val()) > 100 || parseInt($(this).val()) < 1) && $(this).parent().parent().find(".numbertxt").val() != "";
+            //});
+            //if (stocktxts.length > 0) {
+            //    stocktxts.first().focus();
+            //    $("#validationsummary" + tableName).html("<ui><li>จำนวนต้องอยู่ระหว่าง 1-100</li></oi>");
+            //    return false;
+            //}
+
+            //var sellpricetxts = numbertxts.filter(function () {
+            //    return isNaN($(this).val());
+            //});
+            //if (sellpricetxts.length > 0) {
+            //    sellpricetxts.first().focus();
+            //    $("#validationsummary" + tableName).html("<ui><li>ราคาต้องเป็นตัวเลข</li></oi>");
+            //    return false;
+            //}
+            return true;
+        }
+
+        function AddNewBox(sender, tableName) {
+            if (ValidateNumber(tableName)) {
+                AddNumberBox(sender, tableName);
+            }
+        }
+    </script>
+}

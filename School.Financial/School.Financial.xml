@@ -61,7 +61,7 @@
             <param name="request">รายรับ</param>
             <returns></returns>
         </member>
-        <member name="M:School.Financial.Controllers.TransactionController.CreateIncome(School.Financial.Models.Transaction)">
+        <member name="M:School.Financial.Controllers.TransactionController.CreateIncome(School.Financial.ApiModels.TransactionIncomeRequest)">
             <summary>
             
             </summary>
