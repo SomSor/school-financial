@@ -44,17 +44,12 @@
             จำนวนเงิน
             </summary>
         </member>
-        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.SchoolId">
-            <summary>
-            โรงเรียน
-            </summary>
-        </member>
         <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.Incomes">
             <summary>
             
             </summary>
         </member>
-        <member name="M:School.Financial.Controllers.ApiTransactionController.CreatePayment(School.Financial.ApiModels.TransactionIncomeRequest)">
+        <member name="M:School.Financial.Controllers.ApiTransactionController.CreateIncome(School.Financial.ApiModels.TransactionIncomeRequest)">
             <summary>
             สร้างรายการรายรับ
             </summary>

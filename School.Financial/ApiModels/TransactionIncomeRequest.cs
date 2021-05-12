@@ -37,10 +37,6 @@ namespace School.Financial.ApiModels
         /// </summary>
         public decimal Amount { get; set; }
         /// <summary>
-        /// โรงเรียน
-        /// </summary>
-        public int SchoolId { get; set; }
-        /// <summary>
         /// 
         /// </summary>
         public IEnumerable<IncomeDetailRequest> Incomes { get; set; }

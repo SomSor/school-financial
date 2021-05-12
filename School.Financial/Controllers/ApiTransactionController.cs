@@ -38,7 +38,7 @@ namespace School.Financial.Controllers
         /// <param name="request">รายรับ</param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult CreatePayment(ApiModels.TransactionIncomeRequest request)
+        public IActionResult CreateIncome(ApiModels.TransactionIncomeRequest request)
         {
             var income = new Transaction
             {
@@ -52,7 +52,7 @@ namespace School.Financial.Controllers
                 PartnerId = null,
                 VatInclude = null,
                 Amount = Math.Abs(request.Amount),
-                SchoolId = request.SchoolId,
+                SchoolId = CurrentSchoolData.sc_id,
             };
 
             transactionDac.InsertPayment(income);

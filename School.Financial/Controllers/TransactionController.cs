@@ -16,6 +16,7 @@ namespace School.Financial.Controllers
         private readonly IBudgetDac budgetDac;
         private readonly IPartnerDac partnerDac;
         private readonly ITransactionDac transactionDac;
+        private readonly IIncomeDetailDac incomeDetailDac;
         private readonly IBringForwardDac bringForwardDac;
         private readonly IIdentityService identityService;
 
@@ -29,11 +30,13 @@ namespace School.Financial.Controllers
             IBudgetDac budgetDac,
             IPartnerDac partnerDac,
             ITransactionDac transactionDac,
+            IIncomeDetailDac incomeDetailDac,
             IBringForwardDac bringForwardDac,
             IIdentityService identityService
             )
         {
             this.transactionDac = transactionDac;
+            this.incomeDetailDac = incomeDetailDac;
             this.bringForwardDac = bringForwardDac;
             this.identityService = identityService;
             this.budgetDac = budgetDac;
@@ -88,15 +91,28 @@ namespace School.Financial.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateIncome(TransactionIncomeRequest request)
         {
-            request.DuplicatePaymentType = string.Empty;
-            request.DuplicatePaymentNumber = string.Empty;
-            //request.DuplicatePaymentYear = string.Empty;
-            //request.PartnerId = null;
-            //request.VatInclude = null;
-            request.Amount = Math.Abs(request.Amount);
-            request.SchoolId = CurrentSchoolData.sc_id;
+            var txId = transactionDac.Insert(new Transaction
+            {
+                BudgetId = request.BudgetId,
+                IssueDate = request.IssueDate,
+                DuplicatePaymentType = request.DuplicatePaymentType,
+                DuplicatePaymentNumber = request.DuplicatePaymentNumber,
+                Title = request.Title,
+                Remark = request.Remark,
+                Amount = Math.Abs(request.Amount),
+                SchoolId = CurrentSchoolData.sc_id,
+            });
 
-            //transactionDac.Insert(request);
+            foreach (var income in request.Incomes)
+            {
+                incomeDetailDac.Insert(new IncomeDetail
+                {
+                    Title = request.Title,
+                    Amount = request.Amount,
+                    TransactionId = txId,
+                });
+            }
+
             CalculateBringForword(request.IssueDate, request.BudgetId);
 
             return RedirectToAction(nameof(Index));
