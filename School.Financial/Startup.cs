@@ -41,6 +41,7 @@ namespace School.Financial
             services.AddTransient<Dac.IPartnerDac, Dac.Impl.PartnerDac>();
             services.AddTransient<Dac.ISchoolYearDac, Dac.Impl.SchoolYearDac>();
             services.AddTransient<Dac.ITransactionDac, Dac.Impl.TransactionDac>();
+            services.AddTransient<Dac.IIncomeDetailDac, Dac.Impl.IncomeDetailDac>();
             services.AddTransient<Dac.IBringForwardDac, Dac.Impl.BringForwardDac>();
 
             services.AddTransient<Services.IIdentityService, Services.Impl.IdentityService>();
