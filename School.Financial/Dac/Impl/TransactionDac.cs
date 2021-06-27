@@ -250,7 +250,7 @@ namespace School.Financial.Dac.Impl
                 MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (" +
                     "0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentCount,@DuplicatePaymentYear," +
                     "@Title,@Remark,@PartnerId,@Amount,@PaymentType," +
-                    "@VatInclude,@ProductType,@BudgetId,@SchoolId,@CreatedDate)", conn);
+                    "@VatInclude,@ProductType,@BudgetId,@SchoolId,@IncomeReceiptId,@CreatedDate)", conn);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
                 cmd.Parameters.AddWithValue("@DuplicatePaymentNumber", data.DuplicatePaymentNumber);
@@ -265,6 +265,7 @@ namespace School.Financial.Dac.Impl
                 cmd.Parameters.AddWithValue("@ProductType", data.ProductType);
                 cmd.Parameters.AddWithValue("@BudgetId", data.BudgetId);
                 cmd.Parameters.AddWithValue("@SchoolId", data.SchoolId);
+                cmd.Parameters.AddWithValue("@IncomeReceiptId", data.IncomeReceiptId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -280,7 +281,7 @@ namespace School.Financial.Dac.Impl
                 MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (" +
                     "0,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentCount,@DuplicatePaymentYear," +
                     "@Title,@Remark,@PartnerId,@Amount,@PaymentType," +
-                    "@VatInclude,@ProductType,@BudgetId,@SchoolId,@CreatedDate)", conn);
+                    "@VatInclude,@ProductType,@BudgetId,@SchoolId,@IncomeReceiptId,@CreatedDate)", conn);
                 cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
                 //TODO: auto running DuplicatePaymentNumber
                 cmd.Parameters.AddWithValue("@DuplicatePaymentType", data.DuplicatePaymentType);
@@ -296,6 +297,7 @@ namespace School.Financial.Dac.Impl
                 cmd.Parameters.AddWithValue("@ProductType", data.ProductType);
                 cmd.Parameters.AddWithValue("@BudgetId", data.BudgetId);
                 cmd.Parameters.AddWithValue("@SchoolId", data.SchoolId);
+                cmd.Parameters.AddWithValue("@IncomeReceiptId", data.IncomeReceiptId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -339,7 +341,7 @@ namespace School.Financial.Dac.Impl
                 MySqlCommand cmd = new MySqlCommand("INSERT INTO `Transaction` VALUES (" +
                     "@Id,@IssueDate,@DuplicatePaymentType,@DuplicatePaymentNumber,@DuplicatePaymentCount,@DuplicatePaymentYear," +
                     "@Title,@Remark,@PartnerId,@Amount,@PaymentType," +
-                    "@VatInclude,@ProductType,@BudgetId,@SchoolId,@CreatedDate)" +
+                    "@VatInclude,@ProductType,@BudgetId,@SchoolId,@IncomeReceiptId,@CreatedDate)" +
                     "ON DUPLICATE KEY UPDATE " +
                     "`IssueDate`=@IssueDate,`DuplicatePaymentType`=@DuplicatePaymentType,`DuplicatePaymentNumber`=@DuplicatePaymentNumber," +
                     "`DuplicatePaymentCount`=@DuplicatePaymentCount,`DuplicatePaymentYear`=@DuplicatePaymentYear,`Title`=@Title," +
@@ -360,6 +362,7 @@ namespace School.Financial.Dac.Impl
                 cmd.Parameters.AddWithValue("@ProductType", data.ProductType);
                 cmd.Parameters.AddWithValue("@BudgetId", data.BudgetId);
                 cmd.Parameters.AddWithValue("@SchoolId", data.SchoolId);
+                cmd.Parameters.AddWithValue("@IncomeReceiptId", data.IncomeReceiptId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -398,6 +401,7 @@ namespace School.Financial.Dac.Impl
                 ProductType = reader["ProductType"] == DBNull.Value ? null : reader["ProductType"].ToString(),
                 BudgetId = Convert.ToInt32(reader["BudgetId"]),
                 SchoolId = Convert.ToInt32(reader["SchoolId"]),
+                IncomeReceiptId = Convert.ToInt32(reader["IncomeReceiptId"]),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
             };
         }
@@ -421,6 +425,7 @@ namespace School.Financial.Dac.Impl
                 ProductType = reader["ProductType"] == DBNull.Value ? null : reader["ProductType"].ToString(),
                 BudgetId = Convert.ToInt32(reader["BudgetId"]),
                 SchoolId = Convert.ToInt32(reader["SchoolId"]),
+                IncomeReceiptId = Convert.ToInt32(reader["IncomeReceiptId"]),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
                 Partner = new Partner
                 {

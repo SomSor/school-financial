@@ -16,16 +16,14 @@
         <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="BudgetId" class="control-label"></label>
-                <select asp-for="BudgetId" asp-items="@(new SelectList(budgets,"Id","Name"))" class="form-control" required>
-                    <option value="">เลือก ...</option>
-                </select>
-                <span asp-validation-for="BudgetId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="IssueDate" class="control-label"></label>
                 <input asp-for="IssueDate" class="form-control datepicker" type="text" />
                 <span asp-validation-for="IssueDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReceiveFrom" class="control-label"></label>
+                <input asp-for="ReceiveFrom" class="form-control" />
+                <span asp-validation-for="ReceiveFrom" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DuplicatePaymentType" class="control-label"></label>
@@ -43,16 +41,6 @@
                 <span asp-validation-for="DuplicatePaymentType" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" required />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Amount" class="control-label"></label>
-                <input asp-for="Amount" class="form-control" required />
-                <span asp-validation-for="Amount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Remark" class="control-label"></label>
                 <input asp-for="Remark" class="form-control" />
                 <span asp-validation-for="Remark" class="text-danger"></span>
@@ -67,6 +55,7 @@
                     <thead>
                         <tr>
                             <td></td>
+                            <td><label asp-for="@incReqModel.BudgetId"></label></td>
                             <td><label asp-for="@incReqModel.Title"></label></td>
                             <td><label asp-for="@incReqModel.Amount"></label></td>
                             <td></td>
@@ -75,6 +64,11 @@
                     <tbody>
                         <tr style="vertical-align:top;" class="addnumberrow">
                             <td class="text-center padding-top"><b class="numrow">1</b></td>
+                            <td>
+                                <select name="Incomes[0].BudgetId" asp-items="@(new SelectList(budgets,"Id","Name"))" class="form-control BudgetId" onchange="AddNewBox(this, 'addnumbertable')">
+                                    <option value="">เลือก ...</option>
+                                </select>
+                            </td>
                             <td><input type="text" class="form-control Title" name="Incomes[0].Title" autocomplete="off" onkeyup="AddNewBox(this, 'addnumbertable')"></td>
                             <td><input type="number" class="form-control Amount" name="Incomes[0].Amount" autocomplete="off" value="0" onkeyup="AddNewBox(this, 'addnumbertable')"></td>
                             <td><a href="#" class="deleteBtn" onclick="DeleteRow(this, 'addnumbertable')" tabindex="-1" style="display:none">X</a></td>
@@ -84,7 +78,7 @@
                 <div id="validationsummaryaddnumbertable" class="col-sm-offset-1 col-sm-9 text-danger" asp-validation-summary="All"></div>
             </div>
             <div class="form-group">
-                <input type="submit" value="สร้าง" class="btn btn-primary" />
+                <input type="submit" value="สร้าง" class="btn btn-primary" onclick="return OnSubmit('addnumbertable')" />
             </div>
         </div>
     </div>
@@ -103,12 +97,16 @@
                 var newRow = allRows.first().clone();
                 newRow.find(".numrow").html(parseInt(allRows.length) + 1);
 
+                var BudgetId = newRow.find(".BudgetId");
+                BudgetId.attr("name", "Incomes[" + allRows.length + "].BudgetId");
+                BudgetId.prop("value", "");
+
                 var Title = newRow.find(".Title");
-                Title.attr("name", "Incomes[" + allRows.length + "].Number");
+                Title.attr("name", "Incomes[" + allRows.length + "].Title");
                 Title.prop("value", "");
 
                 var Amount = newRow.find(".Amount");
-                Amount.attr("name", "Incomes[" + allRows.length + "].Stock");
+                Amount.attr("name", "Incomes[" + allRows.length + "].Amount");
                 Amount.prop("value", "1");
 
                 var newDeleteBtn = newRow.find(".deleteBtn");
@@ -131,10 +129,10 @@
                 var i = 0;
                 $("#" + tableName).find(".addnumberrow").each(function () {
                     $(this).find(".numrow").html(i + 1);
-                    $(this).find(".Title").attr("name", "Incomes[" + i + "].Number");
 
-                    var Amount = $(this).find(".Amount");
-                    Amount.prop("name", "Incomes[" + i + "].Stock");
+                    $(this).find(".Title").attr("name", "Incomes[" + i + "].Title");
+                    $(this).find(".Amount").attr("name", "Incomes[" + i + "].Amount");
+                    $(this).find(".BudgetId").attr("name", "Incomes[" + i + "].BudgetId");
                     i++;
                 });
             }
@@ -183,6 +181,20 @@
             if (ValidateNumber(tableName)) {
                 AddNumberBox(sender, tableName);
             }
+        }
+
+        function OnSubmit(tableName) {
+            var isValid = ValidateNumber(tableName);
+            if (isValid) {
+                var numbertxts_removing = $("#" + tableName + " .numbertxt").filter(function () {
+                    return $(this).val().length == 0;
+                });
+                for (var i = 0; i < numbertxts_removing.length - 1; i++) {
+                    DeleteRow(numbertxts_removing[i]);
+                }
+                $("#" + tableName + " .addnumberrow").last().remove();
+            }
+            return isValid;
         }
     </script>
 }

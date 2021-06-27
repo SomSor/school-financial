@@ -16,7 +16,7 @@ namespace School.Financial.Controllers
         private readonly IBudgetDac budgetDac;
         private readonly IPartnerDac partnerDac;
         private readonly ITransactionDac transactionDac;
-        private readonly IIncomeDetailDac incomeDetailDac;
+        private readonly IIncomeReceiptDac incomeReceiptDac;
         private readonly IBringForwardDac bringForwardDac;
         private readonly IIdentityService identityService;
 
@@ -30,13 +30,13 @@ namespace School.Financial.Controllers
             IBudgetDac budgetDac,
             IPartnerDac partnerDac,
             ITransactionDac transactionDac,
-            IIncomeDetailDac incomeDetailDac,
+            IIncomeReceiptDac incomeReceiptDac,
             IBringForwardDac bringForwardDac,
             IIdentityService identityService
             )
         {
             this.transactionDac = transactionDac;
-            this.incomeDetailDac = incomeDetailDac;
+            this.incomeReceiptDac = incomeReceiptDac;
             this.bringForwardDac = bringForwardDac;
             this.identityService = identityService;
             this.budgetDac = budgetDac;
@@ -91,29 +91,29 @@ namespace School.Financial.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateIncome(TransactionIncomeRequest request)
         {
-            var txId = transactionDac.Insert(new Transaction
+            var txId = incomeReceiptDac.Insert(new IncomeReceipt
             {
-                BudgetId = request.BudgetId,
                 IssueDate = request.IssueDate,
-                DuplicatePaymentType = request.DuplicatePaymentType,
-                DuplicatePaymentNumber = request.DuplicatePaymentNumber,
-                Title = request.Title,
+                ReceiveFrom = request.ReceiveFrom,
+                Amount = request.Incomes?.Sum(x => Math.Abs(x.Amount)) ?? 0,
                 Remark = request.Remark,
-                Amount = Math.Abs(request.Amount),
-                SchoolId = CurrentSchoolData.sc_id,
             });
 
             foreach (var income in request.Incomes)
             {
-                incomeDetailDac.Insert(new IncomeDetail
+                transactionDac.InsertPayment(new Transaction
                 {
-                    Title = request.Title,
-                    Amount = request.Amount,
-                    TransactionId = txId,
+                    BudgetId = income.BudgetId,
+                    IssueDate = request.IssueDate,
+                    DuplicatePaymentType = request.DuplicatePaymentType,
+                    DuplicatePaymentNumber = request.DuplicatePaymentNumber,
+                    Title = income.Title,
+                    Remark = request.Remark,
+                    Amount = Math.Abs(income.Amount),
+                    SchoolId = CurrentSchoolData.sc_id,
                 });
+                CalculateBringForword(request.IssueDate, income.BudgetId);
             }
-
-            CalculateBringForword(request.IssueDate, request.BudgetId);
 
             return RedirectToAction(nameof(Index));
         }

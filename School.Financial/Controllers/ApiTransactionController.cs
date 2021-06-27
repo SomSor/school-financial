@@ -12,6 +12,7 @@ namespace School.Financial.Controllers
     public class ApiTransactionController : ControllerBase
     {
         private readonly ITransactionDac transactionDac;
+        private readonly IIncomeReceiptDac incomeReceiptDac;
         private readonly IBringForwardDac bringForwardDac;
         private readonly IIdentityService identityService;
 
@@ -23,11 +24,13 @@ namespace School.Financial.Controllers
 
         public ApiTransactionController(
             ITransactionDac transactionDac,
+            IIncomeReceiptDac incomeReceiptDac,
             IBringForwardDac bringForwardDac,
             IIdentityService identityService
             )
         {
             this.transactionDac = transactionDac;
+            this.incomeReceiptDac = incomeReceiptDac;
             this.bringForwardDac = bringForwardDac;
             this.identityService = identityService;
         }
@@ -40,23 +43,29 @@ namespace School.Financial.Controllers
         [HttpPost]
         public IActionResult CreateIncome(ApiModels.TransactionIncomeRequest request)
         {
-            var income = new Transaction
+            var txId = incomeReceiptDac.Insert(new IncomeReceipt
             {
                 IssueDate = request.IssueDate,
-                DuplicatePaymentType = string.IsNullOrWhiteSpace(request.DuplicatePaymentNumber) ? string.Empty : "บร.",
-                DuplicatePaymentNumber = request.DuplicatePaymentNumber,
-                DuplicatePaymentYear = string.Empty,
-                Title = request.Title,
+                ReceiveFrom = request.ReceiveFrom,
+                Amount = request.Incomes?.Sum(x => Math.Abs(x.Amount)) ?? 0,
                 Remark = request.Remark,
-                DuplicatePaymentCount = 1,
-                PartnerId = null,
-                VatInclude = null,
-                Amount = Math.Abs(request.Amount),
-                SchoolId = CurrentSchoolData.sc_id,
-            };
+            });
 
-            transactionDac.InsertPayment(income);
-            CalculateBringForword(request.IssueDate, request.BudgetId);
+            foreach (var income in request.Incomes)
+            {
+                transactionDac.InsertPayment(new Transaction
+                {
+                    BudgetId = income.BudgetId,
+                    IssueDate = request.IssueDate,
+                    DuplicatePaymentType = request.DuplicatePaymentType,
+                    DuplicatePaymentNumber = request.DuplicatePaymentNumber,
+                    Title = income.Title,
+                    Remark = request.Remark,
+                    Amount = Math.Abs(income.Amount),
+                    SchoolId = CurrentSchoolData.sc_id,
+                });
+                CalculateBringForword(request.IssueDate, income.BudgetId);
+            }
 
             return Ok();
         }

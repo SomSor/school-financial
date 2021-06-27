@@ -9,11 +9,6 @@
             รายรับ
             </summary>
         </member>
-        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.BudgetId">
-            <summary>
-            ประเภทงบประมาณ
-            </summary>
-        </member>
         <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.IssueDate">
             <summary>
             วันที่ลงรายการ
@@ -29,24 +24,29 @@
             เลขที่ใบสำคัญ
             </summary>
         </member>
-        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.Title">
-            <summary>
-            รายการ
-            </summary>
-        </member>
         <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.Remark">
             <summary>
             หมายเหตุ
             </summary>
         </member>
-        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.Amount">
-            <summary>
-            จำนวนเงิน
-            </summary>
-        </member>
         <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.Incomes">
             <summary>
             
+            </summary>
+        </member>
+        <member name="P:School.Financial.ApiModels.IncomeDetailRequest.BudgetId">
+            <summary>
+            ประเภทงบประมาณ
+            </summary>
+        </member>
+        <member name="P:School.Financial.ApiModels.IncomeDetailRequest.Title">
+            <summary>
+            รายการ
+            </summary>
+        </member>
+        <member name="P:School.Financial.ApiModels.IncomeDetailRequest.Amount">
+            <summary>
+            จำนวนเงิน
             </summary>
         </member>
         <member name="M:School.Financial.Controllers.ApiTransactionController.CreateIncome(School.Financial.ApiModels.TransactionIncomeRequest)">
@@ -79,6 +79,11 @@
         <member name="P:School.Financial.Models.DbModelBase.CreatedDate">
             <summary>
             วันที่สร้างข้อมูล
+            </summary>
+        </member>
+        <member name="P:School.Financial.Models.IncomeReceipt.IssueDate">
+            <summary>
+            วันที่ลงรายการ
             </summary>
         </member>
         <member name="P:School.Financial.Models.Transaction.Amount">

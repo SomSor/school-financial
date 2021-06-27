@@ -5,22 +5,22 @@ using System.Collections.Generic;
 
 namespace School.Financial.Dac.Impl
 {
-    public class IncomeDetailDac : IIncomeDetailDac
+    public class IncomeReceiptDac : IIncomeReceiptDac
     {
         private readonly SchoolFinancialContext context;
 
-        public IncomeDetailDac(SchoolFinancialContext context)
+        public IncomeReceiptDac(SchoolFinancialContext context)
         {
             this.context = context;
         }
 
-        public IEnumerable<IncomeDetail> Get()
+        public IEnumerable<IncomeReceipt> Get()
         {
-            var list = new List<IncomeDetail>();
+            var list = new List<IncomeReceipt>();
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from IncomeDetail", conn);
+                MySqlCommand cmd = new MySqlCommand("select * from IncomeReceipt", conn);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -33,12 +33,12 @@ namespace School.Financial.Dac.Impl
             return list;
         }
 
-        public IncomeDetail Get(int id)
+        public IncomeReceipt Get(int id)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from IncomeDetail where id = @id", conn);
+                MySqlCommand cmd = new MySqlCommand("select * from IncomeReceipt where id = @id", conn);
                 cmd.Parameters.AddWithValue("@id", id);
 
                 using (var reader = cmd.ExecuteReader())
@@ -52,15 +52,16 @@ namespace School.Financial.Dac.Impl
             return null;
         }
 
-        public int Insert(IncomeDetail data)
+        public int Insert(IncomeReceipt data)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `IncomeDetail` VALUES (0,@Title,@Amount,@TransactionId,@CreatedDate)", conn);
-                cmd.Parameters.AddWithValue("@Title", data.Title);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `IncomeReceipt` VALUES (0,@IssueDate,@ReceiveFrom,@Remark,@Amount,@CreatedDate)", conn);
+                cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
+                cmd.Parameters.AddWithValue("@ReceiveFrom", data.ReceiveFrom);
+                cmd.Parameters.AddWithValue("@Remark", data.Remark);
                 cmd.Parameters.AddWithValue("@Amount", data.Amount);
-                cmd.Parameters.AddWithValue("@TransactionId", data.TransactionId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -68,13 +69,15 @@ namespace School.Financial.Dac.Impl
             }
         }
 
-        public void Update(IncomeDetail data)
+        public void Update(IncomeReceipt data)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("UPDATE `IncomeDetail` SET `Title`=@Title,`Amount`=@Amount WHERE `Id`=@Id", conn);
-                cmd.Parameters.AddWithValue("@Title", data.Title);
+                MySqlCommand cmd = new MySqlCommand("UPDATE `IncomeReceipt` SET `IssueDate`=@IssueDate,`ReceiveFrom`=@ReceiveFrom,`Remark`=@Remark,`Amount`=@Amount WHERE `Id`=@Id", conn);
+                cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
+                cmd.Parameters.AddWithValue("@ReceiveFrom", data.ReceiveFrom);
+                cmd.Parameters.AddWithValue("@Remark", data.Remark);
                 cmd.Parameters.AddWithValue("@Amount", data.Amount);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
 
@@ -82,17 +85,18 @@ namespace School.Financial.Dac.Impl
             }
         }
 
-        public int Upsert(IncomeDetail data)
+        public int Upsert(IncomeReceipt data)
         {
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO `IncomeDetail` VALUES (@Id,@Title,@Amount,@TransactionId,@CreatedDate)" +
-                    "ON DUPLICATE KEY UPDATE `Title`=@Title,`Amount`=@Amount", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO `IncomeReceipt` VALUES (@Id,@IssueDate,@ReceiveFrom,@Remark,@Amount,@CreatedDate)" +
+                    "ON DUPLICATE KEY UPDATE `IssueDate`=@IssueDate,`ReceiveFrom`=@ReceiveFrom,`Remark`=@Remark,`Amount`=@Amount", conn);
                 cmd.Parameters.AddWithValue("@Id", data.Id);
-                cmd.Parameters.AddWithValue("@Title", data.Title);
+                cmd.Parameters.AddWithValue("@IssueDate", data.IssueDate);
+                cmd.Parameters.AddWithValue("@ReceiveFrom", data.ReceiveFrom);
+                cmd.Parameters.AddWithValue("@Remark", data.Remark);
                 cmd.Parameters.AddWithValue("@Amount", data.Amount);
-                cmd.Parameters.AddWithValue("@TransactionId", data.TransactionId);
                 cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
 
                 cmd.ExecuteNonQuery();
@@ -105,21 +109,22 @@ namespace School.Financial.Dac.Impl
             using (MySqlConnection conn = context.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("DELETE FROM `IncomeDetail` WHERE `id`=@id", conn);
+                MySqlCommand cmd = new MySqlCommand("DELETE FROM `IncomeReceipt` WHERE `id`=@id", conn);
                 cmd.Parameters.AddWithValue("@id", id);
 
                 cmd.ExecuteNonQuery();
             }
         }
 
-        private IncomeDetail ReadData(MySqlDataReader reader)
+        private IncomeReceipt ReadData(MySqlDataReader reader)
         {
-            return new IncomeDetail()
+            return new IncomeReceipt()
             {
                 Id = Convert.ToInt32(reader["Id"]),
-                Title = reader["Title"].ToString(),
+                IssueDate = Convert.ToDateTime(reader["IssueDate"]),
+                ReceiveFrom = reader["ReceiveFrom"].ToString(),
+                Remark = reader["Remark"].ToString(),
                 Amount = Convert.ToDecimal(reader["Amount"]),
-                TransactionId = Convert.ToInt32(reader["TransactionId"]),
                 CreatedDate = Convert.ToDateTime(reader["CreatedDate"]),
             };
         }

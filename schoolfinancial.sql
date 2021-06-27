@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 13, 2021 at 01:08 AM
+-- Generation Time: Jun 06, 2021 at 03:49 AM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -30,9 +30,9 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `bankaccount` (
   `Id` int(11) NOT NULL,
-  `BankName` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `AccountName` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `AccountNumber` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `BankName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `AccountName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `AccountNumber` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `SchoolId` int(11) NOT NULL,
   `CreatedDate` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -153,6 +153,29 @@ INSERT INTO `budget` (`Id`, `Name`, `BankAccountId`, `SchoolId`, `CreatedDate`) 
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `incomereceipt`
+--
+
+CREATE TABLE `incomereceipt` (
+  `Id` int(11) NOT NULL,
+  `IssueDate` datetime NOT NULL,
+  `ReceiveFrom` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `Remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `Amount` decimal(10,0) NOT NULL,
+  `CreatedDate` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `incomereceipt`
+--
+
+INSERT INTO `incomereceipt` (`Id`, `IssueDate`, `ReceiveFrom`, `Remark`, `Amount`, `CreatedDate`) VALUES
+(4, '2021-06-06 00:00:00', 'test', NULL, '6001', '2021-06-06 03:44:32'),
+(5, '2021-06-01 00:00:00', 'test', NULL, '500', '2021-06-06 03:48:10');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `partner`
 --
 
@@ -204,7 +227,7 @@ CREATE TABLE `sao` (
   `sao_id` varchar(10) NOT NULL,
   `sao_type` int(4) DEFAULT NULL,
   `sao_name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `sao`
@@ -620,7 +643,7 @@ INSERT INTO `school` (`sc_id`, `smis`, `sc_code`, `sc_name`, `areacode`, `sc_net
 
 CREATE TABLE `schoolyear` (
   `Id` int(11) NOT NULL,
-  `Year` varchar(4) COLLATE utf8mb4_general_ci NOT NULL,
+  `Year` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `StartDate` date NOT NULL,
   `SchoolId` int(11) NOT NULL,
   `CreatedDate` datetime NOT NULL
@@ -643,59 +666,64 @@ CREATE TABLE `transaction` (
   `Id` int(11) NOT NULL,
   `IssueDate` datetime NOT NULL,
   `DuplicatePaymentType` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `DuplicatePaymentNumber` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `DuplicatePaymentNumber` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `DuplicatePaymentCount` int(11) DEFAULT NULL,
-  `DuplicatePaymentYear` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `Title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `DuplicatePaymentYear` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `Title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `Remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `PartnerId` int(11) DEFAULT NULL,
   `Amount` decimal(10,2) NOT NULL,
-  `PaymentType` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `PaymentType` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `VatInclude` decimal(10,2) DEFAULT NULL,
   `ProductType` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `BudgetId` int(11) NOT NULL,
   `SchoolId` int(11) NOT NULL,
-  `CreatedDate` datetime NOT NULL
+  `IncomeReceiptId` int(11) NOT NULL,
+  `CreatedDate` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `transaction`
 --
 
-INSERT INTO `transaction` (`Id`, `IssueDate`, `DuplicatePaymentType`, `DuplicatePaymentNumber`, `DuplicatePaymentCount`, `DuplicatePaymentYear`, `Title`, `Remark`, `PartnerId`, `Amount`, `PaymentType`, `VatInclude`, `ProductType`, `BudgetId`, `SchoolId`, `CreatedDate`) VALUES
-(21, '2019-10-09 00:00:00', 'บค.', '1', 1, '2563', 'คืนเงินคงเหลือจากงบประมาณปี 2562', NULL, NULL, '-29720.00', 'DuplicatePayment', NULL, '', 7, 1057120596, '2020-11-09 15:46:30'),
-(22, '2019-11-01 00:00:00', 'บร.', '17ก63220/2', 1, NULL, 'รับเงินอุดหนุนค่าอาหารกลางวันนักเรียน จำนวน 445 คน ไตรมาสที่ 1', NULL, NULL, '445000.00', NULL, NULL, '', 7, 1057120596, '2020-11-09 15:49:11'),
-(23, '2019-11-01 22:49:00', 'บค.', '3', 2, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 6 วัน', NULL, NULL, '-53400.00', 'Debtor', NULL, '', 7, 1057120596, '2020-11-09 15:50:02'),
-(24, '2019-11-07 22:50:00', 'บค.', '8', 2, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 10 วัน', NULL, NULL, '-89000.00', 'DuplicatePayment', NULL, '', 7, 1057120596, '2020-11-09 15:51:25'),
-(25, '2019-11-22 22:58:00', 'บค.', '16', 2, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 9 วัน', NULL, NULL, '-80100.00', 'DuplicatePayment', NULL, '', 7, 1057120596, '2020-11-09 15:58:55'),
-(26, '2019-12-06 00:00:00', 'บค.', '24', 1, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 9 วัน', NULL, NULL, '-80100.00', 'DuplicatePayment', NULL, '', 7, 1057120596, '2020-11-09 15:59:43'),
-(27, '2019-12-20 00:00:00', 'บค.', '30', 2, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 7 วัน', NULL, NULL, '-62300.00', 'DuplicatePayment', NULL, '', 7, 1057120596, '2020-11-09 16:00:18'),
-(28, '2020-01-03 00:00:00', 'บค.', '35', 1, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 9 วัน', NULL, NULL, '-80100.00', 'DuplicatePayment', NULL, '', 7, 1057120596, '2020-11-10 15:49:26'),
-(29, '2020-01-17 22:50:00', '', NULL, NULL, NULL, 'รับเงินอุดหนุนค่าอาหารกลางวันไตรมาส 2', NULL, NULL, '445000.00', NULL, NULL, '', 7, 1057120596, '2020-11-10 15:50:19'),
-(30, '2020-01-17 00:00:00', 'บค.', '43', 2, '2563', 'จ่ายอาหารกลางวัน 10 วัน', NULL, NULL, '-89000.00', 'DuplicatePayment', NULL, '', 7, 1057120596, '2020-11-10 15:53:20'),
-(31, '2020-01-31 00:00:00', 'บค.', '52', 2, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 9 วัน', NULL, NULL, '-80100.00', 'DuplicatePayment', NULL, '', 7, 1057120596, '2020-11-10 15:53:43'),
-(36, '2019-10-25 00:00:00', '', NULL, NULL, NULL, 'รับเงินอุดหนุนค่าจ้างบุคลากร เจ้าหน้าที่ทรูปลูกปัญญา', NULL, NULL, '46200.00', NULL, NULL, '', 8, 1057120596, '2020-11-28 16:20:28'),
-(37, '2019-10-28 00:00:00', 'บค.', '2', 1, '2563', 'จ่ายเงินเดือนเจ้าหน้าที่ทรูปลูกปัญญา เดือน ตุลาคม 2562', NULL, 1, '-15400.00', 'DuplicatePayment', NULL, '', 8, 1057120596, '2020-11-28 16:21:47'),
-(38, '2019-11-07 00:00:00', '', NULL, NULL, NULL, 'รับเงินอุดหนุน 70% 2/2562 ค่าจัดการเรียนการสอน', NULL, NULL, '426600.00', NULL, NULL, '', 8, 1057120596, '2020-11-28 17:11:46'),
-(39, '2019-11-06 00:00:00', NULL, NULL, NULL, NULL, 'คืนเงินยืมประเภท กิจกรรมพัฒนาผู้เรียน', NULL, NULL, '-100000.00', 'DuplicatePayment', NULL, '', 8, 1057120596, '2020-11-28 17:16:12'),
-(40, '2019-11-07 00:00:00', 'บค.', '5', 1, '2563', 'เงินยืมค่าอาหารนักเรียนพักนอน 50 วัน 2/2562', NULL, 2, '-56000.00', 'Debtor', NULL, '', 8, 1057120596, '2020-11-28 17:17:02'),
-(41, '2019-11-15 00:00:00', 'บค.', '10', 1, '2563', 'ค่าเดินทางไปราชการ การแข่งขันทักษะวิชาการ เขต14,880.- ,ครูภานุมาศ 3,568 ,ครูสุริยัน 3,012', NULL, 2, '-21460.00', 'DuplicatePayment', NULL, '', 8, 1057120596, '2020-11-28 17:17:42'),
-(42, '2019-11-15 00:00:00', 'บจ.', '12', 1, '2563', 'ค่าไฟฟ้า เดือน ตุลาคม 2562', NULL, 3, '-12633.78', 'DuplicatePayment', NULL, '', 8, 1057120596, '2020-11-28 17:18:30'),
-(43, '2019-11-21 00:00:00', '', NULL, NULL, NULL, 'รับเงินอุดหนุนค่าอาหารนักเรียนพักนอน 2/2562', NULL, NULL, '112000.00', NULL, NULL, '', 8, 1057120596, '2020-11-28 17:18:57'),
-(44, '2019-11-29 00:00:00', 'บค.', '18', 1, '2563', 'เงินเดือนเจ้าหน้าที่ทรูปลูกปัญญา เดือนพฤศจิกายน 2562', NULL, 2, '-15400.00', 'DuplicatePayment', NULL, '', 8, 1057120596, '2020-11-28 17:19:33'),
-(45, '2019-12-06 00:00:00', 'บค.', '19', 1, '2563', 'ค่าเดินทางไปราชการ ครูกฤษฎา 7,464 และครูพรรณิภา 1,772', NULL, 2, '-9236.00', 'DuplicatePayment', NULL, '', 8, 1057120596, '2020-11-30 12:04:08'),
-(46, '2019-12-06 00:00:00', 'บจ.', '20', 1, '2563', 'โครงการ พัฒนาภาษาไทยสำหรับเด็กที่ไม่ใช้ภาษาไทยเป็นภาษาแม่ 10,000 ,วันลอยกระทง 8,000 ,ส่งเสริมความเป็นเลิศทางวิชาการ 25,000', NULL, 4, '-43000.00', 'DuplicatePayment', '430.00', 'วัสดุ', 8, 1057120596, '2020-11-30 12:05:33'),
-(47, '2019-12-06 00:00:00', 'บจ.', '21', 1, '2563', 'พัฒนาระบบประชาสัมพันธ์ 13,000 ,พัฒนาอัจฉริยภาพทางด้านเทคโนโลยี 25,000', NULL, 5, '-38000.00', 'DuplicatePayment', '380.00', 'วัสดุ', 8, 1057120596, '2020-11-30 12:08:59'),
-(48, '2019-12-06 00:00:00', 'บจ.', '22', 1, '2563', 'ค่าไฟฟ้า เดือน พฤศจิกายน 2562', NULL, 3, '-13237.31', 'DuplicatePayment', NULL, '', 8, 1057120596, '2020-11-30 12:10:04'),
-(49, '2019-12-13 00:00:00', 'บค.', '27', 1, '2563', 'เงินยืมโครงการทักษะวิชาการระดับชาติ', NULL, 2, '-20160.00', 'Debtor', NULL, '', 8, 1057120596, '2020-11-30 12:11:29'),
-(50, '2019-12-20 00:00:00', 'บจ.', '28', 1, '2563', 'โครงการนักประวัติศาสตร์น้อย 2,730 ,บ้านนักวิทย์น้อย 5,000 บาท', NULL, 4, '-7730.00', 'DuplicatePayment', '77.30', 'วัสดุ', 8, 1057120596, '2020-11-30 12:12:38'),
-(51, '2019-12-23 00:00:00', 'บจ.', '27', 1, '2563', 'โครงการส่งเสริมความเป็นเลิศทางวิชาการ(ทักษะวิชาการระดับชาติ รายการจ้างเหมารถ)', NULL, 6, '-27000.00', 'DuplicatePayment', '270.00', 'จ้างเหมารถ', 8, 1057120596, '2020-11-30 12:13:22'),
-(52, '2019-12-23 00:00:00', 'บค.', '33', 1, '2563', 'เงินยืมค่าอาหารนักเรียนกีฬากลุ่มเทอดไทย', NULL, 2, '-10000.00', 'DuplicatePayment', '0.00', 'อาหาร', 8, 1057120596, '2020-11-30 12:14:07'),
-(53, '2019-12-26 00:00:00', '', NULL, NULL, NULL, 'รับเงินอุดหนุนรายหัว 30 % ค่าจัดการเรียนการสอน', NULL, NULL, '181450.00', NULL, NULL, '', 8, 1057120596, '2020-11-30 13:00:23'),
-(54, '2019-12-27 00:00:00', 'บค.', '34', 1, '2563', 'เงินเดือนเจ้าหน้าที่ทรูปลูกปัญญา เดือนธันวาคม 2562', NULL, 2, '-15400.00', 'DuplicatePayment', NULL, '', 8, 1057120596, '2020-11-30 13:01:12'),
-(57, '2020-01-08 00:00:00', 'ไม่ระบุ', NULL, NULL, NULL, 'ภาษี ณ ที่จ่ายเดือน ธันวาคม 2562', NULL, NULL, '-1157.30', NULL, NULL, '', 0, 1057120596, '2020-12-06 14:29:04'),
-(65, '2021-01-12 00:00:00', 'บจ.', '54', 1, '2563', 'asfasf', NULL, 7, '-80100.00', 'DuplicatePayment', '0.00', NULL, 11, 1057120596, '2021-01-12 14:15:04'),
-(66, '2021-02-23 15:56:22', 'บร.', '17ก63220/3', 1, '', 'ลองสร้างจาก APIs', '', NULL, '5000.00', NULL, NULL, NULL, 0, 1057120596, '2021-02-23 15:59:58');
+INSERT INTO `transaction` (`Id`, `IssueDate`, `DuplicatePaymentType`, `DuplicatePaymentNumber`, `DuplicatePaymentCount`, `DuplicatePaymentYear`, `Title`, `Remark`, `PartnerId`, `Amount`, `PaymentType`, `VatInclude`, `ProductType`, `BudgetId`, `SchoolId`, `IncomeReceiptId`, `CreatedDate`) VALUES
+(21, '2019-10-09 00:00:00', 'บค.', '1', 1, '2563', 'คืนเงินคงเหลือจากงบประมาณปี 2562', NULL, NULL, '-29720.00', 'DuplicatePayment', NULL, '', 7, 1057120596, 0, '2020-11-09 15:46:30'),
+(22, '2019-11-01 00:00:00', 'บร.', '17ก63220/2', 1, NULL, 'รับเงินอุดหนุนค่าอาหารกลางวันนักเรียน จำนวน 445 คน ไตรมาสที่ 1', NULL, NULL, '445000.00', NULL, NULL, '', 7, 1057120596, 0, '2020-11-09 15:49:11'),
+(23, '2019-11-01 22:49:00', 'บค.', '3', 2, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 6 วัน', NULL, NULL, '-53400.00', 'Debtor', NULL, '', 7, 1057120596, 0, '2020-11-09 15:50:02'),
+(24, '2019-11-07 22:50:00', 'บค.', '8', 2, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 10 วัน', NULL, NULL, '-89000.00', 'DuplicatePayment', NULL, '', 7, 1057120596, 0, '2020-11-09 15:51:25'),
+(25, '2019-11-22 22:58:00', 'บค.', '16', 2, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 9 วัน', NULL, NULL, '-80100.00', 'DuplicatePayment', NULL, '', 7, 1057120596, 0, '2020-11-09 15:58:55'),
+(26, '2019-12-06 00:00:00', 'บค.', '24', 1, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 9 วัน', NULL, NULL, '-80100.00', 'DuplicatePayment', NULL, '', 7, 1057120596, 0, '2020-11-09 15:59:43'),
+(27, '2019-12-20 00:00:00', 'บค.', '30', 2, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 7 วัน', NULL, NULL, '-62300.00', 'DuplicatePayment', NULL, '', 7, 1057120596, 0, '2020-11-09 16:00:18'),
+(28, '2020-01-03 00:00:00', 'บค.', '35', 1, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 9 วัน', NULL, NULL, '-80100.00', 'DuplicatePayment', NULL, '', 7, 1057120596, 0, '2020-11-10 15:49:26'),
+(29, '2020-01-17 22:50:00', '', NULL, NULL, NULL, 'รับเงินอุดหนุนค่าอาหารกลางวันไตรมาส 2', NULL, NULL, '445000.00', NULL, NULL, '', 7, 1057120596, 0, '2020-11-10 15:50:19'),
+(30, '2020-01-17 00:00:00', 'บค.', '43', 2, '2563', 'จ่ายอาหารกลางวัน 10 วัน', NULL, NULL, '-89000.00', 'DuplicatePayment', NULL, '', 7, 1057120596, 0, '2020-11-10 15:53:20'),
+(31, '2020-01-31 00:00:00', 'บค.', '52', 2, '2563', 'จ่ายค่าอาหารกลางวันนักเรียน 9 วัน', NULL, NULL, '-80100.00', 'DuplicatePayment', NULL, '', 7, 1057120596, 0, '2020-11-10 15:53:43'),
+(36, '2019-10-25 00:00:00', '', NULL, NULL, NULL, 'รับเงินอุดหนุนค่าจ้างบุคลากร เจ้าหน้าที่ทรูปลูกปัญญา', NULL, NULL, '46200.00', NULL, NULL, '', 8, 1057120596, 0, '2020-11-28 16:20:28'),
+(37, '2019-10-28 00:00:00', 'บค.', '2', 1, '2563', 'จ่ายเงินเดือนเจ้าหน้าที่ทรูปลูกปัญญา เดือน ตุลาคม 2562', NULL, 1, '-15400.00', 'DuplicatePayment', NULL, '', 8, 1057120596, 0, '2020-11-28 16:21:47'),
+(38, '2019-11-07 00:00:00', '', NULL, NULL, NULL, 'รับเงินอุดหนุน 70% 2/2562 ค่าจัดการเรียนการสอน', NULL, NULL, '426600.00', NULL, NULL, '', 8, 1057120596, 0, '2020-11-28 17:11:46'),
+(39, '2019-11-06 00:00:00', NULL, NULL, NULL, NULL, 'คืนเงินยืมประเภท กิจกรรมพัฒนาผู้เรียน', NULL, NULL, '-100000.00', 'DuplicatePayment', NULL, '', 8, 1057120596, 0, '2020-11-28 17:16:12'),
+(40, '2019-11-07 00:00:00', 'บค.', '5', 1, '2563', 'เงินยืมค่าอาหารนักเรียนพักนอน 50 วัน 2/2562', NULL, 2, '-56000.00', 'Debtor', NULL, '', 8, 1057120596, 0, '2020-11-28 17:17:02'),
+(41, '2019-11-15 00:00:00', 'บค.', '10', 1, '2563', 'ค่าเดินทางไปราชการ การแข่งขันทักษะวิชาการ เขต14,880.- ,ครูภานุมาศ 3,568 ,ครูสุริยัน 3,012', NULL, 2, '-21460.00', 'DuplicatePayment', NULL, '', 8, 1057120596, 0, '2020-11-28 17:17:42'),
+(42, '2019-11-15 00:00:00', 'บจ.', '12', 1, '2563', 'ค่าไฟฟ้า เดือน ตุลาคม 2562', NULL, 3, '-12633.78', 'DuplicatePayment', NULL, '', 8, 1057120596, 0, '2020-11-28 17:18:30'),
+(43, '2019-11-21 00:00:00', '', NULL, NULL, NULL, 'รับเงินอุดหนุนค่าอาหารนักเรียนพักนอน 2/2562', NULL, NULL, '112000.00', NULL, NULL, '', 8, 1057120596, 0, '2020-11-28 17:18:57'),
+(44, '2019-11-29 00:00:00', 'บค.', '18', 1, '2563', 'เงินเดือนเจ้าหน้าที่ทรูปลูกปัญญา เดือนพฤศจิกายน 2562', NULL, 2, '-15400.00', 'DuplicatePayment', NULL, '', 8, 1057120596, 0, '2020-11-28 17:19:33'),
+(45, '2019-12-06 00:00:00', 'บค.', '19', 1, '2563', 'ค่าเดินทางไปราชการ ครูกฤษฎา 7,464 และครูพรรณิภา 1,772', NULL, 2, '-9236.00', 'DuplicatePayment', NULL, '', 8, 1057120596, 0, '2020-11-30 12:04:08'),
+(46, '2019-12-06 00:00:00', 'บจ.', '20', 1, '2563', 'โครงการ พัฒนาภาษาไทยสำหรับเด็กที่ไม่ใช้ภาษาไทยเป็นภาษาแม่ 10,000 ,วันลอยกระทง 8,000 ,ส่งเสริมความเป็นเลิศทางวิชาการ 25,000', NULL, 4, '-43000.00', 'DuplicatePayment', '430.00', 'วัสดุ', 8, 1057120596, 0, '2020-11-30 12:05:33'),
+(47, '2019-12-06 00:00:00', 'บจ.', '21', 1, '2563', 'พัฒนาระบบประชาสัมพันธ์ 13,000 ,พัฒนาอัจฉริยภาพทางด้านเทคโนโลยี 25,000', NULL, 5, '-38000.00', 'DuplicatePayment', '380.00', 'วัสดุ', 8, 1057120596, 0, '2020-11-30 12:08:59'),
+(48, '2019-12-06 00:00:00', 'บจ.', '22', 1, '2563', 'ค่าไฟฟ้า เดือน พฤศจิกายน 2562', NULL, 3, '-13237.31', 'DuplicatePayment', NULL, '', 8, 1057120596, 0, '2020-11-30 12:10:04'),
+(49, '2019-12-13 00:00:00', 'บค.', '27', 1, '2563', 'เงินยืมโครงการทักษะวิชาการระดับชาติ', NULL, 2, '-20160.00', 'Debtor', NULL, '', 8, 1057120596, 0, '2020-11-30 12:11:29'),
+(50, '2019-12-20 00:00:00', 'บจ.', '28', 1, '2563', 'โครงการนักประวัติศาสตร์น้อย 2,730 ,บ้านนักวิทย์น้อย 5,000 บาท', NULL, 4, '-7730.00', 'DuplicatePayment', '77.30', 'วัสดุ', 8, 1057120596, 0, '2020-11-30 12:12:38'),
+(51, '2019-12-23 00:00:00', 'บจ.', '27', 1, '2563', 'โครงการส่งเสริมความเป็นเลิศทางวิชาการ(ทักษะวิชาการระดับชาติ รายการจ้างเหมารถ)', NULL, 6, '-27000.00', 'DuplicatePayment', '270.00', 'จ้างเหมารถ', 8, 1057120596, 0, '2020-11-30 12:13:22'),
+(52, '2019-12-23 00:00:00', 'บค.', '33', 1, '2563', 'เงินยืมค่าอาหารนักเรียนกีฬากลุ่มเทอดไทย', NULL, 2, '-10000.00', 'DuplicatePayment', '0.00', 'อาหาร', 8, 1057120596, 0, '2020-11-30 12:14:07'),
+(53, '2019-12-26 00:00:00', '', NULL, NULL, NULL, 'รับเงินอุดหนุนรายหัว 30 % ค่าจัดการเรียนการสอน', NULL, NULL, '181450.00', NULL, NULL, '', 8, 1057120596, 0, '2020-11-30 13:00:23'),
+(54, '2019-12-27 00:00:00', 'บค.', '34', 1, '2563', 'เงินเดือนเจ้าหน้าที่ทรูปลูกปัญญา เดือนธันวาคม 2562', NULL, 2, '-15400.00', 'DuplicatePayment', NULL, '', 8, 1057120596, 0, '2020-11-30 13:01:12'),
+(57, '2020-01-08 00:00:00', 'ไม่ระบุ', NULL, NULL, NULL, 'ภาษี ณ ที่จ่ายเดือน ธันวาคม 2562', NULL, NULL, '-1157.30', NULL, NULL, '', 0, 1057120596, 0, '2020-12-06 14:29:04'),
+(65, '2021-01-12 00:00:00', 'บจ.', '54', 1, '2563', 'asfasf', NULL, 7, '-80100.00', 'DuplicatePayment', '0.00', NULL, 11, 1057120596, 0, '2021-01-12 14:15:04'),
+(66, '2021-02-23 15:56:22', 'บร.', '17ก63220/3', 1, '', 'ลองสร้างจาก APIs', '', NULL, '5000.00', NULL, NULL, NULL, 0, 1057120596, 0, '2021-02-23 15:59:58'),
+(79, '2021-06-06 00:00:00', 'ไม่ระบุ', NULL, NULL, NULL, 'qqq', NULL, NULL, '1000.00', NULL, NULL, NULL, 11, 1057120596, 0, '2021-06-06 03:44:36'),
+(80, '2021-06-06 00:00:00', 'ไม่ระบุ', NULL, NULL, NULL, 'www', NULL, NULL, '2000.00', NULL, NULL, NULL, 14, 1057120596, 0, '2021-06-06 03:44:38'),
+(81, '2021-06-06 00:00:00', 'ไม่ระบุ', NULL, NULL, NULL, 'eee', NULL, NULL, '3000.00', NULL, NULL, NULL, 21, 1057120596, 0, '2021-06-06 03:44:40'),
+(82, '2021-06-01 00:00:00', 'ไม่ระบุ', NULL, NULL, NULL, 'qweqwe', NULL, NULL, '500.00', NULL, NULL, NULL, 16, 1057120596, 0, '2021-06-06 03:48:10');
 
 -- --------------------------------------------------------
 
@@ -705,11 +733,11 @@ INSERT INTO `transaction` (`Id`, `IssueDate`, `DuplicatePaymentType`, `Duplicate
 
 CREATE TABLE `user` (
   `Id` int(11) NOT NULL,
-  `Username` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `Password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `Name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `Position` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `Role` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `Username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Position` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Role` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `CreatedDate` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -740,6 +768,12 @@ ALTER TABLE `bringforward`
 -- Indexes for table `budget`
 --
 ALTER TABLE `budget`
+  ADD PRIMARY KEY (`Id`);
+
+--
+-- Indexes for table `incomereceipt`
+--
+ALTER TABLE `incomereceipt`
   ADD PRIMARY KEY (`Id`);
 
 --
@@ -795,6 +829,12 @@ ALTER TABLE `budget`
   MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
+-- AUTO_INCREMENT for table `incomereceipt`
+--
+ALTER TABLE `incomereceipt`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `partner`
 --
 ALTER TABLE `partner`
@@ -810,7 +850,7 @@ ALTER TABLE `schoolyear`
 -- AUTO_INCREMENT for table `transaction`
 --
 ALTER TABLE `transaction`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT for table `user`

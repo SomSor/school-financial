@@ -32,6 +32,7 @@ namespace School.Financial.Models
         [Display(Name = "ประเภทงบประมาณ")]
         public int BudgetId { get; set; }
         public int SchoolId { get; set; }
+        public int IncomeReceiptId { get; internal set; }
 
         public string IssueDateString { get { return IssueDate.ToString(WebConfiguration.DateTimeFormat); } }
         public string DuplicatePaymentString
