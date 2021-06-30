@@ -13,6 +13,11 @@ $(() => {
         else $(this).html("-");
         if ($(this).val()) $(this).val(moment.utc($(this).val()).local().format("LTS"));
     });
+    $('.showshortdate').each(function () {
+        if ($(this).html()) $(this).html(moment.utc($(this).html()).local().format("ll"));
+        else $(this).html("-");
+        if ($(this).val()) $(this).val(moment.utc($(this).val()).local().format("LL"));
+    });
     $('.showdate').each(function () {
         if ($(this).html()) $(this).html(moment.utc($(this).html()).local().format("LL"));
         else $(this).html("-");

@@ -15,21 +15,21 @@
 <table class="table">
     <thead>
         <tr>
-            <th>วัน เดือน ปี</th>
-            <th>ประเภทงบประมาณ</th>
-            <th>ที่เอกสาร</th>
-            <th>รายการ</th>
-            <th class="text-right">รับ</th>
-            <th class="text-right">จ่าย</th>
-            <th>หมายเหตุ</th>
-            <th></th>
+            <th class="col-1">วัน เดือน ปี</th>
+            <th class="col-2">ประเภทงบประมาณ</th>
+            <th class="col-1">ที่เอกสาร</th>
+            <th class="col-4">รายการ</th>
+            <th class="col-1 text-right">รับ</th>
+            <th class="col-1 text-right">จ่าย</th>
+            <th class="col-1">หมายเหตุ</th>
+            <th class="col-1"></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td class="showdate">@item.IssueDateString</td>
+                <td class="showshortdate">@item.IssueDateString</td>
                 <td>@(budgets.FirstOrDefault(x => x.Id == item.BudgetId)?.Name)</td>
                 <td>@item.DuplicatePaymentString</td>
                 <td>@item.Title</td>
