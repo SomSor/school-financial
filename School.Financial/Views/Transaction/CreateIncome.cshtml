@@ -65,7 +65,7 @@
                         <tr style="vertical-align:top;" class="addnumberrow">
                             <td class="text-center padding-top"><b class="numrow">1</b></td>
                             <td>
-                                <select name="Incomes[0].BudgetId" asp-items="@(new SelectList(budgets,"Id","Name"))" class="form-control BudgetId" onchange="AddNewBox(this, 'addnumbertable')">
+                                <select name="Incomes[0].BudgetId" asp-items="@(new SelectList(budgets,"Id","Name", ViewBag.budgetId))" class="form-control BudgetId" onchange="AddNewBox(this, 'addnumbertable')">
                                     <option value="">เลือก ...</option>
                                 </select>
                             </td>

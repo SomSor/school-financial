@@ -43,26 +43,44 @@ namespace School.Financial.Controllers
             this.partnerDac = partnerDac;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(DateTime? month, int budgetId = 1)
         {
-            var transactions = transactionDac.Get().Where(x => x.SchoolId == CurrentSchoolData.sc_id).ToList();
+            if (month == null) month = DateTime.UtcNow;
+            ViewBag.month = month;
+            ViewBag.budgetId = budgetId;
+
             var budgets = budgetDac.Get().ToList();
             budgets.Add(new Budget
             {
                 Id = 0,
                 Name = "ภาษี ณ ที่จ่าย",
             });
-            var vatTransactions = transactions.Where(x => x.VatInclude.HasValue && x.VatInclude > 0).ToList();
-            var partners = partnerDac.Get();
-            transactions.AddRange(vatTransactions.Select(x => new Transaction
-            {
-                Id = x.Id,
-                IssueDate = x.IssueDate,
-                Title = $"รับเงินภาษี ณ ที่จ่ายจาก {partners.FirstOrDefault(p => p.Id == x.PartnerId)?.Name}",
-                Amount = x.VatInclude.Value,
-            }));
             ViewBag.budgets = budgets.OrderBy(x => x.Name);
-            return View(transactions.OrderBy(x => x.IssueDate).ThenBy(x => x.DuplicatePaymentNumber));
+
+            var partners = partnerDac.Get();
+            var transactions = budgetId switch
+            {
+                0 => transactionDac.GetTeackVat(month.Value).OrderBy(x => x.IssueDate).ThenBy(x => x.Id).Select(x => new Transaction
+                {
+                    Id = x.Id,
+                    IssueDate = x.IssueDate,
+                    Title = $"รับเงินภาษี ณ ที่จ่ายจาก {partners.FirstOrDefault(p => p.Id == x.PartnerId)?.Name}",
+                    Amount = x.VatInclude.Value,
+                }).ToList(),
+                _ => transactionDac.Get(month.Value, budgetId).OrderBy(x => x.IssueDate).ThenBy(x => x.Id).ToList(),
+            };
+            var bringForword = bringForwardDac.Get(month.Value, budgetId);
+            if (bringForword != null)
+            {
+                transactions.Insert(0, new Transaction
+                {
+                    IssueDate = new DateTime(month.Value.Year, month.Value.Month, 1),
+                    Title = "ยอดยกมา",
+                    Amount = bringForword?.Amount ?? 0,
+                    BudgetId = bringForword.BudgetId,
+                });
+            }
+            return View(transactions);
         }
 
         public IActionResult Details(int id)
@@ -75,9 +93,10 @@ namespace School.Financial.Controllers
             return View(transaction);
         }
 
-        public IActionResult CreateIncome()
+        public IActionResult CreateIncome(int budgetId = 1)
         {
             var budgets = budgetDac.Get().OrderBy(x => x.Name);
+            ViewBag.budgetId = budgetId;
             ViewBag.budgets = budgets;
             return View();
         }
@@ -118,7 +137,7 @@ namespace School.Financial.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult CreatePayment()
+        public IActionResult CreatePayment(int budgetId = 1)
         {
             var budgets = budgetDac.Get().ToList();
             var partners = partnerDac.Get().OrderBy(x => x.Name);
@@ -127,6 +146,7 @@ namespace School.Financial.Controllers
                 Id = 0,
                 Name = "ภาษี ณ ที่จ่าย",
             });
+            ViewBag.budgetId = budgetId;
             ViewBag.Budets = budgets.OrderBy(x => x.Name);
             ViewBag.Partners = partners;
             ViewBag.SchoolYear = CurrentSchoolConfig.SchoolYear;

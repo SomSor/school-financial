@@ -31,7 +31,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="BudgetId" class="control-label"></label>
-                <select asp-for="BudgetId" asp-items="@(new SelectList(budgets,"Id","Name"))" class="form-control" onchange="OnBudgetChanged(this)">
+                <select asp-for="BudgetId" asp-items="@(new SelectList(budgets,"Id","Name", ViewBag.budgetId))" class="form-control" onchange="OnBudgetChanged(this)">
                     <option value="">เลือก ...</option>
                 </select>
                 <span asp-validation-for="BudgetId" class="text-danger"></span>

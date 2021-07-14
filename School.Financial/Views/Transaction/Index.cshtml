@@ -4,45 +4,81 @@
     ViewData["Title"] = "บันทึกรายการ";
 
     var budgets = ViewBag.budgets as IEnumerable<School.Financial.Models.Budget>;
+    decimal remainCash = 0, remain = 0, remainDeposit = 0;
 }
 
 <h1>บันทึกรายการ</h1>
-
 <p>
-    <a class="btn btn-primary" asp-action="CreateIncome"><span class="glyphicon glyphicon-plus"></span> บันทึกรายรับ</a>
-    <a class="btn btn-primary" asp-action="CreatePayment"><span class="glyphicon glyphicon-minus"></span> บันทึกรายจ่าย</a>
+    <a class="btn btn-primary" asp-action="CreateIncome" asp-route-budgetid="@ViewBag.budgetId"><span class="glyphicon glyphicon-plus"></span> บันทึกรายรับ</a>
+    <a class="btn btn-primary" asp-action="CreatePayment" asp-route-budgetid="@ViewBag.budgetId"><span class="glyphicon glyphicon-minus"></span> บันทึกรายจ่าย</a>
 </p>
+<br />
+<form>
+    <div class="row">
+        <div class="col-sm-2">
+            <input name="month" class="form-control monthpicker" type="text" value="@ViewBag?.month?.ToString("yyyy-MM-dd hh:mm:ss")" />
+        </div>
+        <div class="col-sm-2">
+            <select name="budgetId" asp-items="@(new SelectList(budgets, "Id", "Name", ViewBag.budgetId))" class="form-control">
+                <option value="">เลือก ...</option>
+            </select>
+        </div>
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-primary">Ok</button>
+        </div>
+    </div>
+</form>
+<br />
 <table class="table">
     <thead>
         <tr>
-            <th class="col-1">วัน เดือน ปี</th>
-            <th class="col-2">ประเภทงบประมาณ</th>
-            <th class="col-1">ที่เอกสาร</th>
-            <th class="col-4">รายการ</th>
-            <th class="col-1 text-right">รับ</th>
-            <th class="col-1 text-right">จ่าย</th>
-            <th class="col-1">หมายเหตุ</th>
+            <th rowspan="2">วัน เดือน ปี</th>
+            <th rowspan="2">ที่เอกสาร</th>
+            <th rowspan="2">รายการ</th>
+            <th rowspan="2" class="text-right">รับ</th>
+            <th colspan="2" class="text-center">จ่าย</th>
+            <th rowspan="2" class="text-right">เงินสดคงเหลือ</th>
+            <th rowspan="2" class="text-right">เงินฝากธนาคารคงเหลือ</th>
+            <th rowspan="2" class="text-right">เงินฝากคงเหลือ<br />ส่วนราชการผู้เบิก</th>
+            <th rowspan="2">หมายเหตุ</th>
             <th class="col-1"></th>
+        </tr>
+        <tr>
+            <th class="text-right">ลูกหนี้</th>
+            <th class="text-right">ใบสำคัญ</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
+            remain += item.Amount;
             <tr>
-                <td class="showshortdate">@item.IssueDateString</td>
-                <td>@(budgets.FirstOrDefault(x => x.Id == item.BudgetId)?.Name)</td>
+                <td class="showdate">@item.IssueDateString</td>
                 <td>@item.DuplicatePaymentString</td>
                 <td>@item.Title</td>
                 @if (item.Amount >= 0)
                 {
                     <td class="text-right">@item.AmountString</td>
                     <td></td>
+                    <td></td>
                 }
                 else
                 {
                     <td></td>
-                    <td class="text-right">@item.AmountString</td>
+                    if (item.PaymentType == PaymentType.DuplicatePayment)
+                    {
+                        <td></td>
+                        <td class="text-right">@item.AmountPositiveString</td>
+                    }
+                    else
+                    {
+                        <td class="text-right">@item.AmountPositiveString</td>
+                        <td></td>
+                    }
                 }
+                <td class="text-right">@remainCash.ToString(WebConfiguration.MoneyFormat)</td>
+                <td class="text-right">@remain.ToString(WebConfiguration.MoneyFormat)</td>
+                <td class="text-right">@remainDeposit.ToString(WebConfiguration.MoneyFormat)</td>
                 <td class="text-right">@item.Remark</td>
                 @if (item.BudgetId == 0 && item.Amount > 0)
                 {
@@ -60,4 +96,68 @@
         }
     </tbody>
 </table>
+
+
+@*@model IEnumerable<School.Financial.Models.Transaction>
+
+    @{
+        ViewData["Title"] = "บันทึกรายการ";
+
+        var budgets = ViewBag.budgets as IEnumerable<School.Financial.Models.Budget>;
+    }
+
+    <h1>บันทึกรายการ</h1>
+
+    <p>
+        <a class="btn btn-primary" asp-action="CreateIncome"><span class="glyphicon glyphicon-plus"></span> บันทึกรายรับ</a>
+        <a class="btn btn-primary" asp-action="CreatePayment"><span class="glyphicon glyphicon-minus"></span> บันทึกรายจ่าย</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-1">วัน เดือน ปี</th>
+                <th class="col-2">ประเภทงบประมาณ</th>
+                <th class="col-1">ที่เอกสาร</th>
+                <th class="col-4">รายการ</th>
+                <th class="col-1 text-right">รับ</th>
+                <th class="col-1 text-right">จ่าย</th>
+                <th class="col-1">หมายเหตุ</th>
+                <th class="col-1"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="showshortdate">@item.IssueDateString</td>
+                    <td>@(budgets.FirstOrDefault(x => x.Id == item.BudgetId)?.Name)</td>
+                    <td>@item.DuplicatePaymentString</td>
+                    <td>@item.Title</td>
+                    @if (item.Amount >= 0)
+                    {
+                        <td class="text-right">@item.AmountString</td>
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td></td>
+                        <td class="text-right">@item.AmountString</td>
+                    }
+                    <td class="text-right">@item.Remark</td>
+                    @if (item.BudgetId == 0 && item.Amount > 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td class="text-right">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-success"><span class="glyphicon glyphicon-edit"></span></a>
+                            <a asp-action="Details" asp-route-id="@item.Id"><span class="glyphicon glyphicon-search"></span></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="text-danger"><span class="glyphicon glyphicon-trash"></span></a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>*@
 
