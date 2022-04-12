@@ -11,7 +11,7 @@
 
 <h4>บันทึกรายรับ</h4>
 <hr />
-<form asp-action="CreateIncome">
+<form asp-action="CreateIncome" id="CreateIncomeForm">
     <div class="row">
         <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -51,6 +51,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label asp-for="Incomes" class="control-label"></label>
+                <span class="text-danger" id="Incomes-error" style="display: none">รายละเอียดอย่างน้อย 1 รายการ</span>
                 <table class="table" id="addnumbertable">
                     <thead>
                         <tr>
@@ -75,7 +76,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <div id="validationsummaryaddnumbertable" class="col-sm-offset-1 col-sm-9 text-danger" asp-validation-summary="All"></div>
+                @*<div id="validationsummaryaddnumbertable" class="col-sm-offset-1 col-sm-9 text-danger" asp-validation-summary="All"></div>*@
             </div>
             <div class="form-group">
                 <input type="submit" value="สร้าง" class="btn btn-primary" onclick="return OnSubmit('addnumbertable')" />
@@ -184,7 +185,11 @@
         }
 
         function OnSubmit(tableName) {
-            var isValid = ValidateNumber(tableName);
+            if ($(".addnumberrow").length == 1) {
+                $("#Incomes-error").show();
+                return false;
+            }
+            var isValid = ValidateNumber(tableName) && $("#IssueDate").val() != "" && $("#ReceiveFrom").val() != "";
             if (isValid) {
                 var numbertxts_removing = $("#" + tableName + " .numbertxt").filter(function () {
                     return $(this).val().length == 0;

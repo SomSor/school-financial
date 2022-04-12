@@ -12,8 +12,13 @@ namespace School.Financial.ApiModels
         /// <summary>
         /// วันที่ลงรายการ
         /// </summary>
+        [Required]
         [Display(Name = "วันที่ลงรายการ")]
         public DateTime IssueDate { get; set; }
+        /// <summary>
+        /// ได้รับเงินจาก
+        /// </summary>
+        [Required]
         [Display(Name = "ได้รับเงินจาก")]
         public string ReceiveFrom { get; set; }
         /// <summary>
@@ -30,7 +35,7 @@ namespace School.Financial.ApiModels
         /// </summary>
         public string Remark { get; set; }
         /// <summary>
-        /// 
+        /// รายละเอียด
         /// </summary>
         [Display(Name = "รายละเอียด")]
         public IEnumerable<IncomeDetailRequest> Incomes { get; set; }
@@ -41,16 +46,19 @@ namespace School.Financial.ApiModels
         /// <summary>
         /// ประเภทงบประมาณ
         /// </summary>
+        [Required]
         [Display(Name = "ประเภทงบประมาณ")]
         public int BudgetId { get; set; }
         /// <summary>
         /// รายการ
         /// </summary>
+        [Required]
         [Display(Name = "รายการ")]
         public string Title { get; set; }
         /// <summary>
         /// จำนวนเงิน
         /// </summary>
+        [Required]
         [Display(Name = "จำนวน")]
         public decimal Amount { get; set; }
     }

@@ -14,6 +14,11 @@
             วันที่ลงรายการ
             </summary>
         </member>
+        <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.ReceiveFrom">
+            <summary>
+            ได้รับเงินจาก
+            </summary>
+        </member>
         <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.DuplicatePaymentType">
             <summary>
             ประเภทใบสำคัญ บ.ร / ไม่ระบุ
@@ -31,7 +36,7 @@
         </member>
         <member name="P:School.Financial.ApiModels.TransactionIncomeRequest.Incomes">
             <summary>
-            
+            รายละเอียด
             </summary>
         </member>
         <member name="P:School.Financial.ApiModels.IncomeDetailRequest.BudgetId">
