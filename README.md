@@ -12,3 +12,5 @@ npm install -g bower
 cd School.Financial
 bower install
 ```
+
+![](dbdiagram/school%20financial.png)

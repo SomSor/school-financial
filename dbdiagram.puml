@@ -1,0 +1,83 @@
+@startuml school financial
+
+class schoolyear {
+    Id : int
+    Name : varchar
+    VatNumber : varchar
+    Address : datetime
+    PartnerType : int
+}
+
+class user {
+    Id : int
+    Username : varchar
+    Password : varchar
+    Name : varchar
+    Position : varchar
+    Role : varchar
+}
+
+class sao { }
+class school { }
+sao *-- school
+
+class bankaccount {
+    Id : int
+    BankName : varchar
+    AccountName : varchar
+    AccountNumber : varchar
+    SchoolId : int
+    CreatedDate : datetime
+}
+school *-- bankaccount
+
+class budget {
+    Id : int
+    Name : varchar
+    BankAccountId : int
+    SchoolId : int
+    CreatedDate : datetime
+}
+school *-- budget
+bankaccount *-- budget
+
+class incomereceipt {
+    Id : int
+    IssueDate : datetime
+    ReceiveFrom : varchar
+    Remark : varchar
+    Amount : decimal
+    CreatedDate : datetime
+}
+
+class transaction {
+    Id : int
+    PartnerId : varchar
+    BudgetId : varchar
+    SchoolId : datetime
+    IncomeReceiptId : int
+}
+school *-- transaction
+budget *-- transaction
+incomereceipt *-- transaction
+partner *-- transaction
+
+class bringforward {
+    Id : int
+    Amount : decimal
+    Month : datetime
+    BudgetId : int
+    CreatedDate : datetime
+}
+budget *-- bringforward
+
+class partner {
+    Id : int
+    Name : varchar
+    VatNumber : varchar
+    Address : varchar
+    PartnerType	 : varchar
+    IsInternal : tinyint
+}
+
+@enduml
